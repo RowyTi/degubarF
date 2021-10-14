@@ -19,6 +19,10 @@ export default {
     ]
   },
 
+  router: {
+    middleware: ["auth"]
+  },
+
   // Global CSS: https://go.nuxtjs.dev/config-css
   css: [
   ],
@@ -40,6 +44,7 @@ export default {
 
   // Modules: https://go.nuxtjs.dev/config-modules
   modules: [
+    '@nuxtjs/auth-next',
     // https://go.nuxtjs.dev/axios
     '@nuxtjs/axios',
     // https://go.nuxtjs.dev/pwa
@@ -47,7 +52,57 @@ export default {
   ],
 
   // Axios module configuration: https://go.nuxtjs.dev/config-axios
-  axios: {},
+  axios: {
+    baseUrl: "http://localhost:8000/v1/",
+    credentials:true,
+    headers: {
+      'Accept': 'application/vnd.api+json',
+      'Content-Type': 'application/vnd.api+json'
+    },
+  },
+
+  auth: {
+    scopeKey: 'permissions',
+    cookie: false,
+    watchLoggedIn: true,
+    redirect: {
+      login: "/login",
+      home: false,
+      logout: "/login",
+      callback: false
+    },
+    strategies: {
+      local: {
+        token: {
+          property: "token",
+          required: true,
+          type: "Bearer"
+        },
+        user: {
+          property: false,
+          autoFetch: true
+        },
+        endpoints: {
+          login: {
+            url: "/login",
+            method: "post",
+            propertyName: "data.token",
+            headers: {
+              'Accept': 'application/vnd.api+json',
+              'Content-Type': 'application/vnd.api+json'
+            },
+          },
+          logout: false,
+          // logout: { url: "/logout", method: "post" },
+          user: {
+            url: "/me",
+            method: "get"
+          },
+          scope:true,
+        }
+      }
+    }
+  },
 
   // PWA module configuration: https://go.nuxtjs.dev/pwa
   pwa: {
