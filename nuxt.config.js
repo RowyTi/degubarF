@@ -20,7 +20,7 @@ export default {
   },
 
   router: {
-    middleware: ["auth"]
+    // middleware: ["auth"]
   },
 
   // Global CSS: https://go.nuxtjs.dev/config-css
@@ -54,7 +54,7 @@ export default {
   // Axios module configuration: https://go.nuxtjs.dev/config-axios
   axios: {
     baseUrl: "http://localhost:8000/v1/",
-    credentials:true,
+    credentials:false,
     headers: {
       'Accept': 'application/vnd.api+json',
       'Content-Type': 'application/vnd.api+json'
