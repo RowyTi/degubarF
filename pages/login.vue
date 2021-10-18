@@ -4,12 +4,14 @@
     <v-col
       cols="8"
       class="pa-0 ma-0"
+      style="background-color: black"
     >
-      <!-- <v-img
-        src="/images/login.jpeg"
+     <v-img
+        src="/images/logo-degubar.png"
         height="100vh"
-        cover
-      /> -->
+        contain
+        class="pt-1"
+      />
     </v-col>
 <!--    LOGIN FORM-->
     <v-col
@@ -18,16 +20,15 @@
       md="4"
       class="d-flex align-center justify-center full-height">
       <v-card
-        class=" elevation-0 pa-3"
+        class=" elevation-0 pa-1"
         light
         height=""
         color="white"
-        width="80%"
       >
 <!--        <v-alert v-show="error.status" type="error">{{ error.texto }}</v-alert>-->
-        <h1 class="text-h3 text-md-h4 pl-3">
-          Bienvenido a Degubar!
-<!--          <span class="primary&#45;&#45;text font-weight-light"> Audinet</span>!-->
+        <h1 class="text-h3 text-md-h4 pl-3 font-weight-light">
+          Bienvenido a 
+         <span class="primary--text font-weight-black"> Degubar</span>!
         </h1>
         <v-card-subtitle class="mt-0 pt-0" v-text="'Inicie sesión para comenzar a trabajar'" />
         <v-form>
@@ -50,28 +51,15 @@
           </v-card-text>
           <v-card-actions>
             <v-btn
-              @click="login"
               class="mx-auto"
-              color="primary"
               :loading="loading"
+              color="primary"
               :disabled="$nuxt.isOffline || loading"
+              @click="login"
             >Iniciar Sesión</v-btn>
           </v-card-actions>
           <v-divider class="mt-5"></v-divider>
         </v-form>
-<!--        <v-list>-->
-<!--          <v-list-item v-for="inf in info" :key="inf.i"-->
-<!--          ><v-list-item-icon>-->
-<!--            <v-icon :color="inf.iconColor" v-text="inf.icon"></v-icon>-->
-<!--          </v-list-item-icon>-->
-<!--            <v-list-item-content>-->
-<!--              <v-list-item-title-->
-<!--                class="font-weight-light"-->
-<!--                v-text="inf.title"-->
-<!--              ></v-list-item-title> </v-list-item-content-->
-<!--            ></v-list-item>-->
-<!--        </v-list>-->
-
         <div class="text-center">
           <span class="font-weight-light grey--text ">v1.0.0</span>
         </div>
@@ -83,12 +71,8 @@
 
 <script>
 export default {
-    name: 'Login',
-    middleware: 'guest',
-    head: {
-      title: "Login"
-    },
-
+  name: 'Login',
+  middleware: 'guest',
   data: () => ({
     form: {
       username: "",
@@ -102,6 +86,9 @@ export default {
     },
     showPassword: "",
   }),
+    head: {
+      title: "Login"
+    },
   methods: {
     capitalize(string) {
       return string.charAt(0).toUpperCase() + string.slice(1);
