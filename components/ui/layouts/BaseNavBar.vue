@@ -34,26 +34,21 @@ export default {
         menu: [
             {
                 nombre: 'administración',
-                permission: 'super:admin',
+                permission: 'administracion',
                 subMenu:[
-                    { id: 1, nombre: 'Usuario', slug: 'administracion/usuarios', icon: 'account', permission: 'view-usuarios' },
-                    { id: 2, nombre: 'Roles' , slug: 'administracion/roles-y-permisos', icon: 'account-lock', permission: 'view-roles'},
-                    { id: 3, nombre: 'Efectos' , slug: 'administracion/efecto', icon: 'archive', permission: 'view-efectos'},
-                    { id: 4, nombre: 'Inventario', slug: 'administracion/inventario', icon: 'clipboard-list', permission: 'view-inventarios' },
+                    { id: 1, nombre: 'Usuario', slug: 'db-admin/administracion/usuarios', icon: 'account', permission: 'view:user' },
+                    { id: 2, nombre: 'Staff', slug: 'db-admin/administracion/staff', icon: 'account', permission: 'view:staff' },
+                    { id: 3, nombre: 'Roles', slug: 'db-admin/administracion/roles-y-permisos', icon: 'account-lock', permission: 'view:role' },
+                    { id: 4, nombre: 'Clientes', slug: 'db-admin/administracion/clientes', icon: 'account-lock', permission: 'view:customer' },
+                    { id: 5, nombre: 'Categorias', slug: 'db-admin/administracion/categorias', icon: 'account-lock', permission: 'view:category' },
                 ],
             },
-            {
+            /* {
                 nombre: 'gestión',
                 permission: 'gestion',
                 subMenu:[
-                {
-                    id: 5,
-                    nombre: 'Movimiento de efectos',
-                    slug: 'gestion/movimiento-de-efectos',
-                    icon: 'swap-horizontal-bold',
-                    permission: 'view-entrega-recepcion'
-                },
-                { id: 6, nombre: 'Item 3' , slug: 'administracion/3', icon: 'format-list-text'},
+                    { id: 4, nombre: 'Productos', slug: 'gestion/productos', icon: 'swap-horizontal-bold', permission: 'view:product' },
+                    { id: 5, nombre: 'Sucursales' , slug: 'administracion/3', icon: 'format-list-text'},
                 ],
             },
             {
@@ -62,7 +57,7 @@ export default {
                 subMenu:[
                 { id: 7, nombre: 'Item 4', slug: 'administracion/1', icon: 'account' },
                 ],
-            },
+            }, */
         ],
     }),
     computed: {
