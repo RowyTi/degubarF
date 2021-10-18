@@ -8,7 +8,7 @@
 <script>
 export default {
     layout: "admin",
-    middelware: "permission-dashboard",
+    middleware: "permission-dashboard",
 }
 </script>
 
