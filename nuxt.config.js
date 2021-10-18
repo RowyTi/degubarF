@@ -6,12 +6,12 @@ export default {
 
   // Global page headers: https://go.nuxtjs.dev/config-head
   head: {
-    titleTemplate: '%s - degubarF',
-    title: 'degubarF',
+    titleTemplate: '%s | Degubar Panel',
+    title: 'Administracion',
     meta: [
       { charset: 'utf-8' },
       { name: 'viewport', content: 'width=device-width, initial-scale=1' },
-      { hid: 'description', name: 'description', content: '' },
+      { hid: 'description', name: 'description', content: 'Plataforma administrativa Degubar' },
       { name: 'format-detection', content: 'telephone=no' }
     ],
     link: [
@@ -62,7 +62,7 @@ export default {
   },
 
   auth: {
-    scopeKey: 'permissions',
+    scopeKey: 'scope',
     cookie: false,
     watchLoggedIn: true,
     redirect: {
@@ -84,7 +84,7 @@ export default {
         },
         endpoints: {
           login: {
-            url: "/login",
+            url: "/login/staff",
             method: "post",
             propertyName: "data.token",
             headers: {
@@ -118,7 +118,7 @@ export default {
       dark: true,
       themes: {
         dark: {
-          primary: colors.blue.darken2,
+          primary:colors.yellow.darken3,
           accent: colors.grey.darken3,
           secondary: colors.amber.darken3,
           info: colors.teal.lighten1,
