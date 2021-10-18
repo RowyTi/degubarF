@@ -1,12 +1,14 @@
 <template>
-  <h1>dashboard</h1>
+<div>
+  {{$auth.user.username}}
+</div>
+
 </template>
 
 <script>
 export default {
     layout: "admin",
     middelware: "permission-dashboard",
-
 }
 </script>
 

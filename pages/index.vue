@@ -1,7 +1,13 @@
+<template>
+  <h1>LANDING PAGE DEGUBAR</h1>
+</template>
+
 <script>
 export default {
-  fetch({ redirect }) {
-    redirect('/db-admin/dashboard')
-  },
+
 }
 </script>
+
+<style>
+
+</style>
