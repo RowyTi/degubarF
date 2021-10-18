@@ -20,7 +20,7 @@
         </v-list-item-content>
       </v-list-item>
       <v-divider class="mb-4"/>
-      <v-list-item to="/dashboard" exact exact-active-class="link">
+      <v-list-item  v-if="$auth.hasScope('view:dashboard')" to="/db-admin/dashboard" exact exact-active-class="link">
         <v-list-item-icon>
           <v-icon>mdi-view-dashboard</v-icon>
         </v-list-item-icon>
@@ -30,7 +30,7 @@
 
       <template v-for="(m, index ) in menu" >
         <template v-if="$auth.hasScope(m.permission) || 'super-admin'">
-          <v-subheader class="text-overline" :key="index">{{m.nombre}}</v-subheader>
+          <v-subheader :key="index" class="text-overline">{{m.nombre}}</v-subheader>
           <template v-for="sm in m.subMenu" >
             <v-list-item
             v-if="$auth.hasScope( ''+sm.permission ) || 'super-admin'"
@@ -60,6 +60,7 @@ export default {
   props: {
     menu: {
       type: Array,
+      default: () => [],
       require: true
     }
   },
@@ -67,14 +68,6 @@ export default {
     mini: false,
     expand: true
   }),
-  watch: {
-    miniMode(newValue) {
-      localStorage.setItem("mini_mode", newValue);
-    },
-    $route(to, from) {
-      this.expand_locations = to.path.includes("/location/");
-    }
-  },
   computed: {
     miniMode: {
       get() {
@@ -84,6 +77,14 @@ export default {
         return value;
       }
     },
+  },
+  watch: {
+    miniMode(newValue) {
+      localStorage.setItem("mini_mode", newValue);
+    },
+    $route(to, from) {
+      this.expand_locations = to.path.includes("/location/");
+    }
   },
   methods: {
     quitarTilde(cadena) {
