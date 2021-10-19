@@ -10,14 +10,14 @@
     :loading="loading"
     class="elevation-1"
   >
-    <template v-slot:[`item.acciones`]="{ item }">
+   <!--  <template v-slot:[`item.acciones`]="{ item }">
       <v-btn color="primary" icon small @click="showItem(item)">
         <v-icon> mdi-eye </v-icon>
       </v-btn>
       <v-btn color="success" icon small @click="editItem(item)">
         <v-icon> mdi-pencil </v-icon>
       </v-btn>
-    </template>
+    </template> -->
   </v-data-table>
 </template>
 
