@@ -29,6 +29,8 @@ export default {
 
   // Plugins to run before rendering page: https://go.nuxtjs.dev/config-plugins
   plugins: [
+    {src: '~/plugins/vuelidate'},
+    {src: '~/plugins/auth'}
   ],
 
   // Auto import components: https://go.nuxtjs.dev/config-components
@@ -92,8 +94,7 @@ export default {
               'Content-Type': 'application/vnd.api+json'
             },
           },
-          logout: false,
-          // logout: { url: "/logout", method: "post" },
+          logout: { url: "/logout", method: "post" },
           user: {
             url: "/me",
             method: "get"
