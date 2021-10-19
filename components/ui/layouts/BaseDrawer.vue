@@ -7,16 +7,16 @@
   >
     <v-list class="pt-0" nav dense>
       <v-list-item class="" two-line style="height: 64px !important">
-        <v-list-item-avatar tile>
+        <v-list-item-avatar tile size="58">
           <!-- <img :src="userFoto" /> -->
-          <img src="/images/logo.png" alt="logo" />
+          <img src="/images/logo-degubar.png" alt="logo" />
         </v-list-item-avatar>
 
         <v-list-item-content class="pb-1">
           <v-list-item-title class="font-weight-medium text-uppercase">
-           CERVELAR
+           Degubar
           </v-list-item-title>
-          <v-list-item-subtitle>Palermo Soho</v-list-item-subtitle>
+          <v-list-item-subtitle>Panel de Control</v-list-item-subtitle>
         </v-list-item-content>
       </v-list-item>
       <v-divider class="mb-4"/>
