@@ -11,7 +11,7 @@
         <template #body>
           <v-data-table
             :headers="headers"
-            :items="items"
+            :items="data"
             :footer-props="{
               'items-per-page-options': [10, 20, 30],
               'items-per-page-text': 'Filas por página',
@@ -20,7 +20,7 @@
             :loading="loading"
           >
             <v-alert slot="no-result"> no hay resultados </v-alert>
-            <template v-slot:[`item.acciones`]="{ item }">
+            <template #[`item.acciones`]="{ item }">
               <v-btn color="primary" icon small @click="showItem(item)">
                 <v-icon> mdi-eye </v-icon>
               </v-btn>
@@ -62,8 +62,7 @@ export default {
         width: '8rem',
       },
     ],
-    items: [],
-    item: {},
+    data: [],
     form: {
       name: '',
       email: '',
@@ -81,9 +80,9 @@ export default {
       try {
         this.loading = true
         const response = await this.$axios.get('/users')
-        this.items = deserialize(response.data, { changeCase: 'camelCase' })
+        this.data = deserialize(response.data, { changeCase: 'camelCase' })
       } catch (error) {
-        console.log(error)
+        /* console.log(error) */
       } finally {
         this.loading = false
       }
