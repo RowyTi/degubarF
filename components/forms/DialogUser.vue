@@ -1,20 +1,20 @@
 <template>
   <v-dialog
     v-bind="$attrs"
-    v-on="$listeners"
     max-width="800"
     persistent
     scrollable
+    v-on="$listeners"
   >
     <v-form
       @submit.prevent="editedIndex === -1 ? createPerson() : updatePerson()"
     >
       <base-card
         :dialog="true"
-        :colorToolbar="showMode ? 'info' : 'success'"
+        :color-toolbar="showMode ? 'info' : 'success'"
         :color="$vuetify.theme.dark ? 'black' : 'blue-grey lighten-5'"
-        :titleToolbar="showMode ? 'edit' : formTitle"
-        :sectionActions="showMode ? false : true"
+        :title-toolbar="showMode ? 'edit' : formTitle"
+        :section-actions="showMode ? false : true"
       >
         <template #rightToolbar />
         <template #leftToolbar>
@@ -22,7 +22,7 @@
             <v-icon>mdi-close</v-icon>
           </v-btn>
         </template>
-        <template #body v-if="showMode">
+        <template v-if="showMode" #body>
           <v-row justify="center" class="ma-0 pa-0">
             <v-col cols="12" md="4" class="mt-10 pr-5 text-center">
               <v-avatar size="200" color="grey" class="elevation-5">
@@ -128,7 +128,7 @@
             </v-col>
           </v-row>
         </template>
-        <template #body v-else>
+<!--         <template v-else #body>
           <v-container fluid class="mt-0 pt-0">
             <v-row>
               <v-col cols="12" class="text-center">
@@ -142,8 +142,8 @@
                     <v-row>
                       <v-col cols="12" sm="6" md="12" class="pb-0">
                         <v-text-field
-                          outlined
                           v-model="form.namembre"
+                          outlined
                           label="Nombre"
                           :error-messages="nombreErrors"
                           @input="$v.formPerson.nombre.$touch()"
@@ -161,8 +161,8 @@
               </v-col>
               <v-col cols="12" sm="6" class="pb-0">
                 <v-text-field
-                  outlined
                   v-model="form.email"
+                  outlined
                   label="Email"
                   :error-messages="emailErrors"
                   @input="$v.formPerson.email.$touch()"
@@ -171,9 +171,9 @@
               </v-col>
             </v-row>
           </v-container>
-        </template>
+        </template> -->
         <template #actions>
-          <v-btn color="error" text @click="close" :disabled="loading">
+          <v-btn color="error" text :disabled="loading" @click="close">
             Cancelar
           </v-btn>
           <v-btn
@@ -190,11 +190,11 @@
   </v-dialog>
 </template>
 <script>
-import { required, email, numeric } from "vuelidate/lib/validators";
+import { required, email } from "vuelidate/lib/validators";
 import BaseCard from "~/components/ui/BaseCard.vue";
 export default {
+  name: "CreateEditPersonForm",
   components: { BaseCard },
-  name: "create-edit-person-form",
   props: {
     form: {
       type: Object,
@@ -257,19 +257,6 @@ export default {
     close() {
       this.$v.$reset();
       this.$emit("closeDialog");
-    },
-    uploadImage(event) {
-      let img = event;
-      img ? console.log("hay foto") : console.log("no hayfoto");
-      if (img) {
-        const reader = new FileReader();
-        reader.onload = e => {
-          this.imagen = e.target.result;
-        };
-        reader.readAsDataURL(img);
-      } else {
-        this.imagen = "";
-      }
     },
     createPerson() {
       this.$v.$touch();
