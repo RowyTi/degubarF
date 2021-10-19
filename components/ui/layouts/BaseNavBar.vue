@@ -4,15 +4,16 @@
         <v-app-bar-nav-icon class="primary--text" @click.stop="openDrawer"/>
         <v-toolbar-title class="text-body-1"> Cervelar Recoleta </v-toolbar-title>
         <v-spacer></v-spacer>
-        <v-btn icon x-large  class="mr-2">
-            <v-avatar color="primary" size="48" elevation="10">
-                <!-- consultar si tiene imagen de perfil -->
-                <!-- <img :src="userFoto" alt="foto de usuario" />-->
-                <!-- else => muestro iniciales del usuario -->
+        <v-btn icon class="mr-2" @click="logout">
+            <v-icon>mdi-logout-variant</v-icon> 
+         <!--  <v-avatar color="primary" size="48" elevation="10">
+                 consultar si tiene imagen de perfil
+                <img :src="userFoto" alt="foto de usuario" />
+                 else => muestro iniciales del usuario
                 <span class="white--text">
                     {{iniciales}}
                 </span>
-        </v-avatar>
+            </v-avatar>  -->
       </v-btn>
     </v-app-bar>
 
@@ -72,6 +73,9 @@ export default {
     methods: {
         openDrawer(){
             this.drawer = !this.drawer
+        },
+        async logout(){
+            await this.$auth.logout()
         }
     }
 }
