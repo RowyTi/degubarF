@@ -25,39 +25,49 @@
         height=""
         color="white"
       >
-<!--        <v-alert v-show="error.status" type="error">{{ error.texto }}</v-alert>-->
+       <!-- <v-alert v-show="error.status" type="error">{{ error.texto }}</v-alert> -->
         <h1 class="text-h3 text-md-h4 pl-3 font-weight-light">
           Bienvenido a 
-         <span class="primary--text font-weight-black"> Degubar</span>!
+         <span class="mx-auto primary--text font-weight-black"> Degubar</span>!
         </h1>
         <v-card-subtitle class="mt-0 pt-0" v-text="'Inicie sesión para comenzar a trabajar'" />
         <v-form>
           <v-card-text>
-            <v-text-field v-model="form.username" outlined label="Usuario" />
+            <v-text-field 
+              v-model="form.username" 
+              outlined 
+              label="Usuario"
+              :error-messages="usernameErrors"
+              @input="$v.form.username.$touch()"
+              @blur="$v.form.username.$touch()"
+            />
             <v-text-field
               v-model="form.password"
               :type="showPassword ? 'text' : 'password'"
               outlined
               label="Contraseña"
               :append-icon="showPassword ? 'mdi-eye' : 'mdi-eye-off'"
+             :error-messages="passwordErrors"
+              @input="$v.form.password.$touch()"
+              @blur="$v.form.password.$touch()"
               @click:append="showPassword = !showPassword"
               @keyup.enter="login"
             />
-            <div class="text-right mt-n5">
-              <v-btn text color="primary" x-small right
-              >Olvidaste la contraseña?</v-btn
-              >
-            </div>
+            <span v-if="errors" class="mx-auto error--text text-caption text-center">
+              {{errors.detail}}
+            </span>
           </v-card-text>
+          
           <v-card-actions>
             <v-btn
               class="mx-auto"
               :loading="loading"
               color="primary"
-              :disabled="$nuxt.isOffline || loading"
+              :disabled="loading"
               @click="login"
             >Iniciar Sesión</v-btn>
           </v-card-actions>
+          <!-- :disabled="$nuxt.isOffline || loading" -->
           <v-divider class="mt-5"></v-divider>
         </v-form>
         <div class="text-center">
@@ -70,6 +80,7 @@
 </template>
 
 <script>
+import { required } from "vuelidate/lib/validators";
 export default {
   name: 'Login',
   middleware: 'guest',
@@ -79,16 +90,43 @@ export default {
       password: ""
     },
     loading: false,
-    error: {
-      status: false,
-      type: "",
-      texto: ""
-    },
+    errors: {},
+    // error: {
+    //   status: false,
+    //   type: "",
+    //   texto: ""
+    // },
     showPassword: "",
   }),
-    head: {
-      title: "Login"
+  validations: {
+    form: {
+      username: {
+        required
+      },
+      password: {
+        required
+      },
+    }
+  },
+  head: {
+    title: "Login"
+  },
+  computed:{
+    usernameErrors() {
+      const errors = [];
+      if (!this.$v.form.username.$dirty) return errors;
+      !this.$v.form.username.required &&
+        errors.push("Este campo es obligatiorio.");
+      return errors;
     },
+    passwordErrors() {
+      const errors = [];
+      if (!this.$v.form.password.$dirty) return errors;
+      !this.$v.form.password.required &&
+        errors.push("Este campo es obligatiorio.");
+      return errors;
+    },
+  },
   methods: {
     capitalize(string) {
       return string.charAt(0).toUpperCase() + string.slice(1);
@@ -96,11 +134,15 @@ export default {
     async login() {
       try {
         this.loading = true;
-        await this.$auth.loginWith("local", { data: this.form })
-        await this.$auth.$storage.getUniversal("user");
-        await this.$router.push({path: "/db-admin/dashboard"});
+        this.$v.$touch();
+        if (!this.$v.$invalid) {
+          await this.$auth.loginWith("local", { data: this.form })
+          await this.$auth.$storage.getUniversal("user");
+          await this.$router.push({path: "/db-admin/dashboard"});
+        }
       } catch (err) {
-          console.log(err);
+        //  console.log(err.response.data.errors[0]);
+         this.errors = err.response.data.errors[0]
       } finally {
         this.loading = false;
       }
