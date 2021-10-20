@@ -1,5 +1,5 @@
 <template>
-  <h1>LANDING PAGE DEGUBAR</h1>
+  <v-btn to="/db-admin/dashboard">ir dashboard</v-btn>
 </template>
 
 <script>
