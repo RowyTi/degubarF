@@ -31,10 +31,12 @@
           </v-data-table>
         </template>
       </base-card>
-      {{user}}
     </v-col>
     <user-dialog 
       v-model="dialog"
+      :form="form"
+      :edited-index="editedIndex"
+      :show-mode="showMode"
       @closeDialog="closeDialog"/>
   </v-row>
 </template>
@@ -68,27 +70,20 @@ export default {
       },
     ],
     data: [],
-    user:[],
     form: {
       name: '',
       email: '',
-      profile: {
-        name: "",
-        lastName: "",
-        avatar: "",
-        dateOfBirth: "",
-        phone: "",
-        address: {
-          street: '',
-          number: '',
-          piso: '',
-
-        }
-      }
+      status: '',
     },
-    //  "street": "Ana Paula ", "number": -5154, "piso": -8663, "dpto": "jKt", "cp": "tF4lWQrcmRPb", "createdAt": "19-10-2021 19:26:21", "updatedAt": "19-10-2021 19:26:21", "id": "74" } }, "socialnetworks": null, "comments": null 
+    defaultForm: {
+      name: '',
+      email: '',
+      status: '',
+    },
     loading: false,
-    dialog: false
+    dialog: false,
+    editedIndex: -1,
+    showMode: false
   }),
   head: {
     title: 'Usuarios',
@@ -99,6 +94,13 @@ export default {
   methods: {
     closeDialog(){
       this.dialog = !this.dialog
+      setTimeout(()=>{
+        this.$nextTick(()=>{
+          this.form = Object.assign({}, this.defaultForm);
+          this.editedIndex = -1;
+          this.showMode = false;
+        })
+      }, 500)
     },
     async getData() {
       try {
@@ -106,16 +108,23 @@ export default {
         const response = await this.$axios.get('/users')
         this.data = deserialize(response.data, { changeCase: 'camelCase' })
       } catch (error) {
-        /* console.log(error) */
+        if (error.response.status === 403)
+          alert('Usted no esta Autorizado para realizar esta acción')
       } finally {
         this.loading = false
       }
     },
     async showItem(item) {
-      this.closeDialog()
-      const response = await this.$axios.get('/users/'+item.id)
-      this.user = deserialize(response.data, { changeCase: 'camelCase' })
-      console.log(this.user)
+      try {
+        const response = await this.$axios.get('/users/'+item.id)
+        const r = deserialize(response.data, { changeCase: 'camelCase' })
+        this.form = Object.assign({}, r)
+        this.editedIndex = this.data.indexOf(item)
+        this.dialog = true
+      } catch (error) {
+        if (error.response.status === 403)
+          alert('Usted no esta Autorizado para realizar esta acción')
+      }
     },
   },
 }
