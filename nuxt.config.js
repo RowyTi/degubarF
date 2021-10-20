@@ -55,14 +55,13 @@ export default {
 
   // Axios module configuration: https://go.nuxtjs.dev/config-axios
   axios: {
-    baseUrl: "http://localhost:8000/v1/",
+    baseUrl: "http://bdegubar.test/v1/",
     credentials:false,
     headers: {
       'Accept': 'application/vnd.api+json',
       'Content-Type': 'application/vnd.api+json'
     },
   },
-
   auth: {
     scopeKey: 'scope',
     cookie: false,
@@ -94,9 +93,12 @@ export default {
               'Content-Type': 'application/vnd.api+json'
             },
           },
-          logout: { url: "/logout", method: "post" },
+          logout: { 
+            url: "/logout", 
+            method: "post" 
+          },
           user: {
-            url: "/me",
+            url: "/user",
             method: "get"
           },
           scope:true,
@@ -116,7 +118,7 @@ export default {
   vuetify: {
     customVariables: ['~/assets/variables.scss'],
     theme: {
-      dark: true,
+      dark: false,
       themes: {
         dark: {
           primary:colors.yellow.darken3,

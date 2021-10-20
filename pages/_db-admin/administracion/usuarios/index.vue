@@ -31,16 +31,21 @@
           </v-data-table>
         </template>
       </base-card>
+      {{user}}
     </v-col>
+    <user-dialog 
+      v-model="dialog"
+      @closeDialog="closeDialog"/>
   </v-row>
 </template>
 
 <script>
 import { deserialize } from 'jsonapi-fractal'
 import BaseCard from '~/components/ui/BaseCard.vue'
+import UserDialog from '~/components/dialog/user/UserDialog.vue'
 export default {
   name: 'AdministracionUsuarios',
-  components: { BaseCard },
+  components: { BaseCard, UserDialog },
   layout: 'admin',
   middleware: 'permission-user',
   data: () => ({
@@ -63,11 +68,27 @@ export default {
       },
     ],
     data: [],
+    user:[],
     form: {
       name: '',
       email: '',
+      profile: {
+        name: "",
+        lastName: "",
+        avatar: "",
+        dateOfBirth: "",
+        phone: "",
+        address: {
+          street: '',
+          number: '',
+          piso: '',
+
+        }
+      }
     },
+    //  "street": "Ana Paula ", "number": -5154, "piso": -8663, "dpto": "jKt", "cp": "tF4lWQrcmRPb", "createdAt": "19-10-2021 19:26:21", "updatedAt": "19-10-2021 19:26:21", "id": "74" } }, "socialnetworks": null, "comments": null 
     loading: false,
+    dialog: false
   }),
   head: {
     title: 'Usuarios',
@@ -76,6 +97,9 @@ export default {
     this.getData()
   },
   methods: {
+    closeDialog(){
+      this.dialog = !this.dialog
+    },
     async getData() {
       try {
         this.loading = true
@@ -88,8 +112,10 @@ export default {
       }
     },
     async showItem(item) {
+      this.closeDialog()
       const response = await this.$axios.get('/users/'+item.id)
-      this.item = deserialize(response.data, { changeCase: 'camelCase' })
+      this.user = deserialize(response.data, { changeCase: 'camelCase' })
+      console.log(this.user)
     },
   },
 }

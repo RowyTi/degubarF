@@ -91,11 +91,6 @@ export default {
     },
     loading: false,
     errors: {},
-    // error: {
-    //   status: false,
-    //   type: "",
-    //   texto: ""
-    // },
     showPassword: "",
   }),
   validations: {
