@@ -20,7 +20,7 @@
         </v-list-item-content>
       </v-list-item>
       <v-divider class="mb-4"/>
-      <v-list-item  v-if="$auth.hasScope('view:dashboard')" to="/db-admin/dashboard" exact exact-active-class="link">
+      <v-list-item  v-if="$auth.hasScope('view:dashboard')|| $auth.hasScope('jklr')" to="/db-admin/dashboard" exact exact-active-class="link">
         <v-list-item-icon>
           <v-icon>mdi-view-dashboard</v-icon>
         </v-list-item-icon>
@@ -29,11 +29,11 @@
       </v-list-item>
 
       <template v-for="(m, index ) in menu" >
-        <template v-if="$auth.hasScope(m.permission) || 'super-admin'">
+        <template v-if="$auth.hasScope(m.permission) || $auth.hasScope('jklr')">
           <v-subheader :key="index" class="text-overline">{{m.nombre}}</v-subheader>
           <template v-for="sm in m.subMenu" >
             <v-list-item
-            v-if="$auth.hasScope( ''+sm.permission ) || 'super-admin'"
+            v-if="$auth.hasScope(sm.permission) || $auth.hasScope('jklr')"
             :key="sm.i"
             :to="'/' + sm.slug" exact exact-active-class="link" class="mx-auto">
             <v-list-item-icon>
@@ -86,6 +86,16 @@ export default {
       this.expand_locations = to.path.includes("/location/");
     }
   },
+  mounted() {
+    const mini = localStorage.getItem("mini_mode");
+    if (mini) {
+      if (mini === "true") {
+        this.mini = true;
+      } else {
+        this.mini = false;
+      }
+    }
+  },
   methods: {
     quitarTilde(cadena) {
       const acentos = {
@@ -105,16 +115,6 @@ export default {
         .map(letra => acentos[letra] || letra)
         .join("")
         .toString();
-    }
-  },
-  mounted() {
-    const mini = localStorage.getItem("mini_mode");
-    if (mini) {
-      if (mini === "true") {
-        this.mini = true;
-      } else {
-        this.mini = false;
-      }
     }
   }
 };
