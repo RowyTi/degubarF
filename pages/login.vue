@@ -136,7 +136,6 @@ export default {
           await this.$router.push({path: "/db-admin/dashboard"});
         }
       } catch (err) {
-        //  console.log(err.response.data.errors[0]);
          this.errors = err.response.data.errors[0]
       } finally {
         this.loading = false;

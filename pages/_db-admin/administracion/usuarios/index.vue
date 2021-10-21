@@ -11,21 +11,26 @@
         <template #body>
           <v-data-table
             :headers="headers"
-            :items="data"
+            :items="usuarios"
             :footer-props="{
               'items-per-page-options': [10, 20, 30],
               'items-per-page-text': 'Filas por página',
             }"
+            :options.sync="options"
+            :server-items-length="totalData"
             loading-text="Cargando...Espere por favor!"
             :loading="loading"
           >
             <v-alert slot="no-result"> no hay resultados </v-alert>
             <template #[`item.acciones`]="{ item }">
-              <v-btn color="primary" icon small @click="showItem(item)">
+              <v-btn color="primary" icon x-small @click="showItem(item)">
                 <v-icon> mdi-eye </v-icon>
               </v-btn>
-              <v-btn color="success" icon small @click="editItem(item)">
+              <v-btn color="success" icon x-small @click="editItem(item)">
                 <v-icon> mdi-pencil </v-icon>
+              </v-btn>
+               <v-btn color="error" icon x-small>
+                <v-icon> mdi-delete </v-icon>
               </v-btn>
             </template>
           </v-data-table>
@@ -42,7 +47,7 @@
 </template>
 
 <script>
-import { deserialize } from 'jsonapi-fractal'
+import { mapState} from 'vuex'
 import BaseCard from '~/components/ui/BaseCard.vue'
 import UserDialog from '~/components/dialog/user/UserDialog.vue'
 export default {
@@ -54,12 +59,12 @@ export default {
     headers: [
       {
         text: 'Nombre',
-        sortable: false,
+        sortable: true,
         value: 'name',
       },
       {
         text: 'Email',
-        sortable: false,
+        sortable: true,
         value: 'email',
       },
       {
@@ -83,14 +88,27 @@ export default {
     loading: false,
     dialog: false,
     editedIndex: -1,
-    showMode: false
+    showMode: false,
+    options:{}
   }),
   head: {
     title: 'Usuarios',
   },
-  created() {
-    this.getData()
+  // created() {
+  //   this.getData()
+  // },
+  computed: {
+     ...mapState("administracion/users", ["usuarios", "usuario", "totalData"])
   },
+   watch: {
+    options: {
+      handler() {
+        this.getData();
+      }
+    },
+    deep: true
+  },
+
   methods: {
     closeDialog(){
       this.dialog = !this.dialog
@@ -102,11 +120,14 @@ export default {
         })
       }, 500)
     },
-    async getData() {
+     getData() {
       try {
         this.loading = true
-        const response = await this.$axios.get('/users')
-        this.data = deserialize(response.data, { changeCase: 'camelCase' })
+        this.$store
+          .dispatch("administracion/users/getList", this.options)
+
+        // const response = await this.$axios.get('/users')
+        // this.data = deserialize(response.data, { changeCase: 'camelCase' })
       } catch (error) {
         if (error.response.status === 403)
           alert('Usted no esta Autorizado para realizar esta acción')
@@ -114,18 +135,32 @@ export default {
         this.loading = false
       }
     },
-    async showItem(item) {
+  async showItem(item) {
       try {
-        const response = await this.$axios.get('/users/'+item.id)
-        const r = deserialize(response.data, { changeCase: 'camelCase' })
-        this.form = Object.assign({}, r)
-        this.editedIndex = this.data.indexOf(item)
+        await this.$store.dispatch("administracion/users/getResource", item.id)
+        this.showMode = true
+        this.$nextTick(() => {
+          this.form = Object.assign({}, this.usuario);
+        })
         this.dialog = true
       } catch (error) {
         if (error.response.status === 403)
           alert('Usted no esta Autorizado para realizar esta acción')
       }
     },
+    async editItem(item){
+      try {
+        await this.$store.dispatch("administracion/users/getResource", item.id)
+        this.editedIndex = this.data.indexOf(item)
+        this.$nextTick(() => {
+          this.form = Object.assign({}, this.usuario)
+        })
+        this.dialog = true
+      } catch (error) {
+        if (error.response.status === 403)
+          alert('Usted no esta Autorizado para realizar esta acción')
+      }
+    }
   },
 }
 </script>

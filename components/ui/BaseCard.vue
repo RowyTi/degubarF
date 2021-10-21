@@ -36,7 +36,7 @@
 
 <script>
 export default {
-  name: "base-card",
+  name: "BaseCard",
   props: {
     dialog: {
       type: Boolean,
@@ -45,15 +45,18 @@ export default {
     },
     colorCard: {
       type: String,
-      default: ""
+      default: "",
+      required: false
     },
     colorToolbar: {
       type: String,
-      default: "primary"
+      default: "primary",
+      required: false
     },
     titleToolbar: {
       type: String,
-      default: "title"
+      default: "title",
+      required: false
     },
     sectionActions: {
       type: Boolean,

@@ -31,8 +31,8 @@ export default {
           required: true
         },
         items: {
-          type: Array,
-          default: () => [],
+          type: Object,
+          default: () => {},
           required: true
         },
         loading: {
