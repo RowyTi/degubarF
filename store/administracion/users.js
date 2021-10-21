@@ -52,13 +52,19 @@ export const actions = {
     }
     const serialized = serialize(resource, 'users', { changeCase: 'kebabCase' })
     await this.$axios.$post("/users", serialized);
-  }
-
+  },
 
   // ACTUALIZAR RECURSO
-  // async actualizarRecurso({ context }, form) {
-  //   await this.$axios.$put("/users", form);
-  // }
+  async updateResource({ context }, form) {
+    const resource = {
+      id: form.id,
+      name: form.name,
+      email: form.email,
+      password: form.password
+    }
+    const serialized = serialize(resource, 'users', { changeCase: 'kebabCase' })
+    await this.$axios.$patch(`users/${form.id}`, serialized);
+  }
 
   // ELIMINAR RECURSO
 };

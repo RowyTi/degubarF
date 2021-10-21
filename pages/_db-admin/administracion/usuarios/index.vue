@@ -112,7 +112,7 @@ export default {
 
   methods: {
     closeDialog() {
-      this.dialog = !this.dialog
+      this.dialog = false
       setTimeout(() => {
         this.$nextTick(() => {
           this.form = Object.assign({}, this.defaultForm)
@@ -121,12 +121,10 @@ export default {
         })
       }, 500)
     },
-    getData() {
+    async getData() {
       try {
         this.loading = true
-        this.$store.dispatch('administracion/users/getList', this.options)
-        // const response = await this.$axios.get('/users')
-        // this.data = deserialize(response.data, { changeCase: 'camelCase' })
+        await this.$store.dispatch('administracion/users/getList', this.options)
       } catch (error) {
         if (error.response.status === 403)
           alert('Usted no esta Autorizado para realizar esta acción')
@@ -150,7 +148,7 @@ export default {
     async editItem(item) {
       try {
         await this.$store.dispatch('administracion/users/getResource', item.id)
-        this.editedIndex = this.data.indexOf(item)
+        this.editedIndex = this.usuarios.indexOf(item)
         this.$nextTick(() => {
           this.form = Object.assign({}, this.usuario)
         })

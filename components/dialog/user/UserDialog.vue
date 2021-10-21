@@ -168,8 +168,11 @@ export default {
         this.formu
       )
     },
-    updateResource() {
-      console.log('update')
+    async updateResource() {
+      await this.$store.dispatch(
+        'administracion/users/updateResource',
+        this.formu
+      )
     },
   },
 }
