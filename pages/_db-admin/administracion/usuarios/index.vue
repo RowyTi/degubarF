@@ -95,9 +95,6 @@ export default {
   head: {
     title: 'Usuarios',
   },
-  // created() {
-  //   this.getData()
-  // },
   computed: {
     ...mapState('administracion/users', ['usuarios', 'usuario', 'totalData']),
   },
@@ -109,7 +106,6 @@ export default {
     },
     deep: true,
   },
-
   methods: {
     closeDialog() {
       this.dialog = false

@@ -3,6 +3,12 @@ export const state = () => ({
   usuarios: [],
   usuario: {},
   totalData: null,
+  defaultOptions:{
+    page: 1,
+    itemsPerPage: 10,
+    sortBy:[],
+    sortDesc:[]
+  },
   searchUrl: ""
 });
 
@@ -44,7 +50,7 @@ export const actions = {
   },
 
   // CREAR RECURSO
-  async createResource({ context }, form) {
+  async createResource({ context, dispatch, state }, form) {
     const resource = {
       name: form.name,
       email: form.email,
@@ -52,10 +58,11 @@ export const actions = {
     }
     const serialized = serialize(resource, 'users', { changeCase: 'kebabCase' })
     await this.$axios.$post("/users", serialized);
+    await dispatch('getList', state.defaultOptions);
   },
 
   // ACTUALIZAR RECURSO
-  async updateResource({ context }, form) {
+  async updateResource({ context, dispatch, state }, form) {
     const resource = {
       id: form.id,
       name: form.name,
@@ -64,6 +71,7 @@ export const actions = {
     }
     const serialized = serialize(resource, 'users', { changeCase: 'kebabCase' })
     await this.$axios.$patch(`users/${form.id}`, serialized);
+    await dispatch('getList', state.defaultOptions);
   }
 
   // ELIMINAR RECURSO

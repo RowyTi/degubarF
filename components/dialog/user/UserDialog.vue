@@ -127,6 +127,10 @@ export default {
   },
   data: () => ({
     loading: false,
+    options: {
+      page: 1,
+      itemsPerPage: 10,
+    },
   }),
   validations: {
     data: {
@@ -163,16 +167,34 @@ export default {
       this.$emit('closeDialog')
     },
     async createResource() {
-      await this.$store.dispatch(
-        'administracion/users/createResource',
-        this.formu
-      )
+      try {
+        this.loading = true
+        await this.$store.dispatch(
+          'administracion/users/createResource',
+          this.formu
+        )
+        this.close()
+      } catch (error) {
+        if (error.response.status === 403)
+          alert('Usted no esta Autorizado para realizar esta acción')
+      } finally {
+        this.loading = false
+      }
     },
     async updateResource() {
-      await this.$store.dispatch(
-        'administracion/users/updateResource',
-        this.formu
-      )
+      try {
+        this.loading = true
+        await this.$store.dispatch(
+          'administracion/users/updateResource',
+          this.formu
+        )
+        this.close()
+      } catch (error) {
+        if (error.response.status === 403)
+          alert('Usted no esta Autorizado para realizar esta acción')
+      } finally {
+        this.loading = false
+      }
     },
   },
 }
