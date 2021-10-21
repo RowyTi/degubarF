@@ -29,7 +29,7 @@
               <v-btn color="success" icon x-small @click="editItem(item)">
                 <v-icon> mdi-pencil </v-icon>
               </v-btn>
-               <v-btn color="error" icon x-small>
+              <v-btn color="error" icon x-small>
                 <v-icon> mdi-delete </v-icon>
               </v-btn>
             </template>
@@ -37,17 +37,18 @@
         </template>
       </base-card>
     </v-col>
-    <user-dialog 
+    <user-dialog
       v-model="dialog"
       :form="form"
       :edited-index="editedIndex"
       :show-mode="showMode"
-      @closeDialog="closeDialog"/>
+      @closeDialog="closeDialog"
+    />
   </v-row>
 </template>
 
 <script>
-import { mapState} from 'vuex'
+import { mapState } from 'vuex'
 import BaseCard from '~/components/ui/BaseCard.vue'
 import UserDialog from '~/components/dialog/user/UserDialog.vue'
 export default {
@@ -89,7 +90,7 @@ export default {
     dialog: false,
     editedIndex: -1,
     showMode: false,
-    options:{}
+    options: {},
   }),
   head: {
     title: 'Usuarios',
@@ -98,34 +99,32 @@ export default {
   //   this.getData()
   // },
   computed: {
-     ...mapState("administracion/users", ["usuarios", "usuario", "totalData"])
+    ...mapState('administracion/users', ['usuarios', 'usuario', 'totalData']),
   },
-   watch: {
+  watch: {
     options: {
       handler() {
-        this.getData();
-      }
+        this.getData()
+      },
     },
-    deep: true
+    deep: true,
   },
 
   methods: {
-    closeDialog(){
+    closeDialog() {
       this.dialog = !this.dialog
-      setTimeout(()=>{
-        this.$nextTick(()=>{
-          this.form = Object.assign({}, this.defaultForm);
-          this.editedIndex = -1;
-          this.showMode = false;
+      setTimeout(() => {
+        this.$nextTick(() => {
+          this.form = Object.assign({}, this.defaultForm)
+          this.editedIndex = -1
+          this.showMode = false
         })
       }, 500)
     },
-     getData() {
+    getData() {
       try {
         this.loading = true
-        this.$store
-          .dispatch("administracion/users/getList", this.options)
-
+        this.$store.dispatch('administracion/users/getList', this.options)
         // const response = await this.$axios.get('/users')
         // this.data = deserialize(response.data, { changeCase: 'camelCase' })
       } catch (error) {
@@ -135,12 +134,12 @@ export default {
         this.loading = false
       }
     },
-  async showItem(item) {
+    async showItem(item) {
       try {
-        await this.$store.dispatch("administracion/users/getResource", item.id)
+        await this.$store.dispatch('administracion/users/getResource', item.id)
         this.showMode = true
         this.$nextTick(() => {
-          this.form = Object.assign({}, this.usuario);
+          this.form = Object.assign({}, this.usuario)
         })
         this.dialog = true
       } catch (error) {
@@ -148,9 +147,9 @@ export default {
           alert('Usted no esta Autorizado para realizar esta acción')
       }
     },
-    async editItem(item){
+    async editItem(item) {
       try {
-        await this.$store.dispatch("administracion/users/getResource", item.id)
+        await this.$store.dispatch('administracion/users/getResource', item.id)
         this.editedIndex = this.data.indexOf(item)
         this.$nextTick(() => {
           this.form = Object.assign({}, this.usuario)
@@ -160,7 +159,7 @@ export default {
         if (error.response.status === 403)
           alert('Usted no esta Autorizado para realizar esta acción')
       }
-    }
+    },
   },
 }
 </script>

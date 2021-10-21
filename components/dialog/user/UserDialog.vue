@@ -7,7 +7,8 @@
     v-on="$listeners"
   >
     <!-- show data -->
-    <base-card v-if="showMode"
+    <base-card
+      v-if="showMode"
       :dialog="false"
       :color="$vuetify.theme.dark ? 'black' : 'blue-grey lighten-5'"
       :section-actions="false"
@@ -21,7 +22,7 @@
         <v-form class="my-10">
           <v-container fluid class="mt-0 pt-0">
             <v-row>
-              <v-col cols="12"  class="pb-0">
+              <v-col cols="12" class="pb-0">
                 <v-text-field
                   v-model="formu.name"
                   outlined
@@ -41,7 +42,10 @@
       </template>
     </base-card>
     <!-- create & edit -->
-    <v-form v-else>
+    <v-form
+      v-else
+      @submit.prevent="editedIndex === -1 ? createResource() : updateResource()"
+    >
       <base-card
         :dialog="true"
         :section-actions="true"
@@ -133,6 +137,9 @@ export default {
         required,
         email,
       },
+      password: {
+        required,
+      },
     },
   },
   computed: {
@@ -154,6 +161,15 @@ export default {
     close() {
       this.$v.$reset()
       this.$emit('closeDialog')
+    },
+    async createResource() {
+      await this.$store.dispatch(
+        'administracion/users/createResource',
+        this.formu
+      )
+    },
+    updateResource() {
+      console.log('update')
     },
   },
 }

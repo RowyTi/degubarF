@@ -1,8 +1,11 @@
 <template>
-  <v-app :dark="$vuetify.theme.dark" :class="!$vuetify.theme.dark ? 'bgLight':''">
+  <v-app
+    :dark="$vuetify.theme.dark"
+    :class="!$vuetify.theme.dark ? 'bgLight' : ''"
+  >
     <base-nav-bar />
     <v-main>
-      <v-container fluid >
+      <v-container fluid>
         <nuxt />
       </v-container>
     </v-main>
@@ -10,12 +13,12 @@
 </template>
 
 <script>
-import BaseNavBar from '~/components/ui/layouts/BaseNavBar.vue';
+import BaseNavBar from '~/components/ui/layouts/BaseNavBar.vue'
 
 export default {
-  name: "Admin",
+  name: 'Admin',
   components: { BaseNavBar },
-};
+}
 </script>
 <style>
 html {
