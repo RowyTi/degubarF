@@ -29,7 +29,7 @@
               <v-btn color="success" icon x-small @click="editItem(item)">
                 <v-icon> mdi-pencil </v-icon>
               </v-btn>
-              <v-btn color="error" icon x-small>
+              <v-btn color="error" icon x-small @click="deleteItem(item)">
                 <v-icon> mdi-delete </v-icon>
               </v-btn>
             </template>
@@ -67,6 +67,11 @@ export default {
         text: 'Email',
         sortable: true,
         value: 'email',
+      },
+      {
+        text: 'Estado',
+        sortable: true,
+        value: 'state',
       },
       {
         text: 'Acciones',
@@ -152,6 +157,16 @@ export default {
       } catch (error) {
         if (error.response.status === 403)
           alert('Usted no esta Autorizado para realizar esta acción')
+      }
+    },
+    async deleteItem(item) {
+      try {
+        await this.$store.dispatch(
+          'administracion/users/deleteResource',
+          item.id
+        )
+      } catch (error) {
+        alert(error)
       }
     },
   },

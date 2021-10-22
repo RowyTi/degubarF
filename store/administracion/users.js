@@ -72,7 +72,13 @@ export const actions = {
     const serialized = serialize(resource, 'users', { changeCase: 'kebabCase' })
     await this.$axios.$patch(`users/${form.id}`, serialized);
     await dispatch('getList', state.defaultOptions);
-  }
+  },
 
-  // ELIMINAR RECURSO
+  // ELIMINAR RECURSO SOFT
+  async deleteResource( {context, dispatch, state}, id ){
+    const serialized = serialize(id, 'users', { changeCase: 'kebabCase' })
+    await this.$axios.$delete(`users/${id}`, serialized);
+    await dispatch('getList', state.defaultOptions);
+
+  }
 };
