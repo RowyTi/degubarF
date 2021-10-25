@@ -29,8 +29,8 @@ export default {
 
   // Plugins to run before rendering page: https://go.nuxtjs.dev/config-plugins
   plugins: [
-    {src: '~/plugins/vuelidate'},
-    {src: '~/plugins/auth'}
+    { src: '~/plugins/vuelidate' },
+    { src: '~/plugins/auth' }
   ],
 
   // Auto import components: https://go.nuxtjs.dev/config-components
@@ -55,9 +55,9 @@ export default {
 
   // Axios module configuration: https://go.nuxtjs.dev/config-axios
   axios: {
-    // baseUrl: "http://bdegubar.test/v1/",
-    baseUrl: "http://localhost:8000/v1/",
-    credentials:false,
+    baseUrl: "http://bdegubar.test/v1/",
+    // baseUrl: "http://localhost:8000/v1/",
+    credentials: false,
     headers: {
       'Accept': 'application/vnd.api+json',
       'Content-Type': 'application/vnd.api+json'
@@ -77,12 +77,19 @@ export default {
       local: {
         token: {
           property: "token",
+          maxAge: 1800,
+          global: true,
           required: true,
           type: "Bearer"
         },
+        refreshToken: {
+          property: 'refresh_token',
+          data: 'refresh_token',
+          maxAge: 60 * 60 * 24 * 30
+        },
         user: {
           property: false,
-          autoFetch: true
+          autoFetch: true,
         },
         endpoints: {
           login: {
@@ -94,15 +101,19 @@ export default {
               'Content-Type': 'application/vnd.api+json'
             },
           },
-          logout: { 
-            url: "/logout", 
-            method: "post" 
+          logout: {
+            url: "/logout",
+            method: "post"
           },
           user: {
             url: "/user",
             method: "get"
           },
-          scope:true,
+          refresh: {
+            url: "/refresh/staff",
+            method: "get"
+          },
+          scope: true,
         }
       }
     }
@@ -122,7 +133,7 @@ export default {
       dark: false,
       themes: {
         dark: {
-          primary:colors.yellow.darken3,
+          primary: colors.yellow.darken3,
           accent: colors.grey.darken3,
           secondary: colors.amber.darken3,
           info: colors.teal.lighten1,

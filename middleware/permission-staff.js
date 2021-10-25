@@ -1,8 +1,7 @@
 export default function ({ $auth, redirect }) {
-    if ($auth.hasScope('view:staff') || $auth.hasScope('jklr')){
+    if ($auth.hasScope('index:staff') || $auth.hasScope('jklr')) {
         return true
-    }else{
+    } else {
         return redirect('/db-admin/dashboard')
     }
 }
-  
