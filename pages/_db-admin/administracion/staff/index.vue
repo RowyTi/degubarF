@@ -36,9 +36,8 @@
           </v-data-table>
         </template>
       </base-card>
-      {{ staff }}
     </v-col>
-    <user-dialog
+    <staff-dialog
       v-model="dialog"
       :form="form"
       :edited-index="editedIndex"
@@ -51,10 +50,10 @@
 <script>
 import { mapState } from 'vuex'
 import BaseCard from '~/components/ui/BaseCard.vue'
-import UserDialog from '~/components/dialog/user/UserDialog.vue'
+import StaffDialog from '~/components/dialog/staff/StaffDialog.vue'
 export default {
   name: 'AdministracionStaff',
-  components: { BaseCard, UserDialog },
+  components: { BaseCard, StaffDialog },
   layout: 'admin',
   middleware: 'permission-staff',
   data: () => ({
@@ -70,11 +69,6 @@ export default {
         value: 'state',
       },
       {
-        text: 'Sucursal',
-        sortable: false,
-        value: 'branch.name',
-      },
-      {
         text: 'Rol',
         sortable: false,
         value: 'roles[0]',
@@ -86,16 +80,21 @@ export default {
         width: '8rem',
       },
     ],
-    data: [],
     form: {
-      name: '',
-      email: '',
+      username: '',
+      password: '',
       status: '',
+      role: [],
+      branch_id: null,
+      profile_id: null,
     },
     defaultForm: {
-      name: '',
-      email: '',
+      username: '',
+      password: '',
       status: '',
+      role: [],
+      branch_id: null,
+      profile_id: null,
     },
     loading: false,
     dialog: false,
@@ -141,11 +140,12 @@ export default {
     },
     async showItem(item) {
       try {
-        await this.$store.dispatch('administracion/users/getResource', item.id)
+        await this.$store.dispatch('administracion/staff/getResource', item.id)
         this.showMode = true
         this.$nextTick(() => {
-          this.form = Object.assign({}, this.usuario)
+          this.form = Object.assign({}, this.empleado)
         })
+
         this.dialog = true
       } catch (error) {
         if (error.response.status === 403)
@@ -154,10 +154,10 @@ export default {
     },
     async editItem(item) {
       try {
-        await this.$store.dispatch('administracion/users/getResource', item.id)
-        this.editedIndex = this.usuarios.indexOf(item)
+        await this.$store.dispatch('administracion/staff/getResource', item.id)
+        this.editedIndex = this.staff.indexOf(item)
         this.$nextTick(() => {
-          this.form = Object.assign({}, this.usuario)
+          this.form = Object.assign({}, this.empleado)
         })
         this.dialog = true
       } catch (error) {
@@ -168,7 +168,7 @@ export default {
     async deleteItem(item) {
       try {
         await this.$store.dispatch(
-          'administracion/users/deleteResource',
+          'administracion/staff/deleteResource',
           item.id
         )
       } catch (error) {

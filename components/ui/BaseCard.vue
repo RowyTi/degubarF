@@ -23,7 +23,7 @@
     </v-card-title>
     <!-- slot default para cualquier otro componente -->
     <slot></slot>
-    <v-card-text>
+    <v-card-text class="pa-0">
       <slot name="body"></slot>
     </v-card-text>
     <v-divider v-show="sectionActions" />
@@ -36,38 +36,38 @@
 
 <script>
 export default {
-  name: "BaseCard",
+  name: 'BaseCard',
   props: {
     dialog: {
       type: Boolean,
       default: false,
-      required: true
+      required: true,
     },
     colorCard: {
       type: String,
-      default: "",
-      required: false
+      default: '',
+      required: false,
     },
     colorToolbar: {
       type: String,
-      default: "primary",
-      required: false
+      default: 'primary',
+      required: false,
     },
     titleToolbar: {
       type: String,
-      default: "title",
-      required: false
+      default: 'title',
+      required: false,
     },
     sectionActions: {
       type: Boolean,
       default: false,
-      required: false
-    }
+      required: false,
+    },
   },
   methods: {
     //
-  }
-};
+  },
+}
 </script>
 
 <style scoped>

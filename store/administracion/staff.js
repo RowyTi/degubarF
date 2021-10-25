@@ -45,9 +45,13 @@ export const actions = {
 
   // VER RECURSO {id}
   async getResource({ commit }, id) {
-    const response = await this.$axios.$get(`users/${id}`)
+    const response = await this.$axios.$get(`staff/${id}`, {
+      params: {
+        'include': 'profile,profile.address'
+      }
+    })
     const serializedData = (deserialize(response, { changeCase: 'camelCase' }))
-    commit("SET_USER", serializedData)
+    commit("SET_EMPLEADO", serializedData)
   },
 
   // CREAR RECURSO
@@ -57,8 +61,8 @@ export const actions = {
       email: form.email,
       password: form.password
     }
-    const serialized = serialize(resource, 'users', { changeCase: 'kebabCase' })
-    await this.$axios.$post("/users", serialized);
+    const serialized = serialize(resource, 'staff', { changeCase: 'kebabCase' })
+    await this.$axios.$post("/staff", serialized);
     await dispatch('getList', state.defaultOptions);
   },
 
@@ -70,15 +74,15 @@ export const actions = {
       email: form.email,
       password: form.password
     }
-    const serialized = serialize(resource, 'users', { changeCase: 'kebabCase' })
-    await this.$axios.$patch(`users/${form.id}`, serialized);
+    const serialized = serialize(resource, 'staff', { changeCase: 'kebabCase' })
+    await this.$axios.$patch(`staff/${form.id}`, serialized);
     await dispatch('getList', state.defaultOptions);
   },
 
   // ELIMINAR RECURSO SOFT
   async deleteResource({ context, dispatch, state }, id) {
-    const serialized = serialize(id, 'users', { changeCase: 'kebabCase' })
-    await this.$axios.$delete(`users/${id}`, serialized);
+    const serialized = serialize(id, 'staff', { changeCase: 'kebabCase' })
+    await this.$axios.$delete(`staff/${id}`, serialized);
     await dispatch('getList', state.defaultOptions);
 
   }
