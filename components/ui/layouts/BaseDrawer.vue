@@ -1,10 +1,5 @@
 <template>
-  <v-navigation-drawer
-    app
-    fixed
-    v-bind="$attrs"
-    v-on="$listeners"
-  >
+  <v-navigation-drawer app fixed v-bind="$attrs" v-on="$listeners">
     <v-list class="pt-0" nav dense>
       <v-list-item class="" two-line style="height: 64px !important">
         <v-list-item-avatar tile size="58">
@@ -14,13 +9,18 @@
 
         <v-list-item-content class="pb-1">
           <v-list-item-title class="font-weight-medium text-uppercase">
-           Degubar
+            Degubar
           </v-list-item-title>
           <v-list-item-subtitle>Panel de Control</v-list-item-subtitle>
         </v-list-item-content>
       </v-list-item>
-      <v-divider class="mb-4"/>
-      <v-list-item  v-if="$auth.hasScope('view:dashboard')|| $auth.hasScope('jklr')" to="/db-admin/dashboard" exact exact-active-class="link">
+      <v-divider class="mb-4" />
+      <v-list-item
+        v-if="$auth.hasScope('index:dashboard') || $auth.hasScope('jklr')"
+        to="/db-admin/dashboard"
+        exact
+        exact-active-class="link"
+      >
         <v-list-item-icon>
           <v-icon>mdi-view-dashboard</v-icon>
         </v-list-item-icon>
@@ -28,21 +28,27 @@
         <v-list-item-title class="text-overline">Dashboard</v-list-item-title>
       </v-list-item>
 
-      <template v-for="(m, index ) in menu" >
+      <template v-for="(m, index) in menu">
         <template v-if="$auth.hasScope(m.permission) || $auth.hasScope('jklr')">
-          <v-subheader :key="index" class="text-overline">{{m.nombre}}</v-subheader>
-          <template v-for="sm in m.subMenu" >
+          <v-subheader :key="index" class="text-overline">{{
+            m.nombre
+          }}</v-subheader>
+          <template v-for="sm in m.subMenu">
             <v-list-item
-            v-if="$auth.hasScope(sm.permission) || $auth.hasScope('jklr')"
-            :key="sm.i"
-            :to="'/' + sm.slug" exact exact-active-class="link" class="mx-auto">
-            <v-list-item-icon>
-              <v-icon v-text="'mdi-' + sm.icon" />
-            </v-list-item-icon>
-            <v-list-item-title v-text="sm.nombre" />
-          </v-list-item>
+              v-if="$auth.hasScope(sm.permission) || $auth.hasScope('jklr')"
+              :key="sm.i"
+              :to="'/' + sm.slug"
+              exact
+              exact-active-class="link"
+              class="mx-auto"
+            >
+              <v-list-item-icon>
+                <v-icon v-text="'mdi-' + sm.icon" />
+              </v-list-item-icon>
+              <v-list-item-title v-text="sm.nombre" />
+            </v-list-item>
           </template>
-          
+
           <v-divider
             v-if="index < menu.length - 1"
             :key="index"
@@ -56,66 +62,66 @@
 
 <script>
 export default {
-  name: "BaseDrawer",
+  name: 'BaseDrawer',
   props: {
     menu: {
       type: Array,
       default: () => [],
-      require: true
-    }
+      require: true,
+    },
   },
   data: () => ({
     mini: false,
-    expand: true
+    expand: true,
   }),
   computed: {
     miniMode: {
       get() {
-        return this.mini;
+        return this.mini
       },
       set(value) {
-        return value;
-      }
+        return value
+      },
     },
   },
   watch: {
     miniMode(newValue) {
-      localStorage.setItem("mini_mode", newValue);
+      localStorage.setItem('mini_mode', newValue)
     },
     $route(to, from) {
-      this.expand_locations = to.path.includes("/location/");
-    }
+      this.expand_locations = to.path.includes('/location/')
+    },
   },
   mounted() {
-    const mini = localStorage.getItem("mini_mode");
+    const mini = localStorage.getItem('mini_mode')
     if (mini) {
-      if (mini === "true") {
-        this.mini = true;
+      if (mini === 'true') {
+        this.mini = true
       } else {
-        this.mini = false;
+        this.mini = false
       }
     }
   },
   methods: {
     quitarTilde(cadena) {
       const acentos = {
-        á: "a",
-        é: "e",
-        í: "i",
-        ó: "o",
-        ú: "u",
-        Á: "A",
-        É: "E",
-        Í: "I",
-        Ó: "O",
-        Ú: "U"
-      };
+        á: 'a',
+        é: 'e',
+        í: 'i',
+        ó: 'o',
+        ú: 'u',
+        Á: 'A',
+        É: 'E',
+        Í: 'I',
+        Ó: 'O',
+        Ú: 'U',
+      }
       return cadena
-        .split("")
-        .map(letra => acentos[letra] || letra)
-        .join("")
-        .toString();
-    }
-  }
-};
+        .split('')
+        .map((letra) => acentos[letra] || letra)
+        .join('')
+        .toString()
+    },
+  },
+}
 </script>

@@ -191,7 +191,7 @@
     >
       <base-card
         :dialog="true"
-        :section-actions="true"
+        :section-actions="false"
         :title-toolbar="formTitle"
         color-toolbar="success"
       >
@@ -201,33 +201,68 @@
           </v-btn>
         </template>
         <template #body>
-          <v-container fluid class="mt-5 pt-0">
-            <v-row>
-              <v-col cols="12" class="pb-0">
+          <v-stepper v-model="stepper">
+            <v-stepper-header>
+              <v-stepper-step :complete="stepper > 1" step="1" editable>
+                Usuario
+              </v-stepper-step>
+
+              <v-divider></v-divider>
+
+              <v-stepper-step :complete="stepper > 2" step="2" editable>
+                Personal
+              </v-stepper-step>
+
+              <v-divider></v-divider>
+
+              <v-stepper-step step="3"> Direccion </v-stepper-step>
+            </v-stepper-header>
+
+            <v-stepper-items>
+              <v-stepper-content step="1">
+                {{ formu }}
                 <v-text-field
                   v-model="formu.username"
+                  class="mt-2"
                   outlined
-                  label="Nombre de Usuario"
+                  label="Nombre"
                 ></v-text-field>
-              </v-col>
-              <v-col cols="12" class="pb-0">
                 <v-text-field
-                  v-model="formu.email"
+                  v-model="formu.name"
                   outlined
-                  label="Email"
+                  label="Nombre"
                 ></v-text-field>
-              </v-col>
-              <v-col cols="12" class="pb-0">
-                <v-text-field
-                  v-model="formu.password"
-                  outlined
-                  label="Contraseña"
-                ></v-text-field>
-              </v-col>
-            </v-row>
-          </v-container>
+
+                <v-btn color="error" text :disabled="loading" @click="close">
+                  Cancelar
+                </v-btn>
+                <v-btn color="primary" @click="stepper = 2"> continuar </v-btn>
+              </v-stepper-content>
+
+              <v-stepper-content step="2">
+                <v-btn color="error" text :disabled="loading" @click="close">
+                  Cancelar
+                </v-btn>
+                <v-btn color="primary" @click="stepper = 3"> continuar </v-btn>
+              </v-stepper-content>
+
+              <v-stepper-content step="3">
+                <v-btn color="error" text :disabled="loading" @click="close">
+                  Cancelar
+                </v-btn>
+                <v-btn
+                  color="success"
+                  type="submit"
+                  :disabled="loading"
+                  :loading="loading"
+                >
+                  {{ btnForm }}
+                </v-btn>
+              </v-stepper-content>
+            </v-stepper-items>
+          </v-stepper>
         </template>
-        <template #actions>
+        <!-- <template #actions>
           <v-btn color="error" text :disabled="loading" @click="close">
             Cancelar
           </v-btn>
@@ -239,8 +274,7 @@
           >
             {{ btnForm }}
           </v-btn>
-        </template>
-        {{ form }}
+        </template> -->
       </base-card>
     </v-form>
   </v-dialog>
@@ -271,6 +305,7 @@ export default {
     },
   },
   data: () => ({
+    stepper: 1,
     loading: false,
     options: {
       page: 1,
@@ -299,7 +334,7 @@ export default {
     formTitle() {
       return this.editedIndex === -1
         ? 'Empleado Nuevo'
-        : 'Editar  ' + this.formu.name
+        : 'Editar  ' + this.form.username
     },
     btnForm() {
       return this.editedIndex === -1 ? 'guardar' : 'Actualizar '
@@ -307,6 +342,7 @@ export default {
   },
   methods: {
     close() {
+      this.stepper = 1
       this.$v.$reset()
       this.$emit('closeDialog')
     },
