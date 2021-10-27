@@ -220,7 +220,7 @@
 
             <v-stepper-items>
               <v-stepper-content step="1">
-                {{ formu }}
+                {{ formu.profile.address }}
                 <v-text-field
                   v-model="formu.username"
                   class="mt-2"
@@ -228,7 +228,7 @@
                   label="Nombre"
                 ></v-text-field>
                 <v-text-field
-                  v-model="formu.name"
+                  v-model="formu.profile.name"
                   outlined
                   label="Nombre"
                 ></v-text-field>
