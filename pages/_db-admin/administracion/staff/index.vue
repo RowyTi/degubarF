@@ -90,7 +90,7 @@ export default {
       profile: {
         name: '',
         lastName: '',
-        avatar: '',
+        avatar: [],
         dateOfBirth: '',
         phone: '',
         address: {

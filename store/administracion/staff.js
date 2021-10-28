@@ -56,14 +56,15 @@ export const actions = {
 
   // CREAR RECURSO
   async createResource({ context, dispatch, state }, form) {
-    const resource = {
-      name: form.name,
-      email: form.email,
-      password: form.password
-    }
-    const serialized = serialize(resource, 'staff', { changeCase: 'kebabCase' })
-    await this.$axios.$post("/staff", serialized);
-    await dispatch('getList', state.defaultOptions);
+   await console.log(form)
+    // const resource = {
+    //   name: form.name,
+    //   email: form.email,
+    //   password: form.password
+    // }
+    // const serialized = serialize(resource, 'staff', { changeCase: 'kebabCase' })
+    // await this.$axios.$post("/staff", serialized);
+    // await dispatch('getList', state.defaultOptions);
   },
 
   // ACTUALIZAR RECURSO

@@ -220,11 +220,60 @@
 
             <v-stepper-items>
               <v-stepper-content step="1">
+                <v-container fluid class="mt-0 pt-0">
+                  <v-row align="center" justify="center">
+                    <v-col cols="12" class="pb-0">
+                      <v-text-field
+                        v-model="formu.username"
+                        outlined
+                        label="Nombre de Usuario"
+                      ></v-text-field>
+                    </v-col>
+                    <v-col cols="12" class="pb-0">
+                      <v-text-field
+                        v-model="formu.password"
+                        outlined
+                        label="Password"
+                      ></v-text-field>
+                    </v-col>
+                    <v-col cols="8" class="pb-0">
+                      <v-file-input
+                        v-model="file"
+                        accept="image/jpeg, image/png"
+                        label="Tu foto"
+                        prepend-icon=""
+                        prepend-inner-icon=""
+                        small-chips
+                        show-size
+                        truncate-length="15"
+                        @change="uploadImg"
+                      ></v-file-input>
+                    </v-col>
+                    <v-col cols="4" class="py-0 text-center">
+                      <v-avatar size="100" rounded>
+                        <v-img v-if="image.length" :src="image" />
+                        <v-icon v-else color="gray" size="100">
+                          mdi-camera
+                        </v-icon>
+                      </v-avatar>
+                    </v-col>
+                  </v-row>
+                </v-container>
+                <!-- <v-avatar size="200" rounded>
+                  <v-img v-if="image.length" :src="image" />
+                </v-avatar>
+
                 <v-file-input
-                  v-model="formu.profile.avatar"
+                  v-model="file"
+                  accept="image/jpeg, image/png"
+                  label="Tu foto"
+                  prepend-icon=""
+                  prepend-inner-icon="mdi-camera"
+                  small-chips
                   show-size
                   truncate-length="15"
-                ></v-file-input>
+                  @change="uploadImg"
+                ></v-file-input> -->
 
                 <v-btn color="error" text :disabled="loading" @click="close">
                   Cancelar
@@ -299,6 +348,8 @@ export default {
   },
   data: () => ({
     stepper: 1,
+    file: [],
+    image: '',
     loading: false,
     options: {
       page: 1,
@@ -342,6 +393,7 @@ export default {
     async createResource() {
       try {
         this.loading = true
+        this.formu.profile.avatar = this.image
         await this.$store.dispatch(
           'administracion/staff/createResource',
           this.formu
@@ -367,6 +419,18 @@ export default {
           alert('Usted no esta Autorizado para realizar esta acción')
       } finally {
         this.loading = false
+      }
+    },
+    uploadImg(event) {
+      const img = event
+      if (img) {
+        const reader = new FileReader()
+        reader.onload = (e) => {
+          this.image = e.target.result
+        }
+        reader.readAsDataURL(img)
+      } else {
+        this.image = ''
       }
     },
   },
