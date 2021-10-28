@@ -220,18 +220,11 @@
 
             <v-stepper-items>
               <v-stepper-content step="1">
-                {{ formu.profile.address }}
-                <v-text-field
-                  v-model="formu.username"
-                  class="mt-2"
-                  outlined
-                  label="Nombre"
-                ></v-text-field>
-                <v-text-field
-                  v-model="formu.profile.name"
-                  outlined
-                  label="Nombre"
-                ></v-text-field>
+                <v-file-input
+                  v-model="formu.profile.avatar"
+                  show-size
+                  truncate-length="15"
+                ></v-file-input>
 
                 <v-btn color="error" text :disabled="loading" @click="close">
                   Cancelar

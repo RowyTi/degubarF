@@ -172,7 +172,6 @@ export default {
         this.$nextTick(() => {
           this.form = Object.assign({}, this.empleado)
         })
-
         this.dialog = true
       } catch (error) {
         if (error.response.status === 403)
