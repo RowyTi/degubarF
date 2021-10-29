@@ -48,6 +48,7 @@
 </template>
 
 <script>
+import { deserialize } from 'jsonapi-fractal'
 import { mapState } from 'vuex'
 import BaseCard from '~/components/ui/BaseCard.vue'
 import StaffDialog from '~/components/dialog/staff/StaffDialog.vue'
@@ -83,13 +84,11 @@ export default {
 
     form: {
       username: '',
-      status: 'Activo',
-      role: [],
+      status: '',
       branch_id: null,
       profile: {
         name: '',
         lastName: '',
-        avatar: [],
         dateOfBirth: '',
         phone: '',
         address: {
@@ -104,13 +103,11 @@ export default {
     defaultForm: {
       username: '',
       password: '',
-      status: 'Activo',
-      role: [],
+      status: '',
       branch_id: null,
       profile: {
         name: '',
         lastName: '',
-        avatar: '',
         dateOfBirth: '',
         phone: '',
         address: {
@@ -179,11 +176,16 @@ export default {
     },
     async editItem(item) {
       try {
-        await this.$store.dispatch('administracion/staff/getResource', item.id)
-        this.editedIndex = this.staff.indexOf(item)
-        this.$nextTick(() => {
-          this.form = Object.assign({}, this.empleado)
+        const res = await this.$axios.$get(`staff/${item.id}`, {
+          params: {
+            include: 'profile,profile.address',
+          },
         })
+        const deserializeData = deserialize(res, {
+          changeCase: 'camelCase',
+        })
+        this.editedIndex = this.staff.indexOf(item)
+        this.form = Object.assign({}, deserializeData)
         this.dialog = true
       } catch (error) {
         if (error.response.status === 403)
