@@ -83,8 +83,7 @@ export default {
 
     form: {
       username: '',
-      password: '',
-      status: '',
+      status: 'Activo',
       role: [],
       branch_id: null,
       profile: {
@@ -105,7 +104,7 @@ export default {
     defaultForm: {
       username: '',
       password: '',
-      status: '',
+      status: 'Activo',
       role: [],
       branch_id: null,
       profile: {

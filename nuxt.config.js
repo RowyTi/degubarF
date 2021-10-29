@@ -54,8 +54,8 @@ export default {
 
   // Axios module configuration: https://go.nuxtjs.dev/config-axios
   axios: {
-    // baseUrl: "http://bdegubar.test/v1/",
-    baseUrl: "http://localhost:8000/v1/",
+    baseUrl: "http://bdegubar.test/v1/",
+    // baseUrl: "http://localhost:8000/v1/",
     credentials: false,
     headers: {
       'Accept': 'application/vnd.api+json',

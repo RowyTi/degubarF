@@ -187,6 +187,7 @@
     <!-- create & edit -->
     <v-form
       v-else
+      lazy-validation
       @submit.prevent="editedIndex === -1 ? createResource() : updateResource()"
     >
       <base-card
@@ -203,13 +204,23 @@
         <template #body>
           <v-stepper v-model="stepper">
             <v-stepper-header>
-              <v-stepper-step :complete="stepper > 1" step="1" editable>
+              <v-stepper-step
+                :complete="stepper > 1"
+                step="1"
+                editable
+                :rules="[() => !$v.$anyError]"
+              >
                 Usuario
+                <small v-if="$v.$anyError">Revisa los datos</small>
               </v-stepper-step>
 
               <v-divider></v-divider>
 
-              <v-stepper-step :complete="stepper > 2" step="2" editable>
+              <v-stepper-step
+                :complete="stepper > 2"
+                step="2"
+                :editable="!$v.$anyError"
+              >
                 Personal
               </v-stepper-step>
 
@@ -220,103 +231,121 @@
 
             <v-stepper-items>
               <v-stepper-content step="1">
-                <v-container fluid class="mt-0 pt-0">
+                <v-container fluid class="mt-2 pt-0">
                   <v-row align="center" justify="center">
                     <v-col cols="12" class="pb-0">
+                      {{ $v.$anyError }}
+                      {{ $v.$invalid }}
                       <v-text-field
                         v-model="formu.username"
                         outlined
                         label="Nombre de Usuario"
+                        :error-messages="usernameErrors"
+                        @input="$v.formu.username.$touch()"
+                        @blur="$v.formu.username.$touch()"
+                      ></v-text-field>
+                    </v-col>
+                    <v-col cols="12" class="pb-0">
+                      <base-password-generator
+                        v-model="formu.password"
+                        :autoGenerate="true"
+                        type="text"
+                        size="8"
+                        characters="a-z,A-Z,0-9,#"
+                        :rules="rules.required"
+                        :error-messages="passwordErrors"
+                        @input="$v.formu.password.$touch()"
+                        @blur="$v.formu.password.$touch()"
+                      />
+                    </v-col>
+                    <v-col cols="12" class="pb-0">
+                      <v-select
+                        label="Estado"
+                        :items="items"
+                        value="activo"
+                        outlined
+                      >
+                      </v-select>
+                    </v-col>
+                  </v-row>
+                </v-container>
+
+                <div class="d-flex justify-end">
+                  <v-btn color="error" text :disabled="loading" @click="close">
+                    Cancelar
+                  </v-btn>
+                  <v-btn
+                    color="primary"
+                    :disabled="$v.$anyError"
+                    right
+                    @click="nextStep"
+                  >
+                    continuar
+                  </v-btn>
+                </div>
+              </v-stepper-content>
+
+              <v-stepper-content step="2">
+                <v-container>
+                  <v-row>
+                    <v-col cols="12" class="pb-0">
+                      <v-text-field
+                        v-model="formu.profile.name"
+                        outlined
+                        label="Nombre"
                       ></v-text-field>
                     </v-col>
                     <v-col cols="12" class="pb-0">
                       <v-text-field
-                        v-model="formu.password"
+                        v-model="formu.profile.lastName"
                         outlined
-                        label="Password"
+                        label="Apellido"
                       ></v-text-field>
                     </v-col>
-                    <v-col cols="8" class="pb-0">
-                      <v-file-input
-                        v-model="file"
-                        accept="image/jpeg, image/png"
-                        label="Tu foto"
-                        prepend-icon=""
-                        prepend-inner-icon=""
-                        small-chips
-                        show-size
-                        truncate-length="15"
-                        @change="uploadImg"
-                      ></v-file-input>
+                    <v-col cols="12" class="pb-0">
+                      <v-text-field
+                        v-model="formu.profile.dateOfBirth"
+                        outlined
+                        label="Fecha de nacimiento"
+                      ></v-text-field>
                     </v-col>
-                    <v-col cols="4" class="py-0 text-center">
-                      <v-avatar size="100" rounded>
-                        <v-img v-if="image.length" :src="image" />
-                        <v-icon v-else color="gray" size="100">
-                          mdi-camera
-                        </v-icon>
-                      </v-avatar>
+                    <v-col cols="12" class="pb-0">
+                      <v-text-field
+                        v-model="formu.profile.phone"
+                        outlined
+                        label="Teléfono"
+                      ></v-text-field>
                     </v-col>
                   </v-row>
                 </v-container>
-                <!-- <v-avatar size="200" rounded>
-                  <v-img v-if="image.length" :src="image" />
-                </v-avatar>
-
-                <v-file-input
-                  v-model="file"
-                  accept="image/jpeg, image/png"
-                  label="Tu foto"
-                  prepend-icon=""
-                  prepend-inner-icon="mdi-camera"
-                  small-chips
-                  show-size
-                  truncate-length="15"
-                  @change="uploadImg"
-                ></v-file-input> -->
-
-                <v-btn color="error" text :disabled="loading" @click="close">
-                  Cancelar
-                </v-btn>
-                <v-btn color="primary" @click="stepper = 2"> continuar </v-btn>
-              </v-stepper-content>
-
-              <v-stepper-content step="2">
-                <v-btn color="error" text :disabled="loading" @click="close">
-                  Cancelar
-                </v-btn>
-                <v-btn color="primary" @click="stepper = 3"> continuar </v-btn>
+                <div class="d-flex justify-end">
+                  <v-btn color="error" text :disabled="loading" @click="close">
+                    Cancelar
+                  </v-btn>
+                  <v-btn color="primary" @click="stepper = 3">
+                    continuar
+                  </v-btn>
+                </div>
               </v-stepper-content>
 
               <v-stepper-content step="3">
-                <v-btn color="error" text :disabled="loading" @click="close">
-                  Cancelar
-                </v-btn>
-                <v-btn
-                  color="success"
-                  type="submit"
-                  :disabled="loading"
-                  :loading="loading"
-                >
-                  {{ btnForm }}
-                </v-btn>
+                <div class="d-flex justify-end">
+                  <v-btn color="error" text :disabled="loading" @click="close">
+                    Cancelar
+                  </v-btn>
+                  <v-btn
+                    color="success"
+                    type="submit"
+                    :disabled="loading"
+                    :loading="loading"
+                  >
+                    {{ btnForm }}
+                  </v-btn>
+                </div>
               </v-stepper-content>
             </v-stepper-items>
           </v-stepper>
         </template>
-        <!-- <template #actions>
-          <v-btn color="error" text :disabled="loading" @click="close">
-            Cancelar
-          </v-btn>
-          <v-btn
-            color="success"
-            type="submit"
-            :disabled="loading"
-            :loading="loading"
-          >
-            {{ btnForm }}
-          </v-btn>
-        </template> -->
       </base-card>
     </v-form>
   </v-dialog>
@@ -326,9 +355,10 @@
 import { required } from 'vuelidate/lib/validators'
 import BaseCard from '~/components/ui/BaseCard.vue'
 import BaseListItemContent from '~/components/ui/BaseListItemContent.vue'
+import BasePasswordGenerator from '~/components/ui/BasePasswordGenerator.vue'
 export default {
   name: 'StaffDialog',
-  components: { BaseCard, BaseListItemContent },
+  components: { BaseCard, BaseListItemContent, BasePasswordGenerator },
   props: {
     form: {
       type: Object,
@@ -348,23 +378,24 @@ export default {
   },
   data: () => ({
     stepper: 1,
-    file: [],
-    image: '',
+    items: ['inactivo', 'activo'],
     loading: false,
+    showPassword: '',
+    rules: {
+      required: [(value) => !!value || 'Este campo es obligatorio.'],
+    },
+
     options: {
       page: 1,
       itemsPerPage: 10,
     },
   }),
   validations: {
-    data: {
+    formu: {
       username: {
         required,
       },
       password: {
-        required,
-      },
-      state: {
         required,
       },
     },
@@ -383,8 +414,28 @@ export default {
     btnForm() {
       return this.editedIndex === -1 ? 'guardar' : 'Actualizar '
     },
+    passwordErrors() {
+      const errors = []
+      if (!this.$v.formu.password.$dirty) return errors
+      !this.$v.formu.password.required &&
+        errors.push('Este campo es obligatiorio.')
+      return errors
+    },
+    usernameErrors() {
+      const errors = []
+      if (!this.$v.formu.username.$dirty) return errors
+      !this.$v.formu.username.required &&
+        errors.push('Este campo es obligatiorio.')
+      return errors
+    },
   },
   methods: {
+    nextStep() {
+      this.$v.$touch()
+      if (!this.$v.$invalid) {
+        this.stepper++
+      }
+    },
     close() {
       this.stepper = 1
       this.$v.$reset()
@@ -419,18 +470,6 @@ export default {
           alert('Usted no esta Autorizado para realizar esta acción')
       } finally {
         this.loading = false
-      }
-    },
-    uploadImg(event) {
-      const img = event
-      if (img) {
-        const reader = new FileReader()
-        reader.onload = (e) => {
-          this.image = e.target.result
-        }
-        reader.readAsDataURL(img)
-      } else {
-        this.image = ''
       }
     },
   },
