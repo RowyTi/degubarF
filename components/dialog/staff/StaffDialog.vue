@@ -274,6 +274,7 @@
                     </v-col>
                     <v-col cols="12" class="pb-0">
                       <v-select
+                        v-model="formu.state"
                         label="Estado"
                         :items="itemState"
                         value="activo"
@@ -617,16 +618,22 @@ export default {
     },
     async createResource() {
       try {
-        this.loading = true
-        this.formu.branch_id = this.$store.$auth.user.branch_id
-        await this.$store.dispatch(
-          'administracion/staff/createResource',
-          this.formu
-        )
-        this.close()
+        this.$v.$touch()
+        if (!this.$v.$invalid) {
+          this.loading = true
+          this.formu.branch_id = this.$store.$auth.user.branch_id.toString()
+          await this.$store.dispatch(
+            'administracion/staff/createResource',
+            this.formu
+          )
+          this.close()
+        }
       } catch (error) {
-        if (error.response.status === 403)
-          alert('Usted no esta Autorizado para realizar esta acción')
+        // if (error.response.status === 403) {
+        //   alert('Usted no esta Autorizado para realizar esta acción')
+        // } else {
+        //   alert(error)
+        // }
       } finally {
         this.loading = false
       }

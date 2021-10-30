@@ -56,15 +56,31 @@ export const actions = {
 
   // CREAR RECURSO
   async createResource({ context, dispatch, state }, form) {
-   await console.log(form)
-    // const resource = {
-    //   name: form.name,
-    //   email: form.email,
-    //   password: form.password
-    // }
-    // const serialized = serialize(resource, 'staff', { changeCase: 'kebabCase' })
-    // await this.$axios.$post("/staff", serialized);
-    // await dispatch('getList', state.defaultOptions);
+    const resource = {
+      username: form.username,
+      state: form.state,
+      password: form.password,
+      branches: {
+        id: form.branch_id
+      },
+      profile:{
+        avatar: "rutadefualt.png",
+        dateOfBirth: form.profile.dateOfBirth,
+        lastName: form.profile.lastName,
+        name: form.profile.name,
+        phone: form.profile.phone,
+        address: {
+          cp: form.profile.address.cp,
+          dpto: form.profile.address.dpto,
+          number: form.profile.address.number,
+          piso:  form.profile.address.piso,
+          street: form.profile.address.street
+        }
+      }
+    }
+    const serialized = serialize(resource, 'staff', { relationships: ['branches'], changeCase: 'kebabCase' })
+    await this.$axios.$post("/staff", serialized);
+    await dispatch('getList', state.defaultOptions);
   },
 
   // ACTUALIZAR RECURSO
@@ -85,6 +101,5 @@ export const actions = {
     const serialized = serialize(id, 'staff', { changeCase: 'kebabCase' })
     await this.$axios.$delete(`staff/${id}`, serialized);
     await dispatch('getList', state.defaultOptions);
-
   }
 };

@@ -81,10 +81,9 @@ export default {
         width: '8rem',
       },
     ],
-
     form: {
       username: '',
-      status: '',
+      state: '',
       branch_id: null,
       profile: {
         name: '',
@@ -103,7 +102,7 @@ export default {
     defaultForm: {
       username: '',
       password: '',
-      status: '',
+      state: '',
       branch_id: null,
       profile: {
         name: '',
@@ -186,6 +185,7 @@ export default {
         })
         this.editedIndex = this.staff.indexOf(item)
         this.form = Object.assign({}, deserializeData)
+        console.log(deserializeData)
         this.dialog = true
       } catch (error) {
         if (error.response.status === 403)
