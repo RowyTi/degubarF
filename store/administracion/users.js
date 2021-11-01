@@ -70,6 +70,7 @@ export const actions = {
       password: form.password
     }
     const serialized = serialize(resource, 'users', { changeCase: 'kebabCase' })
+    console.log(serialized)
     await this.$axios.$patch(`users/${form.id}`, serialized);
     await dispatch('getList', state.defaultOptions);
   },
