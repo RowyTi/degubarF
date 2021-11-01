@@ -22,6 +22,9 @@
             :loading="loading"
           >
             <v-alert slot="no-result"> no hay resultados </v-alert>
+            <template #[`item.roles`]="{ item }">
+              <span v-if="item.lenght < 1">Sin Asignar</span>
+            </template>
             <template #[`item.acciones`]="{ item }">
               <v-btn color="primary" icon x-small @click="showItem(item)">
                 <v-icon> mdi-eye </v-icon>
@@ -166,6 +169,11 @@ export default {
         this.showMode = true
         this.$nextTick(() => {
           this.form = Object.assign({}, this.empleado)
+        })
+        await this.$notify({
+          group: 'error',
+          title: 'No Autorizado',
+          text: 'Usted no está autorizado a realizar esta acción',
         })
         this.dialog = true
       } catch (error) {

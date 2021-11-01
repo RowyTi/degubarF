@@ -512,10 +512,6 @@ export default {
       get() {
         return this.form
       },
-      // set(value) {
-      //   this.formu = value
-      //   return this.formu
-      // },
     },
     formTitle() {
       return this.editedIndex === -1
@@ -627,13 +623,18 @@ export default {
             this.formu
           )
           this.close()
+          await this.$notify({
+            group: 'success',
+            title: 'Usuario creado!',
+            text: `${this.formu.username} fue creado con éxito!`,
+          })
         }
       } catch (error) {
-        // if (error.response.status === 403) {
-        //   alert('Usted no esta Autorizado para realizar esta acción')
-        // } else {
-        //   alert(error)
-        // }
+        if (error.response.status === 403) {
+          alert('Usted no esta Autorizado para realizar esta acción')
+        } else {
+          alert(error)
+        }
       } finally {
         this.loading = false
       }
