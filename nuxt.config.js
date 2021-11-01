@@ -29,7 +29,9 @@ export default {
 
   // Plugins to run before rendering page: https://go.nuxtjs.dev/config-plugins
   plugins: [
-    { src: '~/plugins/vuelidate' }
+    { src: '~/plugins/vuelidate' },
+    { src: "~/plugins/mask" },
+    { src: '~/plugins/notifications-client', ssr: false }
   ],
 
   // Auto import components: https://go.nuxtjs.dev/config-components
@@ -54,8 +56,8 @@ export default {
 
   // Axios module configuration: https://go.nuxtjs.dev/config-axios
   axios: {
-    // baseUrl: "http://bdegubar.test/v1/",
-    baseUrl: "http://localhost:8000/v1/",
+    baseUrl: "http://bdegubar.test/v1/",
+    // baseUrl: "http://localhost:8000/v1/",
     credentials: false,
     headers: {
       'Accept': 'application/vnd.api+json',
@@ -143,8 +145,19 @@ export default {
       }
     }
   },
+  pageTransition: {
+    name: "page",
+    mode: "out-in"
+  },
+  loading: {
+    name: "chasing-dots",
+    color: "#00C853",
+    background: "white",
+    height: "4px"
+  },
 
   // Build Configuration: https://go.nuxtjs.dev/config-build
   build: {
+    maxChunkSize: 1000
   }
 }
