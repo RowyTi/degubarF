@@ -2,11 +2,11 @@
   <v-row justify="center" align="center">
     <v-col cols="12" md="11">
       <base-card :dialog="false">
-        <template #rightCardTitle> Administración de Staff </template>
+        <template #rightCardTitle> Administración de Permisos </template>
         <template #leftCardTitle>
-          <v-btn color="primary" small @click.stop="dialog = !dialog">
-            Agregar Empleado<v-icon right dark>mdi-account-plus</v-icon>
-          </v-btn>
+          <!-- <v-btn color="primary" small @click.stop="dialog = !dialog">
+            Asignar Empleado<v-icon right dark>mdi-account-plus</v-icon>
+          </v-btn> -->
         </template>
         <template #body>
           <v-data-table
@@ -56,7 +56,7 @@ import { mapState } from 'vuex'
 import BaseCard from '~/components/ui/BaseCard.vue'
 import StaffDialog from '~/components/dialog/staff/StaffDialog.vue'
 export default {
-  name: 'AdministracionStaff',
+  name: 'AdministracionPermisos',
   components: { BaseCard, StaffDialog },
   layout: 'admin',
   middleware: 'permission-staff',

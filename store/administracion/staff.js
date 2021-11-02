@@ -85,25 +85,28 @@ export const actions = {
 
   // ACTUALIZAR RECURSO
   async updateResource({ context, dispatch, state }, form) {
-    await console.log(form)
-    // const resource = {
-    //   id: form.id,
-    //   username: form.username,
-    //   password: form.password,
-    //   state: form.state,
-    //   name: form.profile.name,
-    //   profile:
-    //   {
-    //     id: form.profile.id,
-    //     // name: form.profile.name
-    //   }
-
-
-
-
-    // }
-    const serialized = serialize(form, 'staff', { relationships: ['profile'], changeCase: 'kebabCase' })
-    console.log(serialized)
+    const resource = {
+      id:form.id,
+      username: form.username,
+      state: form.state,
+      password: form.password,
+      profile: {
+        id: form.profile.id,
+        avatar: "rutadefualt.png",
+        dateOfBirth: form.profile.dateOfBirth,
+        lastName: form.profile.lastName,
+        name: form.profile.name,
+        phone: form.profile.phone,
+        address: {
+          cp: form.profile.address.cp,
+          dpto: form.profile.address.dpto,
+          number: form.profile.address.number,
+          piso: form.profile.address.piso,
+          street: form.profile.address.street
+        }
+      }
+    }
+    const serialized = serialize(resource, 'staff', { changeCase: 'kebabCase' })
     await this.$axios.$patch(`staff/${form.id}`, serialized);
     await dispatch('getList', state.defaultOptions);
   },
