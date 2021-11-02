@@ -170,15 +170,14 @@ export default {
         this.$nextTick(() => {
           this.form = Object.assign({}, this.empleado)
         })
-        await this.$notify({
-          group: 'error',
-          title: 'No Autorizado',
-          text: 'Usted no está autorizado a realizar esta acción',
-        })
         this.dialog = true
       } catch (error) {
         if (error.response.status === 403)
-          alert('Usted no esta Autorizado para realizar esta acción')
+          await this.$notify({
+            group: 'error',
+            title: 'No Autorizado',
+            text: 'Usted no está autorizado a realizar esta acción',
+          })
       }
     },
     async editItem(item) {
@@ -197,7 +196,11 @@ export default {
         this.dialog = true
       } catch (error) {
         if (error.response.status === 403)
-          alert('Usted no esta Autorizado para realizar esta acción')
+          await this.$notify({
+            group: 'error',
+            title: 'No Autorizado',
+            text: 'Usted no está autorizado a realizar esta acción',
+          })
       }
     },
     async deleteItem(item) {
@@ -207,7 +210,12 @@ export default {
           item.id
         )
       } catch (error) {
-        alert(error)
+        if (error.response.status === 403)
+          await this.$notify({
+            group: 'error',
+            title: 'No Autorizado',
+            text: 'Usted no está autorizado a realizar esta acción',
+          })
       }
     },
   },

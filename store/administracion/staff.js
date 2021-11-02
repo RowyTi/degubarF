@@ -63,7 +63,7 @@ export const actions = {
       branches: {
         id: form.branch_id
       },
-      profile:{
+      profile: {
         avatar: "rutadefualt.png",
         dateOfBirth: form.profile.dateOfBirth,
         lastName: form.profile.lastName,
@@ -73,7 +73,7 @@ export const actions = {
           cp: form.profile.address.cp,
           dpto: form.profile.address.dpto,
           number: form.profile.address.number,
-          piso:  form.profile.address.piso,
+          piso: form.profile.address.piso,
           street: form.profile.address.street
         }
       }
@@ -85,13 +85,25 @@ export const actions = {
 
   // ACTUALIZAR RECURSO
   async updateResource({ context, dispatch, state }, form) {
-    const resource = {
-      id: form.id,
-      name: form.name,
-      email: form.email,
-      password: form.password
-    }
-    const serialized = serialize(resource, 'staff', { changeCase: 'kebabCase' })
+    await console.log(form)
+    // const resource = {
+    //   id: form.id,
+    //   username: form.username,
+    //   password: form.password,
+    //   state: form.state,
+    //   name: form.profile.name,
+    //   profile:
+    //   {
+    //     id: form.profile.id,
+    //     // name: form.profile.name
+    //   }
+
+
+
+
+    // }
+    const serialized = serialize(form, 'staff', { relationships: ['profile'], changeCase: 'kebabCase' })
+    console.log(serialized)
     await this.$axios.$patch(`staff/${form.id}`, serialized);
     await dispatch('getList', state.defaultOptions);
   },

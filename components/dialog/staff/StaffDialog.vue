@@ -626,14 +626,22 @@ export default {
           await this.$notify({
             group: 'success',
             title: 'Usuario creado!',
-            text: `${this.formu.username} fue creado con éxito!`,
+            text: `<b>${this.formu.username}</b> fue creado con éxito!`,
           })
         }
       } catch (error) {
         if (error.response.status === 403) {
-          alert('Usted no esta Autorizado para realizar esta acción')
+          await this.$notify({
+            group: 'error',
+            title: 'No Autorizado',
+            text: 'Usted no esta Autorizado para realizar esta acción',
+          })
         } else {
-          alert(error)
+          await this.$notify({
+            group: 'error',
+            title: 'Error',
+            text: 'Ocurrió un error en el servidor, intentelo de nuevo mas tarde..',
+          })
         }
       } finally {
         this.loading = false
@@ -647,9 +655,25 @@ export default {
           this.formu
         )
         this.close()
+        await this.$notify({
+          group: 'success',
+          title: 'Usuario Actualiado!',
+          text: `<b>${this.formu.username}</b> fue actualizado con éxito!`,
+        })
       } catch (error) {
-        if (error.response.status === 403)
-          alert('Usted no esta Autorizado para realizar esta acción')
+        if (error.response.status === 403) {
+          await this.$notify({
+            group: 'error',
+            title: 'No Autorizado',
+            text: 'Usted no esta Autorizado para realizar esta acción',
+          })
+        } else {
+          await this.$notify({
+            group: 'error',
+            title: 'Error',
+            text: 'Ocurrió un error en el servidor, intentelo de nuevo mas tarde..',
+          })
+        }
       } finally {
         this.loading = false
       }
