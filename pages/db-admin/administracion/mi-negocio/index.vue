@@ -2,14 +2,13 @@
   <v-row justify="center" align="center">
     <v-col cols="12" md="11">
       <base-card :dialog="false">
-        <template #rightCardTitle> Administración de Staff </template>
+        <template #rightCardTitle> Administración de Clientes </template>
         <template #leftCardTitle>
           <v-btn color="primary" small @click.stop="dialog = !dialog">
-            Agregar Empleado<v-icon right dark>mdi-account-plus</v-icon>
+            Nuevo Cliente<v-icon right dark>mdi-store-plus</v-icon>
           </v-btn>
         </template>
         <template #body>
-          {{ branches }}
           <v-data-table
             :headers="headers"
             :items="branches"
@@ -23,6 +22,17 @@
             :loading="loading"
           >
             <v-alert slot="no-result"> no hay resultados </v-alert>
+            <template #[`item.rating`]="{ item }">
+              <v-rating
+                v-model="item.rating"
+                color="yellow darken-3"
+                background-color="grey lighten-2"
+                empty-icon="$ratingFull"
+                half-increments
+                readonly
+                small
+              ></v-rating>
+            </template>
             <template #[`item.acciones`]="{ item }">
               <v-btn color="primary" icon x-small @click="showItem(item)">
                 <v-icon> mdi-eye </v-icon>
@@ -38,7 +48,7 @@
         </template>
       </base-card>
     </v-col>
-    <staff-dialog
+    <branch-dialog
       v-model="dialog"
       :form="form"
       :edited-index="editedIndex"
@@ -52,12 +62,11 @@
 import { deserialize } from 'jsonapi-fractal'
 import { mapState } from 'vuex'
 import BaseCard from '~/components/ui/BaseCard.vue'
-import StaffDialog from '~/components/dialog/staff/StaffDialog.vue'
+import BranchDialog from '~/components/dialog/branch/BranchDialog.vue'
 export default {
   name: 'AdministracionDeMiNegocio',
-  components: { BaseCard, StaffDialog },
+  components: { BaseCard, BranchDialog },
   layout: 'admin',
-  middleware: 'permission-staff',
   data: () => ({
     headers: [
       {
@@ -72,8 +81,13 @@ export default {
       },
       {
         text: 'Rating',
-        sortable: true,
+        sortable: false,
         value: 'rating',
+      },
+      {
+        text: 'Ult. Actualización',
+        sortable: true,
+        value: 'updatedAt',
       },
       {
         text: 'Acciones',
@@ -83,41 +97,14 @@ export default {
       },
     ],
     form: {
-      username: '',
-      state: '',
-      branch_id: null,
-      profile: {
-        name: '',
-        lastName: '',
-        dateOfBirth: '',
-        phone: '',
-        address: {
-          street: '',
-          number: '',
-          piso: '',
-          dpto: '',
-          cp: '',
-        },
-      },
+      name: '',
+      slug: '',
+      state: 'inactivo',
     },
     defaultForm: {
-      username: '',
-      password: '',
-      state: '',
-      branch_id: null,
-      profile: {
-        name: '',
-        lastName: '',
-        dateOfBirth: '',
-        phone: '',
-        address: {
-          street: '',
-          number: '',
-          piso: '',
-          dpto: '',
-          cp: '',
-        },
-      },
+      name: '',
+      slug: '',
+      state: 'inactivo',
     },
     loading: false,
     dialog: false,
@@ -169,29 +156,36 @@ export default {
         await this.$store.dispatch('administracion/branch/getResource', item.id)
         this.showMode = true
         this.$nextTick(() => {
-          this.form = Object.assign({}, this.empleado)
+          this.form = Object.assign({}, this.branch)
         })
         this.dialog = true
       } catch (error) {
-        if (error.response.status === 403)
+        if (error.response.status === 403) {
           await this.$notify({
             group: 'error',
             title: 'No Autorizado',
             text: 'Usted no está autorizado a realizar esta acción',
           })
+        } else {
+          await this.$notify({
+            group: 'error',
+            title: error.response.status,
+            text: 'Usted no está autorizado a realizar esta acción',
+          })
+        }
       }
     },
     async editItem(item) {
       try {
-        const res = await this.$axios.$get(`staff/${item.id}`, {
+        const res = await this.$axios.$get(`branches/${item.id}`, {
           params: {
-            include: 'profile,profile.address',
+            // include: 'profile,profile.address',
           },
         })
         const deserializeData = deserialize(res, {
           changeCase: 'camelCase',
         })
-        this.editedIndex = this.staff.indexOf(item)
+        this.editedIndex = this.branches.indexOf(item)
         this.form = Object.assign({}, deserializeData)
         this.dialog = true
       } catch (error) {

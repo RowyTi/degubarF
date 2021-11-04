@@ -45,13 +45,13 @@ export const actions = {
 
   // VER RECURSO {id}
   async getResource({ commit }, id) {
-    const response = await this.$axios.$get(`staff/${id}`, {
+    const response = await this.$axios.$get(`branches/${id}`, {
       params: {
-        'include': 'profile,profile.address'
+        // 'include': 'profile,profile.address'
       }
     })
     const serializedData = (deserialize(response, { changeCase: 'camelCase' }))
-    commit("SET_EMPLEADO", serializedData)
+    commit("SET_BRANCH", serializedData)
   },
 
   // CREAR RECURSO
