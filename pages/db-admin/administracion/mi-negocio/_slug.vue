@@ -1,6 +1,6 @@
 <template>
   <div>
-    {{ this.$route.params.slug }}
+    {{ $route.params.slug }}
   </div>
 </template>
 
