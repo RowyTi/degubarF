@@ -1,7 +1,7 @@
 <template>
   <v-row>
     <v-col cols="6">
-      <h1>Autocomplete Example (#164)</h1>
+      <h1>Autocomplete</h1>
 
       <label>
         AutoComplete
