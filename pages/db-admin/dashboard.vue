@@ -2,15 +2,15 @@
   <v-row>
     <v-col cols="6">
       <vuetify-google-autocomplete
-        ref="address"
         id="map"
+        ref="address"
         prepend-icon="mdi-map-marker"
         clearable
         label="Dirección"
         classname="form-control"
         hint="Seleccionar la dirección cuando aparezca"
-        v-on:placechanged="getAddressData"
         country="ar"
+        @placechanged="getAddressData"
       />
 
       <!-- 

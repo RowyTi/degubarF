@@ -202,7 +202,7 @@
           </v-btn>
         </template>
         <template #body>
-          <v-stepper v-model="stepper">
+          <v-stepper v-model="stepper" alt-labels>
             <v-stepper-header>
               <v-stepper-step
                 :complete="stepper > 1"
@@ -222,7 +222,7 @@
                   () => !$v.formu.profile.dateOfBirth.$error,
                   () => !$v.formu.profile.phone.$error,
                 ]" -->
-                Personal
+                Dirección
               </v-stepper-step>
 
               <v-divider></v-divider>
@@ -288,46 +288,73 @@
               <v-stepper-content step="2">
                 <v-container>
                   <v-row>
-                    <!-- <v-col cols="12" class="pb-0">
-                      <v-text-field
-                        v-model="formu.profile.name"
+                    <v-col cols="12" class="pb-0">
+                      <vuetify-google-autocomplete
+                        id="map"
+                        ref="address"
+                        prepend-inner-icon="mdi-map-marker"
                         outlined
-                        label="Nombre"
-                        :error-messages="nameErrors"
-                        @input="$v.formu.profile.name.$touch()"
-                        @blur="$v.formu.profile.name.$touch()"
+                        clearable
+                        label="Dirección"
+                        classname="form-control"
+                        hint="Seleccionar la dirección cuando aparezca"
+                        country="ar"
+                        @placechanged="getAddressData"
+                      >
+                        <template #prepend-inner>
+                          <v-icon>mdi-map-marker</v-icon>
+                        </template>
+                      </vuetify-google-autocomplete>
+                    </v-col>
+                    <v-col cols="6">
+                      <v-text-field
+                        v-model="formu.address.street"
+                        outlined
+                        label="Calle"
                       ></v-text-field>
                     </v-col>
-                    <v-col cols="12" class="pb-0">
+                    <v-col cols="6">
                       <v-text-field
-                        v-model="formu.profile.lastName"
+                        v-model="formu.address.number"
                         outlined
-                        label="Apellido"
-                        :error-messages="lastnameErrors"
-                        @input="$v.formu.profile.lastName.$touch()"
-                        @blur="$v.formu.profile.lastName.$touch()"
+                        label="Numero"
                       ></v-text-field>
                     </v-col>
-                    <v-col cols="12" class="pb-0">
+                    <v-col cols="6">
                       <v-text-field
-                        v-model="formu.profile.dateOfBirth"
+                        v-model="formu.address.cp"
                         outlined
-                        label="Fecha de nacimiento"
-                        :error-messages="dateofbirthErrors"
-                        @input="$v.formu.profile.dateOfBirth.$touch()"
-                        @blur="$v.formu.profile.dateOfBirth.$touch()"
+                        label="cp"
                       ></v-text-field>
                     </v-col>
-                    <v-col cols="12" class="pb-0">
+                    <v-col cols="6">
                       <v-text-field
-                        v-model="formu.profile.phone"
+                        v-model="formu.address.piso"
                         outlined
-                        label="Teléfono"
-                        :error-messages="phoneErrors"
-                        @input="$v.formu.profile.phone.$touch()"
-                        @blur="$v.formu.profile.phone.$touch()"
+                        label="Piso"
+                        :error-messages="pisoErrors"
+                        @input="$v.formu.address.piso.$touch()"
+                        @blur="$v.formu.address.piso.$touch()"
                       ></v-text-field>
-                    </v-col> -->
+                    </v-col>
+                    <v-col cols="6">
+                      <v-text-field
+                        v-model="formu.address.dpto"
+                        outlined
+                        label="Dpto"
+                        :error-messages="dptoErrors"
+                        @input="$v.formu.address.dpto.$touch()"
+                        @blur="$v.formu.address.dpto.$touch()"
+                      ></v-text-field>
+                    </v-col>
+                    <pre>
+                      {{ address }}
+                      {{ street }}
+                      {{ street_number }}
+                      {{ postal_code }}
+                      {{ latitude }}
+                      {{ longitude }}
+                    </pre>
                   </v-row>
                 </v-container>
                 <div class="d-flex justify-end">
@@ -419,7 +446,7 @@
 
 <script>
 import slugify from 'slugify'
-import { required } from 'vuelidate/lib/validators'
+import { required, numeric, maxLength } from 'vuelidate/lib/validators'
 import BaseCard from '~/components/ui/BaseCard.vue'
 import BaseListItemContent from '~/components/ui/BaseListItemContent.vue'
 export default {
@@ -443,9 +470,11 @@ export default {
     },
   },
   data: () => ({
+    address: '',
     stepper: 1,
     itemState: ['inactivo', 'activo'],
     loading: false,
+    loadingSearch: false,
     options: {
       page: 1,
       itemsPerPage: 10,
@@ -455,6 +484,25 @@ export default {
     formu: {
       name: {
         required,
+      },
+      address: {
+        street: {
+          required,
+        },
+        number: {
+          required,
+          numeric,
+        },
+        cp: {
+          required,
+          maxLength: maxLength(5),
+        },
+        piso: {
+          maxLength: maxLength(3),
+        },
+        dpto: {
+          maxLength: maxLength(3),
+        },
       },
     },
   },
@@ -485,14 +533,90 @@ export default {
         this.formu.name = value
       },
     },
+    street: {
+      get() {
+        // eslint-disable-next-line vue/no-side-effects-in-computed-properties
+        this.formu.address.street = this.address.route
+
+        return this.formu.address.street
+      },
+      set(value) {
+        this.formu.address.street = value
+      },
+    },
+    street_number: {
+      get() {
+        // eslint-disable-next-line vue/no-side-effects-in-computed-properties
+        this.formu.address.number = this.address.street_number
+
+        return this.formu.address.number
+      },
+      set(value) {
+        this.formu.address.number = value
+      },
+    },
+    postal_code: {
+      get() {
+        // eslint-disable-next-line vue/no-side-effects-in-computed-properties
+        this.formu.address.cp = this.address.postal_code
+
+        return this.formu.address.cp
+      },
+      set(value) {
+        this.formu.address.cp = value
+      },
+    },
+    latitude: {
+      get() {
+        // eslint-disable-next-line vue/no-side-effects-in-computed-properties
+        this.formu.latitud = this.address.latitude
+
+        return this.formu.latitud
+      },
+      set(value) {
+        this.formu.latitud = value
+      },
+    },
+    longitude: {
+      get() {
+        // eslint-disable-next-line vue/no-side-effects-in-computed-properties
+        this.formu.longitud = this.address.longitude
+
+        return this.formu.longitud
+      },
+      set(value) {
+        this.formu.longitud = value
+      },
+    },
     nameErrors() {
       const errors = []
       if (!this.$v.formu.name.$dirty) return errors
       !this.$v.formu.name.required && errors.push('Este campo es obligatiorio.')
       return errors
     },
+    pisoErrors() {
+      const errors = []
+      if (!this.$v.formu.address.piso.$dirty) return errors
+      !this.$v.formu.address.piso.maxLength &&
+        errors.push('El campo Piso, no puede tener mas de 3 caracteres.')
+      return errors
+    },
+    dptoErrors() {
+      const errors = []
+      if (!this.$v.formu.address.dpto.$dirty) return errors
+      !this.$v.formu.address.dpto.maxLength &&
+        errors.push('El campo Dpto, no puede tener mas de 3 caracteres.')
+      return errors
+    },
   },
   methods: {
+    getAddressData(addressData, placeResultData, id) {
+      try {
+        this.address = addressData
+      } catch (error) {
+        alert(error)
+      }
+    },
     nextStep() {
       return this.stepper++
     },
