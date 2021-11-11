@@ -1,22 +1,19 @@
 <template>
   <v-row>
     <v-col cols="6">
-      <h1>Autocomplete</h1>
+      <vuetify-google-autocomplete
+        ref="address"
+        id="map"
+        prepend-icon="mdi-map-marker"
+        clearable
+        label="Dirección"
+        classname="form-control"
+        hint="Seleccionar la dirección cuando aparezca"
+        v-on:placechanged="getAddressData"
+        country="ar"
+      />
 
-      <label>
-        AutoComplete
-        <gmap-autocomplete
-          placeholder="This is a placeholder text"
-          :options="{
-            fields: ['geometry', 'formatted_address', 'address_components'],
-          }"
-          @place_changed="setPlace"
-        >
-        </gmap-autocomplete>
-        <button @click="usePlace">Add</button>
-      </label>
-      <br />
-
+      <!-- 
       <Gmap-Map
         style="width: 100%; height: 300px"
         :zoom="15"
@@ -31,7 +28,6 @@
           disableDefaultUi: false,
         }"
       >
-        <!-- :center="{ lat: -34.5838464, lng: -58.4357956 }" -->
         <Gmap-Marker
           v-for="(marker, index) in markers"
           :key="index"
@@ -45,24 +41,21 @@
             lng: place.geometry.location.lng(),
           }"
         ></Gmap-Marker>
-      </Gmap-Map>
+      </Gmap-Map> -->
     </v-col>
     <v-col cols="6">
-      {{ LatLng }}
-      <pre>
-
-      {{ place }}
-     </pre
-      >
+      {{ address }}
     </v-col>
   </v-row>
 </template>
 
 <script>
 export default {
+  // :center="{ lat: -34.5838464, lng: -58.4357956 }"
   layout: 'admin',
   middleware: 'permission-dashboard',
   data: () => ({
+    address: '',
     markers: [],
     place: null,
     position: {
@@ -70,43 +63,11 @@ export default {
       lng: null,
     },
   }),
-  computed: {
-    LatLng: {
-      get() {
-        // eslint-disable-next-line vue/no-side-effects-in-computed-properties
-        this.position.lat =
-          this.place !== null ? this.place.geometry.location.lat() : -34.5838464
-        // eslint-disable-next-line vue/no-side-effects-in-computed-properties
-        this.position.lng =
-          this.place !== null ? this.place.geometry.location.lng() : -58.4357956
-        return this.position
-      },
-      set(value) {
-        this.position.lat = value
-      },
-    },
-  },
+
   methods: {
-    setDescription(description) {
-      this.description = description
-    },
-    setPlace(place) {
-      this.place = place
-    },
-    usePlace(place) {
-      if (this.place) {
-        this.markers.push({
-          position: {
-            lat: this.place.geometry.location.lat(),
-            lng: this.place.geometry.location.lng(),
-          },
-        })
-        this.place = null
-      }
+    getAddressData(addressData, placeResultData, id) {
+      this.address = addressData
     },
   },
 }
 </script>
-
-<style>
-</style>
