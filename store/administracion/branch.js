@@ -47,7 +47,7 @@ export const actions = {
   async getResource({ commit }, id) {
     const response = await this.$axios.$get(`branches/${id}`, {
       params: {
-        // 'include': 'profile,profile.address'
+        'include': 'address'
       }
     })
     const serializedData = (deserialize(response, { changeCase: 'camelCase' }))
@@ -56,30 +56,25 @@ export const actions = {
 
   // CREAR RECURSO
   async createResource({ context, dispatch, state }, form) {
+ 
     const resource = {
-      username: form.username,
-      state: form.state,
-      password: form.password,
-      branches: {
-        id: form.branch_id
-      },
-      profile: {
-        avatar: "rutadefualt.png",
-        dateOfBirth: form.profile.dateOfBirth,
-        lastName: form.profile.lastName,
-        name: form.profile.name,
-        phone: form.profile.phone,
-        address: {
-          cp: form.profile.address.cp,
-          dpto: form.profile.address.dpto,
-          number: form.profile.address.number,
-          piso: form.profile.address.piso,
-          street: form.profile.address.street
-        }
+      name     : form.name,
+      slug     : form.slug,
+      logo     : "logodefault.png",
+      latitud  : form.latitud,
+      longitud : form.longitud,
+      state    : form.state,
+      address: {
+        cp      : form.address.cp,
+        dpto    : form.address.dpto,
+        number  : form.address.number,
+        piso    : form.address.piso,
+        street  : form.address.street
       }
     }
-    const serialized = serialize(resource, 'staff', { relationships: ['branches'], changeCase: 'kebabCase' })
-    await this.$axios.$post("/staff", serialized);
+    const serialized = serialize(resource, 'branches', { changeCase: 'kebabCase' })
+    await console.log(serialized)
+    await this.$axios.$post("/branches", serialized);
     await dispatch('getList', state.defaultOptions);
   },
 

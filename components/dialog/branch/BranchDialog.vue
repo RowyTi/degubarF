@@ -224,19 +224,19 @@
                 ]" -->
                 Dirección
               </v-stepper-step>
-
+              <!-- 
               <v-divider></v-divider>
 
               <v-stepper-step step="3">
-                <!-- :rules="[
+                 :rules="[
                   () => !$v.formu.profile.address.street.$error,
                   () => !$v.formu.profile.address.number.$error,
                   () => !$v.formu.profile.address.cp.$error,
                   () => !$v.formu.profile.address.piso.$error,
                   () => !$v.formu.profile.address.dpto.$error,
-                ]" -->
+                ]" 
                 Administrador
-              </v-stepper-step>
+              </v-stepper-step> -->
             </v-stepper-header>
 
             <v-stepper-items>
@@ -369,76 +369,6 @@
                   <v-btn color="error" text :disabled="loading" @click="close">
                     Cancelar
                   </v-btn>
-                  <v-btn color="primary" @click="stepper = 3">
-                    continuar
-                  </v-btn>
-                </div>
-              </v-stepper-content>
-
-              <v-stepper-content step="3">
-                <v-container>
-                  <v-row>
-                    <v-col>
-                      <pre>
-                        {{ formu }}
-                      </pre>
-                    </v-col>
-                    <!-- <v-col cols="12">
-                      <v-text-field
-                        v-model="formu.profile.address.street"
-                        outlined
-                        label="Calle"
-                        :error-messages="streetErrors"
-                        @input="$v.formu.profile.address.street.$touch()"
-                        @blur="$v.formu.profile.address.street.$touch()"
-                      ></v-text-field>
-                    </v-col>
-                    <v-col cols="6">
-                      <v-text-field
-                        v-model="formu.profile.address.number"
-                        outlined
-                        label="Numero"
-                        :error-messages="numberErrors"
-                        @input="$v.formu.profile.address.number.$touch()"
-                        @blur="$v.formu.profile.address.number.$touch()"
-                      ></v-text-field>
-                    </v-col>
-                    <v-col cols="6">
-                      <v-text-field
-                        v-model="formu.profile.address.cp"
-                        outlined
-                        label="CP"
-                        :error-messages="cpErrors"
-                        @input="$v.formu.profile.address.cp.$touch()"
-                        @blur="$v.formu.profile.address.cp.$touch()"
-                      ></v-text-field>
-                    </v-col>
-                    <v-col cols="6">
-                      <v-text-field
-                        v-model="formu.profile.address.piso"
-                        outlined
-                        label="Piso"
-                        :error-messages="pisoErrors"
-                        @input="$v.formu.profile.address.piso.$touch()"
-                        @blur="$v.formu.profile.address.piso.$touch()"
-                      ></v-text-field>
-                    </v-col>
-                    <v-col cols="6">
-                      <v-text-field
-                        v-model="formu.profile.address.dpto"
-                        outlined
-                        label="Dpto"
-                        :error-messages="dptoErrors"
-                        @input="$v.formu.profile.address.dpto.$touch()"
-                        @blur="$v.formu.profile.address.dpto.$touch()"
-                      ></v-text-field>
-                    </v-col> -->
-                  </v-row>
-                </v-container>
-                <div class="d-flex justify-end">
-                  <v-btn color="error" text :disabled="loading" @click="close">
-                    Cancelar
-                  </v-btn>
                   <v-btn
                     color="success"
                     type="submit"
@@ -448,6 +378,8 @@
                     {{ btnForm }}
                   </v-btn>
                 </div>
+
+                {{ formu }}
               </v-stepper-content>
             </v-stepper-items>
           </v-stepper>
@@ -643,16 +575,15 @@ export default {
         this.$v.$touch()
         if (!this.$v.$invalid) {
           this.loading = true
-          this.formu.branch_id = this.$store.$auth.user.branch_id.toString()
           await this.$store.dispatch(
-            'administracion/staff/createResource',
+            'administracion/branch/createResource',
             this.formu
           )
           this.close()
           await this.$notify({
             group: 'success',
             title: 'Usuario creado!',
-            text: `<b>${this.formu.username}</b> fue creado con éxito!`,
+            text: `<b>${this.formu.name}</b> fue creado con éxito!`,
           })
         }
       } catch (error) {

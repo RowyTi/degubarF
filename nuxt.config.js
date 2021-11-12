@@ -14,11 +14,7 @@ export default {
       { hid: 'description', name: 'description', content: 'Plataforma administrativa Degubar' },
       { name: 'format-detection', content: 'telephone=no' }
     ],
-    // script: [
-    //   {
-    //     src: 'https://maps.googleapis.com/maps/api/js?libraries=places&key=AIzaSyDr4VUYyi0XVEmPrBjTzT35EvbL8XIasHU'
-    //   }
-    // ],
+   
     link: [
       { rel: 'icon', type: 'image/x-icon', href: '/favicon.ico' }
     ]
@@ -58,19 +54,11 @@ export default {
     '@nuxtjs/axios',
     // https://go.nuxtjs.dev/pwa
     '@nuxtjs/pwa',
-    // ['nuxt-gmaps', {
-    //   key: process.env.GOOGLE_MAPS_KEY,
-    //   libraries: ['places']
-    // }]
-
-    // AIzaSyDr4VUYyi0XVEmPrBjTzT35EvbL8XIasHU
   ],
 
   // Axios module configuration: https://go.nuxtjs.dev/config-axios
   axios: {
     baseUrl: process.env.BASE_URL,
-    // baseUrl: "http://bdegubar.test/v1/",
-    // baseUrl: "http://localhost:8000/v1/",
     credentials: false,
     headers: {
       'Accept': 'application/vnd.api+json',
@@ -173,6 +161,5 @@ export default {
   build: {
     maxChunkSize: 1000,
     transpile: [/^vue2-google-maps($|\/)/]
-    // vendor: ["vue2-google-maps"]
   }
 }

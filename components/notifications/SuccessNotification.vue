@@ -16,7 +16,7 @@
           <div class="custom-template-title">
             {{ props.item.title }}
           </div>
-          <div class="custom-template-text" v-text="props.item.text"></div>
+          <div class="custom-template-text" v-html="props.item.text"></div>
         </div>
         <div class="custom-template-close" @click="props.close">
           <i class="mdi mdi-close"></i>
