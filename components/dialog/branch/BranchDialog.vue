@@ -210,7 +210,7 @@
                 editable
                 :rules="[() => !$v.formu.name.$error]"
               >
-                Usuario
+                Cliente
               </v-stepper-step>
 
               <v-divider></v-divider>
@@ -235,7 +235,7 @@
                   () => !$v.formu.profile.address.piso.$error,
                   () => !$v.formu.profile.address.dpto.$error,
                 ]" -->
-                Direccion
+                Administrador
               </v-stepper-step>
             </v-stepper-header>
 
@@ -308,26 +308,26 @@
                     </v-col>
                     <v-col cols="6">
                       <v-text-field
-                        v-model="formu.address.street"
+                        v-model="street"
                         outlined
                         label="Calle"
                       ></v-text-field>
                     </v-col>
                     <v-col cols="6">
                       <v-text-field
-                        v-model="formu.address.number"
+                        v-model="street_number"
                         outlined
                         label="Numero"
                       ></v-text-field>
                     </v-col>
-                    <v-col cols="6">
+                    <v-col cols="4">
                       <v-text-field
-                        v-model="formu.address.cp"
+                        v-model="postal_code"
                         outlined
                         label="cp"
                       ></v-text-field>
                     </v-col>
-                    <v-col cols="6">
+                    <v-col cols="4">
                       <v-text-field
                         v-model="formu.address.piso"
                         outlined
@@ -337,7 +337,7 @@
                         @blur="$v.formu.address.piso.$touch()"
                       ></v-text-field>
                     </v-col>
-                    <v-col cols="6">
+                    <v-col cols="4">
                       <v-text-field
                         v-model="formu.address.dpto"
                         outlined
@@ -347,14 +347,22 @@
                         @blur="$v.formu.address.dpto.$touch()"
                       ></v-text-field>
                     </v-col>
-                    <pre>
-                      {{ address }}
-                      {{ street }}
-                      {{ street_number }}
-                      {{ postal_code }}
-                      {{ latitude }}
-                      {{ longitude }}
-                    </pre>
+                    <v-col cols="6">
+                      <v-text-field
+                        v-model="latitude"
+                        outlined
+                        disabled
+                        label="Latitud"
+                      ></v-text-field>
+                    </v-col>
+                    <v-col cols="6">
+                      <v-text-field
+                        v-model="longitude"
+                        outlined
+                        disabled
+                        label="Longitud"
+                      ></v-text-field>
+                    </v-col>
                   </v-row>
                 </v-container>
                 <div class="d-flex justify-end">
@@ -370,6 +378,11 @@
               <v-stepper-content step="3">
                 <v-container>
                   <v-row>
+                    <v-col>
+                      <pre>
+                        {{ formu }}
+                      </pre>
+                    </v-col>
                     <!-- <v-col cols="12">
                       <v-text-field
                         v-model="formu.profile.address.street"
