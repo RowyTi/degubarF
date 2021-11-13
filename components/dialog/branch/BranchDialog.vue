@@ -594,11 +594,12 @@ export default {
             text: 'Usted no esta Autorizado para realizar esta acción',
           })
         } else {
-          await this.$notify({
-            group: 'error',
-            title: 'Error',
-            text: 'Ocurrió un error en el servidor, intentelo de nuevo mas tarde..',
-          })
+          alert(error)
+          // await this.$notify({
+          //   group: 'error',
+          //   title: 'Error',
+          //   text: 'Ocurrió un error en el servidor, intentelo de nuevo mas tarde..',
+          // })
         }
       } finally {
         this.loading = false

@@ -56,25 +56,23 @@ export const actions = {
 
   // CREAR RECURSO
   async createResource({ context, dispatch, state }, form) {
- 
     const resource = {
-      name     : form.name,
-      slug     : form.slug,
-      logo     : "logodefault.png",
-      latitud  : form.latitud,
-      longitud : form.longitud,
-      state    : form.state,
+      name: form.name,
+      slug: form.slug,
+      logo: "logodefault.png",
+      latitud: form.latitud.toString(),
+      longitud: form.longitud.toString(),
+      state: form.state,
       address: {
-        cp      : form.address.cp,
-        dpto    : form.address.dpto,
-        number  : form.address.number,
-        piso    : form.address.piso,
-        street  : form.address.street
+        cp: form.address.cp,
+        dpto: form.address.dpto,
+        number: form.address.number,
+        piso: form.address.piso,
+        street: form.address.street
       }
     }
     const serialized = serialize(resource, 'branches', { changeCase: 'kebabCase' })
-    await console.log(serialized)
-    await this.$axios.$post("/branches", serialized);
+    await this.$axios.$post("branches", serialized);
     await dispatch('getList', state.defaultOptions);
   },
 
