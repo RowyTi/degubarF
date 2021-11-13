@@ -65,7 +65,7 @@ export default {
           {
             id: 4,
             nombre: 'Clientes',
-            slug: 'db-admin/administracion/mi-negocio',
+            slug: 'db-admin/administracion/clientes',
             icon: 'store',
             permission: 'index:customer',
           },

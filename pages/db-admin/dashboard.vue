@@ -1,7 +1,7 @@
 <template>
   <v-row>
     <v-col cols="6">
-      <vuetify-google-autocomplete
+      <!-- <vuetify-google-autocomplete
         id="map"
         ref="address"
         prepend-icon="mdi-map-marker"
@@ -11,7 +11,7 @@
         hint="Seleccionar la dirección cuando aparezca"
         country="ar"
         @placechanged="getAddressData"
-      />
+      /> -->
 
       <!-- 
       <Gmap-Map
@@ -44,7 +44,7 @@
       </Gmap-Map> -->
     </v-col>
     <v-col cols="6">
-      {{ address }}
+      <!-- {{ address }} -->
     </v-col>
   </v-row>
 </template>
@@ -55,19 +55,11 @@ export default {
   layout: 'admin',
   middleware: 'permission-dashboard',
   data: () => ({
-    address: '',
-    markers: [],
-    place: null,
-    position: {
-      lat: null,
-      lng: null,
-    },
+    //
   }),
 
   methods: {
-    getAddressData(addressData, placeResultData, id) {
-      this.address = addressData
-    },
+    //
   },
 }
 </script>
