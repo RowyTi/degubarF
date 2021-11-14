@@ -63,16 +63,16 @@ export const actions = {
       latitud: form.latitud.toString(),
       longitud: form.longitud.toString(),
       state: form.state,
-      // address: {
-      //   cp: form.address.cp,
-      //   dpto: form.address.dpto,
-      //   number: form.address.number,
-      //   piso: form.address.piso,
-      //   street: form.address.street
-      // }
+      addresses: {
+        cp: form.address.cp,
+        dpto: form.address.dpto,
+        number: form.address.number,
+        piso: form.address.piso,
+        street: form.address.street
+      }
     }
     const serialized = serialize(resource, 'branches', { changeCase: 'kebabCase' })
-    await this.$axios.$post("branches",serialized);
+    await this.$axios.$post("branches", serialized);
     await dispatch('getList', state.defaultOptions);
   },
 
