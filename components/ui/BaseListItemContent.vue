@@ -6,7 +6,8 @@
       <v-list-item-subtitle class="text-capitalize" v-text="subtitle" />
     </v-list-item-content>
     <v-list-item-avatar v-show="avatar">
-      <v-img :alt="alt" :src="avatarLink"></v-img>
+      <v-img v-if="logo" :alt="alt" :src="avatarLink"></v-img>
+      <v-icon v-else x-large class="elevation-10" v-text="avatarIcon"></v-icon>
     </v-list-item-avatar>
   </v-list-item>
   <!-- </v-list> -->
@@ -31,9 +32,19 @@ export default {
       default: false,
       require: false,
     },
+    logo: {
+      type: Boolean,
+      default: false,
+      require: false,
+    },
     avatarLink: {
       type: String,
       default: 'imagen',
+      require: false,
+    },
+    avatarIcon: {
+      type: String,
+      default: 'mdi-image',
       require: false,
     },
     alt: {

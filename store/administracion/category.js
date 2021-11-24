@@ -1,7 +1,7 @@
 import { deserialize, serialize } from 'jsonapi-fractal'
 export const state = () => ({
-  branches: [],
-  branch: {},
+  categories: [],
+  category: {},
   totalData: null,
   defaultOptions: {
     page: 1,
@@ -13,11 +13,11 @@ export const state = () => ({
 });
 
 export const mutations = {
-  SET_BRANCHES(state, data) {
-    state.branches = data;
+  SET_CATEGORIES(state, data) {
+    state.categories = data;
   },
-  SET_BRANCH(state, data) {
-    state.branch = data;
+  SET_CATEGORY(state, data) {
+    state.category = data;
   },
   SET_TOTAL_DATA(state, data) {
     state.totalData = data;
@@ -31,9 +31,10 @@ export const actions = {
   // LISTAR RECURSOS 10/pag default
   async getList({ commit }, params) {
     // console.log(params)
-    const response = await this.$axios.$get(`branches`, {
+    const response = await this.$axios.$get(`categories`, {
       params: {
         // 'filter[branch_id]': rootState.auth.user.branch_id, // null para super admin
+        'include': 'branches',
         'page[number]': params.page,
         'page[size]': params.itemsPerPage,
         sort: params.sortDesc[0] ? '-' + params.sortBy[0] : params.sortBy[0]
@@ -41,19 +42,19 @@ export const actions = {
     })
     commit("SET_TOTAL_DATA", response.meta.page.total)
     const data = deserialize(response, { changeCase: 'camelCase' })
-    commit("SET_BRANCHES", data)
+    commit("SET_CATEGORIES", data)
   },
 
   // VER RECURSO {id}
   async getResource({ commit }, id) {
-    const response = await this.$axios.$get(`branches/${id}`, {
+    const response = await this.$axios.$get(`categories/${id}`, {
       params: {
-        'include': 'address'
+        // 'include': 'address'
       }
     })
     const serializedData = (deserialize(response, { changeCase: 'camelCase' }))
     // console.log(serializedData)
-    commit("SET_BRANCH", serializedData)
+    commit("SET_CATEGORY", serializedData)
   },
 
   // CREAR RECURSO
@@ -73,7 +74,7 @@ export const actions = {
       }
     }
     const serialized = serialize(resource, 'branches', { changeCase: 'kebabCase' })
-    await this.$axios.$post("branches", serialized);
+    await this.$axios.$post("categories", serialized);
     await dispatch('getList', state.defaultOptions);
   },
 
@@ -96,17 +97,14 @@ export const actions = {
       }
     }
     const serialized = serialize(resource, 'branches', { changeCase: 'kebabCase' })
-    console.log(form)
-    console.log(resource);
-    console.log(serialized)
-    await this.$axios.$patch(`branches/${form.id}`, serialized);
+    await this.$axios.$patch(`categories/${form.id}`, serialized);
     await dispatch('getList', state.defaultOptions);
   },
 
   // ELIMINAR RECURSO SOFT
   async deleteResource({ context, dispatch, state }, id) {
-    const serialized = serialize(id, 'branches', { changeCase: 'kebabCase' })
-    await this.$axios.$delete(`branches/${id}`, serialized);
+    const serialized = serialize(id, 'categories', { changeCase: 'kebabCase' })
+    await this.$axios.$delete(`categories/${id}`, serialized);
     await dispatch('getList', state.defaultOptions);
   }
 };

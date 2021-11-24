@@ -2,16 +2,16 @@
   <v-row justify="center" align="center">
     <v-col cols="12" md="11">
       <base-card :dialog="false">
-        <template #rightCardTitle> Administración de Clientes </template>
+        <template #rightCardTitle> Administración de Categorias </template>
         <template #leftCardTitle>
           <v-btn color="primary" small @click.stop="dialog = !dialog">
-            Nuevo Cliente<v-icon right dark>mdi-store-plus</v-icon>
+            Nuevo Categoría<v-icon right dark>mdi-shape-plus</v-icon>
           </v-btn>
         </template>
         <template #body>
           <v-data-table
             :headers="headers"
-            :items="branches"
+            :items="categories"
             :footer-props="{
               'items-per-page-options': [10, 20, 30],
               'items-per-page-text': 'Filas por página',
@@ -22,16 +22,15 @@
             :loading="loading"
           >
             <v-alert slot="no-result"> no hay resultados </v-alert>
-            <template #[`item.rating`]="{ item }">
-              <v-rating
-                v-model="item.rating"
-                color="yellow darken-3"
-                background-color="grey lighten-2"
-                empty-icon="$ratingFull"
-                half-increments
-                readonly
-                small
-              ></v-rating>
+            <template v-slot:[`item.branches`]="{ item }">
+              <!-- {{ item.branches }} -->
+              <v-chip
+                class="ma-1"
+                v-for="branch in item.branches"
+                :key="branch.id"
+              >
+                {{ branch.name }}
+              </v-chip>
             </template>
             <template #[`item.acciones`]="{ item }">
               <v-btn color="primary" icon x-small @click="showItem(item)">
@@ -46,6 +45,7 @@
             </template>
           </v-data-table>
         </template>
+        <!-- {{ categories }} -->
       </base-card>
     </v-col>
     <branch-dialog
@@ -64,26 +64,26 @@ import { mapState } from 'vuex'
 import BaseCard from '~/components/ui/BaseCard.vue'
 import BranchDialog from '~/components/dialog/branch/BranchDialog.vue'
 export default {
-  name: 'AdministracionDeMiNegocio',
+  name: 'AdministracionDeCategorias',
   components: { BaseCard, BranchDialog },
   layout: 'admin',
   data: () => ({
     headers: [
       {
-        text: 'Cliente',
+        text: 'Categoría',
         sortable: true,
         value: 'name',
       },
       {
-        text: 'Estado',
+        text: 'Locales adheridos',
         sortable: true,
-        value: 'state',
+        value: 'branches',
       },
-      {
-        text: 'Rating',
-        sortable: false,
-        value: 'rating',
-      },
+      // {
+      //   text: 'Rating',
+      //   sortable: false,
+      //   value: 'rating',
+      // },
       {
         text: 'Ult. Actualización',
         sortable: true,
@@ -99,30 +99,12 @@ export default {
     form: {
       name: '',
       slug: '',
-      state: 'inactivo',
-      longitud: '',
-      latitud: '',
-      address: {
-        street: '',
-        number: '',
-        cp: '',
-        piso: '',
-        dpto: '',
-      },
+      branch_id: '',
     },
     defaultForm: {
       name: '',
       slug: '',
-      state: 'inactivo',
-      longitud: '',
-      latitud: '',
-      address: {
-        street: '',
-        number: '',
-        cp: '',
-        piso: '',
-        dpto: '',
-      },
+      branch_id: '',
     },
     loading: false,
     dialog: false,
@@ -136,10 +118,14 @@ export default {
     },
   }),
   head: {
-    title: 'Clientes',
+    title: 'Categorías',
   },
   computed: {
-    ...mapState('administracion/branch', ['branches', 'branch', 'totalData']),
+    ...mapState('administracion/category', [
+      'categories',
+      'category',
+      'totalData',
+    ]),
   },
   watch: {
     options: {
@@ -164,7 +150,7 @@ export default {
       try {
         this.loading = true
         await this.$store.dispatch(
-          'administracion/branch/getList',
+          'administracion/category/getList',
           this.options
         )
       } catch (error) {
@@ -176,7 +162,10 @@ export default {
     },
     async showItem(item) {
       try {
-        await this.$store.dispatch('administracion/branch/getResource', item.id)
+        await this.$store.dispatch(
+          'administracion/category/getResource',
+          item.id
+        )
         this.showMode = true
         this.$nextTick(() => {
           this.form = Object.assign({}, this.branch)

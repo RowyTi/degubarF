@@ -19,174 +19,125 @@
         </v-btn>
       </template>
       <template #body class="pa-0">
-        <v-form class="my-5">
-          <v-container fluid class="mt-0 pt-0">
-            <v-tabs vertical>
-              <v-tab>
-                <v-icon left> mdi-account </v-icon>
-                Usuario
-              </v-tab>
-              <v-tab>
-                <v-icon left> mdi-face-man-profile </v-icon>
-                Perfil
-              </v-tab>
-              <v-tab>
-                <v-icon left> mdi-map-marker-account </v-icon>
-                Dirección
-              </v-tab>
-              <v-tab-item>
-                <!-- informacion de Usuario -->
-                <v-card flat>
-                  <v-card-text class="py-0">
-                    <v-list two-line subheader flat>
-                      <base-list-item-content
-                        title="Nombre de usuario"
-                        :subtitle="form.username"
-                      />
-                      <base-list-item-content
-                        title="Rol"
-                        :subtitle="
-                          form.roles && form.roles.length
-                            ? form.roles[0]
-                            : 'sin asignar'
-                        "
-                      />
-                      <base-list-item-content
-                        title="Estado"
-                        :subtitle="form.state"
-                      />
-                      <base-list-item-content
-                        title="Fecha de alta"
-                        :subtitle="form.createdAt"
-                      />
-                    </v-list>
-                  </v-card-text>
-                </v-card>
-              </v-tab-item>
-              <v-tab-item>
-                <!-- perfil de usuario -->
-                <v-card flat>
-                  <v-card-text class="py-0">
-                    <v-list>
-                      <base-list-item-content
-                        :avatar="true"
-                        :avatar-link="
-                          form.profile && form.profile.avatar
-                            ? form.profile.avatar
-                            : ''
-                        "
-                        title="Nombres"
-                        :subtitle="
-                          form.profile && form.profile.name
-                            ? form.profile.name
-                            : 'sin completar'
-                        "
-                      />
-                      <base-list-item-content
-                        title="Apellido"
-                        :subtitle="
-                          form.profile && form.profile.lastName
-                            ? form.profile.lastName
-                            : 'sin completar'
-                        "
-                      />
-                      <base-list-item-content
-                        title="Teléfono"
-                        :subtitle="
-                          form.profile && form.profile.phone
-                            ? form.profile.phone
-                            : 'sin completar'
-                        "
-                      />
-                      <base-list-item-content
-                        title="Fecha de nacimiento"
-                        :subtitle="
-                          form.profile && form.profile.dateOfBirth
-                            ? form.profile.dateOfBirth
-                            : 'sin completar'
-                        "
-                      />
-                      <base-list-item-content
-                        title="Ultima Actualización"
-                        :subtitle="
-                          form.profile && form.profile.updatedAt
-                            ? form.profile.updatedAt
-                            : 'sin completar'
-                        "
-                      />
-                    </v-list>
-                  </v-card-text>
-                </v-card>
-              </v-tab-item>
-              <v-tab-item>
-                <!-- direccion del usuario -->
-                <v-card flat>
-                  <v-card-text class="py-0">
-                    <v-list>
-                      <v-row>
-                        <v-col cols="8">
-                          <base-list-item-content
-                            title="Calle"
-                            :subtitle="
-                              form.profile && form.profile.address.street
-                                ? form.profile.address.street
-                                : 'sin completar'
-                            "
-                          />
-                        </v-col>
-                        <v-col cols="4">
-                          <base-list-item-content
-                            title="Nº"
-                            :subtitle="
-                              form.profile && form.profile.address.number
-                                ? form.profile.address.number
-                                : 'sin completar'
-                            "
-                          />
-                        </v-col>
-                        <v-col cols="4">
-                          <base-list-item-content
-                            title="Piso"
-                            :subtitle="
-                              form.profile && form.profile.address.piso
-                                ? form.profile.address.piso
-                                : 's/n'
-                            "
-                          />
-                        </v-col>
-                        <v-col cols="4">
-                          <base-list-item-content
-                            title="Dpto"
-                            :subtitle="
-                              form.profile && form.profile.address.dpto
-                                ? form.profile.address.dpto
-                                : 's/n'
-                            "
-                          />
-                        </v-col>
-                        <v-col cols="4">
-                          <base-list-item-content
-                            title="CP"
-                            :subtitle="
-                              form.profile && form.profile.address.cp
-                                ? form.profile.address.cp
-                                : 's/n'
-                            "
-                          />
-                        </v-col>
-                      </v-row>
-                    </v-list>
-                  </v-card-text>
-                </v-card>
-              </v-tab-item>
-            </v-tabs>
-          </v-container>
-        </v-form>
+        <v-container fluid class="mt-0 pt-0">
+          <v-tabs vertical>
+            <v-tab>
+              <v-icon left> mdi-store </v-icon>
+              Mi negocio
+            </v-tab>
+            <v-tab>
+              <v-icon left> mdi-map-marker-account </v-icon>
+              Dirección
+            </v-tab>
+            <v-tab-item>
+              <!-- perfil de usuario -->
+              <v-card flat>
+                <v-card-text class="py-0">
+                  <v-list>
+                    <base-list-item-content
+                      :avatar="true"
+                      :avatar-link="form.logo"
+                      :logo="form.logo !== null"
+                      title="Nombre"
+                      :subtitle="form.name"
+                    />
+                    <v-list-item>
+                      <v-list-item-content>
+                        <v-list-item-title
+                          class="text-overline"
+                          v-text="ratingTitle"
+                        />
+                        <v-rating
+                          v-model="formu.rating"
+                          color="yellow darken-3"
+                          background-color="grey lighten-2"
+                          empty-icon="$ratingFull"
+                          half-increments
+                          readonly
+                        />
+                      </v-list-item-content>
+                    </v-list-item>
+                    <base-list-item-content
+                      title="Estado"
+                      :subtitle="form.state"
+                    />
+                    <base-list-item-content
+                      title="Fecha de Alta"
+                      :subtitle="form.createdAt"
+                    />
+                  </v-list>
+                </v-card-text>
+              </v-card>
+            </v-tab-item>
+            <v-tab-item>
+              <!-- direccion del usuario -->
+              <v-card flat>
+                <v-card-text class="py-0">
+                  <v-list>
+                    <v-row>
+                      <v-col cols="6">
+                        <base-list-item-content
+                          title="Calle"
+                          :subtitle="
+                            form.address && form.address.street
+                              ? form.address.street
+                              : 'sin completar'
+                          "
+                        />
+                      </v-col>
+                      <v-col cols="6">
+                        <base-list-item-content
+                          title="Número"
+                          :subtitle="
+                            form.address && form.address.number
+                              ? form.address.number
+                              : 'sin completar'
+                          "
+                        />
+                      </v-col>
+                      <v-col cols="6">
+                        <base-list-item-content
+                          title="Piso"
+                          :subtitle="
+                            form.address && form.address.piso
+                              ? form.address.piso
+                              : 's/n'
+                          "
+                        />
+                      </v-col>
+                      <v-col cols="6">
+                        <base-list-item-content
+                          title="Dpto"
+                          :subtitle="
+                            form.address && form.address.dpto
+                              ? form.address.dpto
+                              : 's/n'
+                          "
+                        />
+                      </v-col>
+                      <v-col cols="6">
+                        <base-list-item-content
+                          title="CP"
+                          :subtitle="
+                            form.address && form.address.cp
+                              ? form.address.cp
+                              : 's/n'
+                          "
+                        />
+                      </v-col>
+                    </v-row>
+                  </v-list>
+                </v-card-text>
+              </v-card>
+            </v-tab-item>
+          </v-tabs>
+        </v-container>
       </template>
     </base-card>
     <!-- create & edit -->
     <v-form
       v-else
+      ref="formulario"
       lazy-validation
       @submit.prevent="editedIndex === -1 ? createResource() : updateResource()"
     >
@@ -378,8 +329,6 @@
                     {{ btnForm }}
                   </v-btn>
                 </div>
-
-                {{ formu }}
               </v-stepper-content>
             </v-stepper-items>
           </v-stepper>
@@ -415,7 +364,7 @@ export default {
     },
   },
   data: () => ({
-    address: '',
+    address: null,
     stepper: 1,
     itemState: ['inactivo', 'activo'],
     loading: false,
@@ -423,6 +372,20 @@ export default {
     options: {
       page: 1,
       itemsPerPage: 10,
+    },
+    defaultForm: {
+      name: '',
+      slug: '',
+      state: 'inactivo',
+      longitud: '',
+      latitud: '',
+      address: {
+        street: 'test',
+        street_number: 'test',
+        cp: 'test',
+        piso: '',
+        dpto: '',
+      },
     },
   }),
   validations: {
@@ -452,10 +415,8 @@ export default {
     },
   },
   computed: {
-    formu: {
-      get() {
-        return this.form
-      },
+    formu() {
+      return this.form
     },
     formTitle() {
       return this.editedIndex === -1
@@ -464,6 +425,10 @@ export default {
     },
     btnForm() {
       return this.editedIndex === -1 ? 'Guardar' : 'Actualizar '
+    },
+    ratingTitle() {
+      const title = 'Rating (' + this.formu.rating + ')'
+      return title
     },
     clientName: {
       get() {
@@ -480,10 +445,13 @@ export default {
     },
     street: {
       get() {
-        // eslint-disable-next-line vue/no-side-effects-in-computed-properties
-        this.formu.address.street = this.address.route
+        const street =
+          this.address !== null
+            ? // eslint-disable-next-line vue/no-side-effects-in-computed-properties
+              (this.formu.address.street = this.address.route)
+            : this.formu.address.street
 
-        return this.formu.address.street
+        return street
       },
       set(value) {
         this.formu.address.street = value
@@ -491,10 +459,13 @@ export default {
     },
     street_number: {
       get() {
-        // eslint-disable-next-line vue/no-side-effects-in-computed-properties
-        this.formu.address.number = this.address.street_number
+        const number =
+          this.address !== null
+            ? // eslint-disable-next-line vue/no-side-effects-in-computed-properties
+              (this.formu.address.number = this.address.street_number)
+            : this.formu.address.number
 
-        return this.formu.address.number
+        return number
       },
       set(value) {
         this.formu.address.number = value
@@ -502,10 +473,13 @@ export default {
     },
     postal_code: {
       get() {
-        // eslint-disable-next-line vue/no-side-effects-in-computed-properties
-        this.formu.address.cp = this.address.postal_code
+        const postalCode =
+          this.address !== null
+            ? // eslint-disable-next-line vue/no-side-effects-in-computed-properties
+              (this.formu.address.cp = this.address.postal_code)
+            : this.formu.address.cp
 
-        return this.formu.address.cp
+        return postalCode
       },
       set(value) {
         this.formu.address.cp = value
@@ -513,10 +487,13 @@ export default {
     },
     latitude: {
       get() {
-        // eslint-disable-next-line vue/no-side-effects-in-computed-properties
-        this.formu.latitud = this.address.latitude
+        const latitude =
+          this.address !== null
+            ? // eslint-disable-next-line vue/no-side-effects-in-computed-properties
+              (this.formu.latitud = this.address.latitude.toString())
+            : this.formu.latitud
 
-        return this.formu.latitud
+        return latitude
       },
       set(value) {
         this.formu.latitud = value
@@ -524,10 +501,13 @@ export default {
     },
     longitude: {
       get() {
-        // eslint-disable-next-line vue/no-side-effects-in-computed-properties
-        this.formu.longitud = this.address.longitude
+        const longitude =
+          this.address !== null
+            ? // eslint-disable-next-line vue/no-side-effects-in-computed-properties
+              (this.formu.longitud = this.address.longitude.toString())
+            : this.formu.longitud
 
-        return this.formu.longitud
+        return longitude
       },
       set(value) {
         this.formu.longitud = value
@@ -566,6 +546,8 @@ export default {
       return this.stepper++
     },
     close() {
+      this.address = null
+      this.$refs.address.clear()
       this.$v.$reset()
       this.stepper = 1
       this.$emit('closeDialog')
@@ -595,11 +577,11 @@ export default {
           })
         } else {
           alert(error)
-          // await this.$notify({
-          //   group: 'error',
-          //   title: 'Error',
-          //   text: 'Ocurrió un error en el servidor, intentelo de nuevo mas tarde..',
-          // })
+          await this.$notify({
+            group: 'error',
+            title: 'Error',
+            text: 'Ocurrió un error en el servidor, intentelo de nuevo mas tarde..',
+          })
         }
       } finally {
         this.loading = false
@@ -609,14 +591,14 @@ export default {
       try {
         this.loading = true
         await this.$store.dispatch(
-          'administracion/staff/updateResource',
+          'administracion/branch/updateResource',
           this.formu
         )
         this.close()
         await this.$notify({
           group: 'success',
           title: 'Usuario Actualiado!',
-          text: `<b>${this.formu.username}</b> fue actualizado con éxito!`,
+          text: `<b>${this.formu.name}</b> fue actualizado con éxito!`,
         })
       } catch (error) {
         if (error.response.status === 403) {

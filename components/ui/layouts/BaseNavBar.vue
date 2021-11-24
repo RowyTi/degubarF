@@ -69,13 +69,13 @@ export default {
             icon: 'store',
             permission: 'index:customer',
           },
-          // {
-          //   id: 5,
-          //   nombre: 'Categorias',
-          //   slug: 'db-admin/administracion/categorias',
-          //   icon: 'account-lock',
-          //   permission: 'index:category',
-          // },
+          {
+            id: 5,
+            nombre: 'Categorias',
+            slug: 'db-admin/administracion/categorias',
+            icon: 'shape',
+            permission: 'index:category',
+          },
         ],
       },
       /* {
