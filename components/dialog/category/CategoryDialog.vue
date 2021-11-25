@@ -20,34 +20,20 @@
       </template>
       <template #body class="pa-0">
         <v-container fluid class="mt-0 pt-0">
-          <v-tabs vertical>
-            <v-tab>
-              <v-icon left> mdi-store </v-icon>
-              Mi negocio
-            </v-tab>
-            <v-tab>
-              <v-icon left> mdi-map-marker-account </v-icon>
-              Dirección
-            </v-tab>
-            <v-tab-item>
-              <!-- perfil de usuario -->
-              <v-card flat>
-                <v-card-text class="py-0">
-                  <v-list> <base-list-item-content /></v-list>
-                </v-card-text>
-              </v-card>
-            </v-tab-item>
-            <v-tab-item>
-              <!-- direccion del usuario -->
-              <v-card flat>
-                <v-card-text class="py-0">
-                  <v-list>
-                    <v-row> </v-row>
-                  </v-list>
-                </v-card-text>
-              </v-card>
-            </v-tab-item>
-          </v-tabs>
+          <v-card flat>
+            <v-card-text class="py-0">
+              <v-list>
+                <base-list-item-content
+                  title="Categoría"
+                  :subtitle="formu.name"
+                />
+                <base-list-item-content
+                  title="URL Amigable"
+                  :subtitle="formu.slug"
+                />
+              </v-list>
+            </v-card-text>
+          </v-card>
         </v-container>
       </template>
     </base-card>
