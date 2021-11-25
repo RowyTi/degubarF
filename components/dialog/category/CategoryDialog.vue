@@ -31,6 +31,19 @@
                   title="URL Amigable"
                   :subtitle="formu.slug"
                 />
+                <base-list-item-content
+                  title="Actualizada"
+                  :subtitle="formu.updatedAt"
+                />
+                <v-chip
+                  v-for="branch in formu.branches"
+                  :key="branch.id"
+                  label
+                  class="ma-1"
+                  :color="branch.state === 'inactivo' ? 'error' : 'success'"
+                >
+                  {{ branch.name }}
+                </v-chip>
               </v-list>
             </v-card-text>
           </v-card>

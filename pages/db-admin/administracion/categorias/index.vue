@@ -40,6 +40,7 @@
                 label
                 x-small
                 class="ma-1"
+                :color="branch.state === 'inactivo' ? 'error' : 'success'"
               >
                 {{ branch.name }}
               </v-chip>
@@ -181,7 +182,7 @@ export default {
         )
         this.showMode = true
         this.$nextTick(() => {
-          this.form = Object.assign({}, this.branch)
+          this.form = Object.assign({}, this.category)
         })
         this.dialog = true
       } catch (error) {

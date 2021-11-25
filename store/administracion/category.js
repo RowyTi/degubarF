@@ -49,7 +49,7 @@ export const actions = {
   async getResource({ commit }, id) {
     const response = await this.$axios.$get(`categories/${id}`, {
       params: {
-        // 'include': 'address'
+        'include': 'branches',
       }
     })
     const serializedData = (deserialize(response, { changeCase: 'camelCase' }))
