@@ -61,19 +61,9 @@ export const actions = {
   async createResource({ context, dispatch, state }, form) {
     const resource = {
       name: form.name,
-      slug: form.slug,
-      latitud: form.latitud.toString(),
-      longitud: form.longitud.toString(),
-      state: form.state,
-      addresses: {
-        cp: form.address.cp,
-        dpto: form.address.dpto,
-        number: form.address.number,
-        piso: form.address.piso,
-        street: form.address.street
-      }
+      slug: form.slug
     }
-    const serialized = serialize(resource, 'branches', { changeCase: 'kebabCase' })
+    const serialized = serialize(resource, 'categories', { changeCase: 'kebabCase' })
     await this.$axios.$post("categories", serialized);
     await dispatch('getList', state.defaultOptions);
   },
@@ -84,19 +74,8 @@ export const actions = {
       id: form.id,
       name: form.name,
       slug: form.slug,
-      latitud: form.latitud,
-      longitud: form.longitud,
-      state: form.state,
-      addresses: {
-        id: form.address.id,
-        cp: form.address.cp,
-        dpto: form.address.dpto,
-        number: form.address.number,
-        piso: form.address.piso,
-        street: form.address.street
-      }
     }
-    const serialized = serialize(resource, 'branches', { changeCase: 'kebabCase' })
+    const serialized = serialize(resource, 'categories', { changeCase: 'kebabCase' })
     await this.$axios.$patch(`categories/${form.id}`, serialized);
     await dispatch('getList', state.defaultOptions);
   },

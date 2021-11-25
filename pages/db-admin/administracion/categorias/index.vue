@@ -22,12 +22,24 @@
             :loading="loading"
           >
             <v-alert slot="no-result"> no hay resultados </v-alert>
-            <template v-slot:[`item.branches`]="{ item }">
-              <!-- {{ item.branches }} -->
+            <template #[`item.branches`]="{ item }">
               <v-chip
-                class="ma-1"
+                color="info"
+                small
+                label
+                outlined
+                v-if="item.branches.length < 1"
+              >
+                <v-icon size="small" left> mdi-information </v-icon>
+                No hay locales asociados a esta categoría.
+              </v-chip>
+              <v-chip
+                v-else
                 v-for="branch in item.branches"
                 :key="branch.id"
+                label
+                x-small
+                class="ma-1"
               >
                 {{ branch.name }}
               </v-chip>
@@ -48,7 +60,7 @@
         <!-- {{ categories }} -->
       </base-card>
     </v-col>
-    <branch-dialog
+    <category-dialog
       v-model="dialog"
       :form="form"
       :edited-index="editedIndex"
@@ -62,10 +74,10 @@
 import { deserialize } from 'jsonapi-fractal'
 import { mapState } from 'vuex'
 import BaseCard from '~/components/ui/BaseCard.vue'
-import BranchDialog from '~/components/dialog/branch/BranchDialog.vue'
+import CategoryDialog from '~/components/dialog/category/CategoryDialog.vue'
 export default {
   name: 'AdministracionDeCategorias',
-  components: { BaseCard, BranchDialog },
+  components: { BaseCard, CategoryDialog },
   layout: 'admin',
   data: () => ({
     headers: [
@@ -88,6 +100,7 @@ export default {
         text: 'Ult. Actualización',
         sortable: true,
         value: 'updatedAt',
+        width: '11rem',
       },
       {
         text: 'Acciones',
@@ -189,16 +202,16 @@ export default {
     },
     async editItem(item) {
       try {
-        const res = await this.$axios.$get(`branches/${item.id}`, {
+        const res = await this.$axios.$get(`categories/${item.id}`, {
           params: {
-            include: 'address',
+            // include: 'address',
           },
         })
         const deserializeData = deserialize(res, {
           changeCase: 'camelCase',
         })
 
-        this.editedIndex = this.branches.indexOf(item)
+        this.editedIndex = this.categories.indexOf(item)
         this.form = Object.assign({}, deserializeData)
         this.dialog = true
       } catch (error) {
@@ -213,13 +226,13 @@ export default {
     async deleteItem(item) {
       try {
         await this.$store.dispatch(
-          'administracion/branch/deleteResource',
+          'administracion/category/deleteResource',
           item.id
         )
         await this.$notify({
           group: 'success',
-          title: 'Local Eliminado',
-          text: `${item.name} fue elimiando con éxito!`,
+          title: 'Categoría Eliminada',
+          text: `La categiría ${item.name} fue elimianda con éxito!`,
         })
       } catch (error) {
         if (error.response.status === 403)
