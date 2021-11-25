@@ -24,18 +24,18 @@
             <v-alert slot="no-result"> no hay resultados </v-alert>
             <template #[`item.branches`]="{ item }">
               <v-chip
+                v-if="item.branches.length < 1"
                 color="info"
                 small
                 label
                 outlined
-                v-if="item.branches.length < 1"
               >
                 <v-icon size="small" left> mdi-information </v-icon>
                 No hay locales asociados a esta categoría.
               </v-chip>
               <v-chip
-                v-else
                 v-for="branch in item.branches"
+                v-else
                 :key="branch.id"
                 label
                 x-small

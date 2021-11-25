@@ -96,9 +96,9 @@ export const actions = {
       }
     }
     const serialized = serialize(resource, 'branches', { changeCase: 'kebabCase' })
-    console.log(form)
-    console.log(resource);
-    console.log(serialized)
+    // console.log(form)
+    // console.log(resource);
+    // console.log(serialized)
     await this.$axios.$patch(`branches/${form.id}`, serialized);
     await dispatch('getList', state.defaultOptions);
   },
