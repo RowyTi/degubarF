@@ -9,11 +9,11 @@
           </v-btn>
         </template>
         <template #body>
+          {{ tables }}
           <vue-qr text="Hello world!" :size="200"></vue-qr>
-          <vue-qr text="Hello world!" :callback="test" qid="testid"></vue-qr>
-          <!-- <v-data-table
+          <v-data-table
             :headers="headers"
-            :items="staff"
+            :items="tables"
             :footer-props="{
               'items-per-page-options': [10, 20, 30],
               'items-per-page-text': 'Filas por página',
@@ -24,6 +24,9 @@
             :loading="loading"
           >
             <v-alert slot="no-result"> no hay resultados </v-alert>
+            <template #[`item.updatedAt`]="{ item }">
+              <span>{{ $moment(item.updatedAt) }} </span>
+            </template>
             <template #[`item.roles`]="{ item }">
               <span v-if="item.lenght < 1">Sin Asignar</span>
             </template>
@@ -38,7 +41,7 @@
                 <v-icon> mdi-delete </v-icon>
               </v-btn>
             </template>
-          </v-data-table> -->
+          </v-data-table>
         </template>
       </base-card>
     </v-col>
@@ -59,16 +62,16 @@ import { mapState } from 'vuex'
 import BaseCard from '~/components/ui/BaseCard.vue'
 import StaffDialog from '~/components/dialog/staff/StaffDialog.vue'
 export default {
-  name: 'AdministracionStaff',
+  name: 'AdministracionTable',
   components: { BaseCard, StaffDialog, VueQr },
   layout: 'admin',
-  middleware: 'permission-staff',
+  middleware: 'permission-table',
   data: () => ({
     headers: [
       {
-        text: 'Usuario',
+        text: 'Mesa',
         sortable: true,
-        value: 'username',
+        value: 'name',
       },
       {
         text: 'Estado',
@@ -76,10 +79,11 @@ export default {
         value: 'state',
       },
       {
-        text: 'Rol',
-        sortable: false,
-        value: 'roles[0]',
+        text: 'Actualizado',
+        sortable: true,
+        value: 'updatedAt',
       },
+
       {
         text: 'Acciones',
         value: 'acciones',
@@ -91,51 +95,26 @@ export default {
       username: '',
       state: '',
       branch_id: null,
-      profile: {
-        name: '',
-        lastName: '',
-        dateOfBirth: '',
-        phone: '',
-        address: {
-          street: '',
-          number: '',
-          piso: '',
-          dpto: '',
-          cp: '',
-        },
-      },
     },
     defaultForm: {
       username: '',
       password: '',
       state: '',
       branch_id: null,
-      profile: {
-        name: '',
-        lastName: '',
-        dateOfBirth: '',
-        phone: '',
-        address: {
-          street: '',
-          number: '',
-          piso: '',
-          dpto: '',
-          cp: '',
-        },
-      },
     },
     loading: false,
     dialog: false,
     editedIndex: -1,
     showMode: false,
-    options: {},
+    options: { sortBy: ['updatedAt'], sortDesc: [true] },
   }),
   head: {
-    title: 'Staff',
+    title: 'Mesas',
   },
   computed: {
-    ...mapState('administracion/staff', ['staff', 'empleado', 'totalData']),
+    ...mapState('administracion/table', ['tables', 'table', 'totalData']),
   },
+
   watch: {
     options: {
       handler() {
@@ -145,9 +124,6 @@ export default {
     deep: true,
   },
   methods: {
-    test(dataUrl, id) {
-      console.log(dataUrl, id)
-    },
     closeDialog() {
       this.dialog = false
       setTimeout(() => {
@@ -161,7 +137,7 @@ export default {
     async getData() {
       try {
         this.loading = true
-        await this.$store.dispatch('administracion/staff/getList', this.options)
+        await this.$store.dispatch('administracion/table/getList', this.options)
       } catch (error) {
         if (error.response.status === 403)
           alert('Usted no esta Autorizado para realizar esta acción')
@@ -171,10 +147,10 @@ export default {
     },
     async showItem(item) {
       try {
-        await this.$store.dispatch('administracion/staff/getResource', item.id)
+        await this.$store.dispatch('administracion/table/getResource', item.id)
         this.showMode = true
         this.$nextTick(() => {
-          this.form = Object.assign({}, this.empleado)
+          this.form = Object.assign({}, this.tables)
         })
         this.dialog = true
       } catch (error) {
@@ -188,7 +164,7 @@ export default {
     },
     async editItem(item) {
       try {
-        const res = await this.$axios.$get(`staff/${item.id}`, {
+        const res = await this.$axios.$get(`table/${item.id}`, {
           params: {
             include: 'profile,profile.address',
           },

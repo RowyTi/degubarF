@@ -81,7 +81,7 @@ export default {
             nombre: 'Mesas',
             slug: 'db-admin/administracion/mesas',
             icon: 'table-chair',
-            permission: 'index:category',
+            permission: 'index:table',
           },
         ],
       },
