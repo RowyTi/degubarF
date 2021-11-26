@@ -22,6 +22,15 @@
             :loading="loading"
           >
             <v-alert slot="no-result"> no hay resultados </v-alert>
+            <template #[`item.state`]="{ item }">
+              <v-chip
+                :color="branchState(item.state)"
+                label
+                x-small
+                class="text-caption text-uppercase"
+                v-text="item.state"
+              />
+            </template>
             <template #[`item.rating`]="{ item }">
               <v-rating
                 v-model="item.rating"
@@ -150,6 +159,9 @@ export default {
     deep: true,
   },
   methods: {
+    branchState(value) {
+      return value === 'inactivo' ? 'error' : 'success'
+    },
     closeDialog() {
       this.dialog = false
       setTimeout(() => {
