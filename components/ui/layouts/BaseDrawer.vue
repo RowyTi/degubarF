@@ -4,14 +4,15 @@
       <v-list-item class="" two-line style="height: 64px !important">
         <v-list-item-avatar tile size="58">
           <!-- <img :src="userFoto" /> -->
-          <img src="/images/logo-degubar.png" alt="logo" />
+          <img :src="logoBranch" :alt="altLogoBranch" />
         </v-list-item-avatar>
 
         <v-list-item-content class="pb-1">
-          <v-list-item-title class="font-weight-medium text-uppercase">
-            Degubar
-          </v-list-item-title>
-          <v-list-item-subtitle>Panel de Control</v-list-item-subtitle>
+          <v-list-item-title
+            class="font-weight-medium text-uppercase"
+            v-text="$auth.user.username"
+          />
+          <v-list-item-subtitle v-text="'Panel de Control'" />
         </v-list-item-content>
       </v-list-item>
       <v-divider class="mb-4" />
@@ -82,6 +83,16 @@ export default {
       set(value) {
         return value
       },
+    },
+    logoBranch() {
+      return this.$auth.user.branch === null
+        ? '/images/logo-degubar.png'
+        : this.$auth.user.branch.logo
+    },
+    altLogoBranch() {
+      return this.$auth.user.branch === null
+        ? 'Logo Degubar'
+        : 'Logo ' + this.$auth.user.branch.name
     },
   },
   watch: {

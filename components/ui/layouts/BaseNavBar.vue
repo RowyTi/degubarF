@@ -8,7 +8,7 @@
       height="64"
     >
       <v-app-bar-nav-icon class="primary--text" @click.stop="openDrawer" />
-      <v-toolbar-title class="text-body-1"> Cervelar Recoleta </v-toolbar-title>
+      <v-toolbar-title class="text-body-1" v-text="nameBranch" />
       <v-spacer></v-spacer>
       <v-btn icon class="mr-2" @click="logout">
         <v-icon>mdi-logout-variant</v-icon>
@@ -104,6 +104,11 @@ export default {
   }),
   computed: {
     ...mapGetters(['isAuthenticated', 'user']),
+    nameBranch() {
+      return this.user.branch === null
+        ? 'Administrador Degubar'
+        : this.user.branch.name
+    },
     // nombreCompleto() {
     //     return this.user.first_name + " " + this.user.last_name;
     // },
