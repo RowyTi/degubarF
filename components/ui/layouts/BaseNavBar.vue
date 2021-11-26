@@ -76,6 +76,13 @@ export default {
             icon: 'shape',
             permission: 'index:category',
           },
+          {
+            id: 6,
+            nombre: 'Mesas',
+            slug: 'db-admin/administracion/mesas',
+            icon: 'table-chair',
+            permission: 'index:category',
+          },
         ],
       },
       /* {
