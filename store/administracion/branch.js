@@ -33,7 +33,6 @@ export const actions = {
     // console.log(params)
     const response = await this.$axios.$get(`branches`, {
       params: {
-        // 'filter[branch_id]': rootState.auth.user.branch_id, // null para super admin
         'page[number]': params.page,
         'page[size]': params.itemsPerPage,
         sort: params.sortDesc[0] ? '-' + params.sortBy[0] : params.sortBy[0]
