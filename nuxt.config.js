@@ -46,9 +46,12 @@ export default {
     // https://go.nuxtjs.dev/vuetify
     '@nuxtjs/vuetify',
     // https://github.com/nuxt-community/moment-module
-    '@nuxtjs/moment',
+    ['@nuxtjs/moment', { locales: ['es'] }]
   ],
   moment: {
+    plugins: [
+      'moment-twitter',
+    ],
     locales: ['es']
   },
 

@@ -25,7 +25,7 @@
           >
             <v-alert slot="no-result"> no hay resultados </v-alert>
             <template #[`item.updatedAt`]="{ item }">
-              <span>{{ $moment(item.updatedAt) }} </span>
+              <span>{{ fecha(item.updatedAt) }} </span>
             </template>
             <template #[`item.roles`]="{ item }">
               <span v-if="item.lenght < 1">Sin Asignar</span>
@@ -124,6 +124,11 @@ export default {
     deep: true,
   },
   methods: {
+    fecha(value) {
+      // const moment = require('moment-twitter')
+      // return moment(value).twitterLong()
+      return this.$moment(value)
+    },
     closeDialog() {
       this.dialog = false
       setTimeout(() => {
