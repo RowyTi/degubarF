@@ -45,16 +45,8 @@ export default {
     '@nuxtjs/eslint-module',
     // https://go.nuxtjs.dev/vuetify
     '@nuxtjs/vuetify',
-    // https://github.com/nuxt-community/moment-module
-    ['@nuxtjs/moment', { locales: ['es'] }]
-  ],
-  moment: {
-    plugins: [
-      'moment-twitter',
     ],
-    locales: ['es']
-  },
-
+   
   // Modules: https://go.nuxtjs.dev/config-modules
   modules: [
     '@nuxtjs/auth-next',
@@ -132,7 +124,7 @@ export default {
   // PWA module configuration: https://go.nuxtjs.dev/pwa
   pwa: {
     manifest: {
-      lang: 'en'
+      lang: 'es'
     }
   },
 
