@@ -9,8 +9,7 @@
           </v-btn>
         </template>
         <template #body>
-          {{ tables }}
-          <vue-qr text="Hello world!" :size="200"></vue-qr>
+          <!-- {{ tables }} -->
           <v-data-table
             :headers="headers"
             :items="tables"
@@ -42,7 +41,7 @@
         </template>
       </base-card>
     </v-col>
-    <staff-dialog
+    <table-dialog
       v-model="dialog"
       :form="form"
       :edited-index="editedIndex"
@@ -53,14 +52,13 @@
 </template>
 
 <script>
-import VueQr from 'vue-qr'
 import { deserialize } from 'jsonapi-fractal'
 import { mapState } from 'vuex'
 import BaseCard from '~/components/ui/BaseCard.vue'
-import StaffDialog from '~/components/dialog/staff/StaffDialog.vue'
+import TableDialog from '~/components/dialog/table/TableDialog.vue'
 export default {
   name: 'AdministracionTable',
-  components: { BaseCard, StaffDialog, VueQr },
+  components: { BaseCard, TableDialog },
   layout: 'admin',
   middleware: 'permission-table',
   data: () => ({
@@ -89,15 +87,16 @@ export default {
       },
     ],
     form: {
-      username: '',
+      name: '',
+      slug: '',
       state: '',
-      branch_id: null,
+      qr: '',
     },
     defaultForm: {
-      username: '',
-      password: '',
+      name: '',
+      slug: '',
       state: '',
-      branch_id: null,
+      qr: '',
     },
     loading: false,
     dialog: false,

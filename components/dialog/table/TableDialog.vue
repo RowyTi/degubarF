@@ -71,20 +71,53 @@
         <template #body>
           <v-container fluid class="mt-5 pt-0">
             <v-row>
-              <v-col cols="12" class="pb-0">
-                <v-text-field
-                  v-model="clientName"
-                  outlined
-                  label="Nombre de Categorīa"
-                ></v-text-field>
+              <v-col cols="6">
+                <v-col cols="12" class="pb-0">
+                  <v-text-field
+                    v-model="clientName"
+                    outlined
+                    label="Número de Mesa"
+                  ></v-text-field>
+                </v-col>
+                <v-col cols="12" class="pb-0">
+                  <v-text-field
+                    v-model="formu.slug"
+                    disabled
+                    outlined
+                    label="Url amigable"
+                  ></v-text-field>
+                </v-col>
+                <v-col cols="12" class="pb-0">
+                  <v-text-field
+                    v-model="formu.state"
+                    outlined
+                    label="Estado"
+                  ></v-text-field>
+                </v-col>
               </v-col>
-              <v-col cols="12" class="pb-0">
-                <v-text-field
-                  v-model="formu.slug"
-                  disabled
-                  outlined
-                  label="Url amigable"
-                ></v-text-field>
+              <!-- codigo qr -->
+              <v-col cols="6">
+                <v-subheader v-text="'Código QR'" />
+                <v-sheet
+                  v-if="qrValue.length < 1"
+                  height="200"
+                  width="200"
+                  color="blue-grey lighten-5 d-flex align-center"
+                  rounded
+                  elevation="5"
+                >
+                  <p class="mx-2">
+                    El código se generará automaticamente al ingresar el nombre
+                    de la mesa
+                  </p>
+                </v-sheet>
+
+                <vue-qr
+                  v-else
+                  :text="qrValue"
+                  :size="200"
+                  :callback="qrImage"
+                ></vue-qr>
               </v-col>
             </v-row>
           </v-container>
@@ -109,12 +142,13 @@
 
 <script>
 import slugify from 'slugify'
+import VueQr from 'vue-qr'
 import { required } from 'vuelidate/lib/validators'
 import BaseCard from '~/components/ui/BaseCard.vue'
 import BaseListItemContent from '~/components/ui/BaseListItemContent.vue'
 export default {
   name: 'TableDialog',
-  components: { BaseCard, BaseListItemContent },
+  components: { BaseCard, BaseListItemContent, VueQr },
   props: {
     form: {
       type: Object,
@@ -133,15 +167,18 @@ export default {
     },
   },
   data: () => ({
-    address: null,
     stepper: 1,
-    itemState: ['inactivo', 'activo'],
+    itemState: ['inactivo', 'libre', 'ocupado'],
     loading: false,
-    loadingSearch: false,
     options: {
       page: 1,
       itemsPerPage: 10,
     },
+    // name: '',
+    // slug: '',
+    // state: '',
+    // qr: '',
+    // branhc_id: '',
   }),
   validations: {
     formu: {
@@ -159,7 +196,7 @@ export default {
     },
     formTitle() {
       return this.editedIndex === -1
-        ? 'Categoría Nueva'
+        ? 'Mesa Nueva'
         : 'Editar  ' + this.form.name
     },
     btnForm() {
@@ -178,13 +215,18 @@ export default {
         this.formu.name = value
       },
     },
+    qrValue() {
+      return this.formu.slug
+    },
   },
   methods: {
+    qrImage(dataUrl) {
+      this.formu.qr = dataUrl
+    },
     nextStep() {
       return this.stepper++
     },
     close() {
-      this.address = null
       this.$v.$reset()
       this.stepper = 1
       this.$emit('closeDialog')
@@ -195,14 +237,14 @@ export default {
         if (!this.$v.$invalid) {
           this.loading = true
           await this.$store.dispatch(
-            'administracion/category/createResource',
+            'administracion/table/createResource',
             this.formu
           )
           this.close()
           await this.$notify({
             group: 'success',
-            title: 'Categoría creada!',
-            text: `La categoría <b>${this.formu.name}</b> fue creado con éxito!`,
+            title: 'Mesa creada!',
+            text: `La Mesa <b>${this.formu.name}</b> fue creado con éxito!`,
           })
         }
       } catch (error) {
