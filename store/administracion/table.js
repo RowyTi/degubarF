@@ -63,10 +63,10 @@ export const actions = {
       qr: form.qr,
       branch_id: rootState.auth.user.branch_id.toString()
     }
-    const serialized = serialize(resource, 'tables', { changeCase: 'kebabCase' })
-    await console.log(serialized);
-    // await this.$axios.$post("/tables", serialized);
-    // await dispatch('getList', state.defaultOptions);
+    const serialized = serialize(resource, 'tables', { changeCase: 'snakeCase' })
+    // await console.log(serialized);
+    await this.$axios.$post("/tables", serialized);
+    await dispatch('getList', state.defaultOptions);
   },
 
   // ACTUALIZAR RECURSO
