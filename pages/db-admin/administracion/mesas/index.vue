@@ -4,6 +4,15 @@
       <base-card :dialog="false">
         <template #rightCardTitle> Administración de Mesas </template>
         <template #leftCardTitle>
+          <v-btn
+            color="accent"
+            small
+            class="mr-2"
+            @click="print(tables)"
+            :disabled="tables.length < 1"
+          >
+            Imprimir QR <v-icon right dark v-text="'mdi-qrcode-scan'" />
+          </v-btn>
           <v-btn color="primary" small @click.stop="dialog = !dialog">
             Agregar Mesa<v-icon right dark>mdi-table-chair</v-icon>
           </v-btn>
@@ -38,6 +47,9 @@
               />
             </template>
             <template #[`item.acciones`]="{ item }">
+              <v-btn color="accent" icon x-small @click="print([item])">
+                <v-icon> mdi-qrcode-scan </v-icon>
+              </v-btn>
               <v-btn color="primary" icon x-small @click="showItem(item)">
                 <v-icon> mdi-eye </v-icon>
               </v-btn>
@@ -59,25 +71,7 @@
       :show-mode="showMode"
       @closeDialog="closeDialog"
     />
-    <!-- <img
-      src="http://localhost:8000/storage/mesas/8/8-mesa-balcon-1.png"
-      id="printMe"
-    /> -->
-    <div id="printMe">
-      <div class="w-48 border-double border-4 pa-1 rounded overflow-hidden m-2">
-        <img
-          class="object-contain h-48 w-full"
-          src="http://localhost:8000/storage/mesas/8/8-mesa-balcon-1.png"
-          alt="Sunset in the mountains"
-        />
-        <!-- <div class="px-6 py-4">
-          <div class="font-bold text-2xl mb-2">Escaneá y comenzá a pedir!</div>
-        </div> -->
-      </div>
-      <p class="font-bold text-xs ml-2">Mesa id: <code>mesa 12</code></p>
-      <p class="font-thin text-xs ml-2">Recortá la imagen sobre el borde</p>
-    </div>
-    <v-btn @click="print">print</v-btn>
+    <base-print :qr="qrData" @print="print" />
   </v-row>
 </template>
 
@@ -86,13 +80,14 @@ import { deserialize } from 'jsonapi-fractal'
 import { mapState } from 'vuex'
 import BaseCard from '~/components/ui/BaseCard.vue'
 import TableDialog from '~/components/dialog/table/TableDialog.vue'
+import BasePrint from '~/components/ui/layouts/BasePrint.vue'
 export default {
   name: 'AdministracionTable',
-  components: { BaseCard, TableDialog },
+  components: { BaseCard, TableDialog, BasePrint },
   layout: 'admin',
   middleware: 'permission-table',
   data: () => ({
-    output: null,
+    qrData: [],
     headers: [
       {
         text: 'Mesa',
@@ -151,8 +146,11 @@ export default {
     deep: true,
   },
   methods: {
-    async print() {
-      // Pass the element id here
+    loadPrintData(value) {
+      this.qrData = value
+    },
+    async print(data) {
+      await this.loadPrintData(data)
       await this.$htmlToPaper('printMe')
     },
     closeDialog() {
