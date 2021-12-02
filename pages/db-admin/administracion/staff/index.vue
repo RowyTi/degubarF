@@ -23,7 +23,17 @@
           >
             <v-alert slot="no-result"> no hay resultados </v-alert>
             <template #[`item.roles`]="{ item }">
-              <span v-if="item.lenght < 1">Sin Asignar</span>
+              <span v-if="item.roles.length < 1">Sin Asignar</span>
+              <span v-else v-text="item.roles[0]"></span>
+            </template>
+            <template #[`item.state`]="{ item }">
+              <v-chip
+                :color="item.state === 'inactivo' ? 'error' : 'success'"
+                label
+                x-small
+                class="text-caption text-uppercase"
+                v-text="item.state"
+              />
             </template>
             <template #[`item.acciones`]="{ item }">
               <v-btn color="primary" icon x-small @click="showItem(item)">
@@ -75,7 +85,7 @@ export default {
       {
         text: 'Rol',
         sortable: false,
-        value: 'roles[0]',
+        value: 'roles',
       },
       {
         text: 'Acciones',
@@ -86,7 +96,7 @@ export default {
     ],
     form: {
       username: '',
-      state: '',
+      state: 'inactivo',
       branch_id: null,
       profile: {
         name: '',
@@ -105,7 +115,7 @@ export default {
     defaultForm: {
       username: '',
       password: '',
-      state: '',
+      state: 'inactivo',
       branch_id: null,
       profile: {
         name: '',

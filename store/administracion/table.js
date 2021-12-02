@@ -45,13 +45,13 @@ export const actions = {
 
   // VER RECURSO {id}
   async getResource({ commit }, id) {
-    const response = await this.$axios.$get(`staff/${id}`, {
+    const response = await this.$axios.$get(`tables/${id}`, {
       params: {
-        'include': 'profile,profile.address'
+        // 'include': 'branch'
       }
     })
     const serializedData = (deserialize(response, { changeCase: 'camelCase' }))
-    commit("SET_EMPLEADO", serializedData)
+    commit("SET_TABLE", serializedData)
   },
 
   // CREAR RECURSO
@@ -73,34 +73,22 @@ export const actions = {
   async updateResource({ context, dispatch, state }, form) {
     const resource = {
       id: form.id,
-      username: form.username,
+      name: form.name,
+      slug: form.slug,
       state: form.state,
-      password: form.password,
-      profile: {
-        id: form.profile.id,
-        avatar: "rutadefualt.png",
-        dateOfBirth: form.profile.dateOfBirth,
-        lastName: form.profile.lastName,
-        name: form.profile.name,
-        phone: form.profile.phone,
-        address: {
-          cp: form.profile.address.cp,
-          dpto: form.profile.address.dpto,
-          number: form.profile.address.number,
-          piso: form.profile.address.piso,
-          street: form.profile.address.street
-        }
-      }
+      qr: form.qr,
+      branch_id: form.branchId.toString()
     }
-    const serialized = serialize(resource, 'staff', { changeCase: 'kebabCase' })
-    await this.$axios.$patch(`staff/${form.id}`, serialized);
+    const serialized = serialize(resource, 'tables', { changeCase: 'snakeCase' })
+    console.log(serialized);
+    await this.$axios.$patch(`tables/${form.id}`, serialized);
     await dispatch('getList', state.defaultOptions);
   },
 
   // ELIMINAR RECURSO SOFT
   async deleteResource({ context, dispatch, state }, id) {
-    const serialized = serialize(id, 'staff', { changeCase: 'kebabCase' })
-    await this.$axios.$delete(`staff/${id}`, serialized);
+    const serialized = serialize(id, 'tables', { changeCase: 'kebabCase' })
+    await this.$axios.$delete(`tables/${id}`, serialized);
     await dispatch('getList', state.defaultOptions);
   }
 };

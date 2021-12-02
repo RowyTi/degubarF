@@ -23,8 +23,20 @@
             :loading="loading"
           >
             <v-alert slot="no-result"> no hay resultados </v-alert>
-            <template #[`item.roles`]="{ item }">
-              <span v-if="item.lenght < 1">Sin Asignar</span>
+            <template #[`item.state`]="{ item }">
+              <v-chip
+                :color="
+                  item.state === 'inactivo'
+                    ? 'disabled'
+                    : item.state === 'ocupado'
+                    ? 'error'
+                    : 'success'
+                "
+                label
+                x-small
+                class="text-caption text-uppercase"
+                v-text="item.state"
+              />
             </template>
             <template #[`item.acciones`]="{ item }">
               <v-btn color="primary" icon x-small @click="showItem(item)">
@@ -89,13 +101,13 @@ export default {
     form: {
       name: '',
       slug: '',
-      state: '',
+      state: 'inactivo',
       qr: '',
     },
     defaultForm: {
       name: '',
       slug: '',
-      state: '',
+      state: 'inactivo',
       qr: '',
     },
     loading: false,
@@ -146,7 +158,7 @@ export default {
         await this.$store.dispatch('administracion/table/getResource', item.id)
         this.showMode = true
         this.$nextTick(() => {
-          this.form = Object.assign({}, this.tables)
+          this.form = Object.assign({}, this.table)
         })
         this.dialog = true
       } catch (error) {
@@ -160,15 +172,15 @@ export default {
     },
     async editItem(item) {
       try {
-        const res = await this.$axios.$get(`table/${item.id}`, {
+        const res = await this.$axios.$get(`tables/${item.id}`, {
           params: {
-            include: 'profile,profile.address',
+            // include: 'branch',
           },
         })
         const deserializeData = deserialize(res, {
           changeCase: 'camelCase',
         })
-        this.editedIndex = this.staff.indexOf(item)
+        this.editedIndex = this.tables.indexOf(item)
         this.form = Object.assign({}, deserializeData)
         this.dialog = true
       } catch (error) {
@@ -183,13 +195,13 @@ export default {
     async deleteItem(item) {
       try {
         await this.$store.dispatch(
-          'administracion/staff/deleteResource',
+          'administracion/table/deleteResource',
           item.id
         )
         await this.$notify({
           group: 'success',
-          title: 'Usuario Eliminado',
-          text: `${item.username} fue elimiando con éxito!`,
+          title: 'Mesa Eliminada',
+          text: `La mesa ${item.name} fue elimianda con éxito!`,
         })
       } catch (error) {
         if (error.response.status === 403)

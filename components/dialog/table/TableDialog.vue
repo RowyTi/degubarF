@@ -22,29 +22,30 @@
         <v-container fluid class="mt-0 pt-0">
           <v-card flat>
             <v-card-text class="py-0">
-              <v-list>
-                <base-list-item-content
-                  title="Categoría"
-                  :subtitle="formu.name"
-                />
-                <base-list-item-content
-                  title="URL Amigable"
-                  :subtitle="formu.slug"
-                />
-                <base-list-item-content
-                  title="Actualizada"
-                  :subtitle="formu.updatedAt"
-                />
-                <v-chip
-                  v-for="branch in formu.branches"
-                  :key="branch.id"
-                  label
-                  class="ma-1"
-                  :color="branch.state === 'inactivo' ? 'error' : 'success'"
-                >
-                  {{ branch.name }}
-                </v-chip>
-              </v-list>
+              <v-row>
+                <v-col cols="6">
+                  <v-list>
+                    <base-list-item-content
+                      title="Categoría"
+                      :subtitle="formu.name"
+                    />
+                    <base-list-item-content
+                      title="Estado"
+                      :subtitle="formu.state"
+                      class="text-capitalize"
+                    />
+                    <base-list-item-content
+                      title="Actualizada"
+                      :subtitle="formu.updatedAt"
+                    />
+                  </v-list>
+                </v-col>
+                <v-col cols="6">
+                  <v-img
+                    :src="'http://bdegubar.test/storage/' + formu.qr"
+                  ></v-img>
+                </v-col>
+              </v-row>
             </v-card-text>
           </v-card>
         </v-container>
@@ -82,24 +83,30 @@
                 <v-col cols="12" class="pb-0">
                   <v-text-field
                     v-model="formu.slug"
+                    hidden
                     disabled
                     outlined
-                    label="Url amigable"
+                    class="d-none"
                   ></v-text-field>
                 </v-col>
                 <v-col cols="12" class="pb-0">
-                  <v-text-field
+                  <v-select
                     v-model="formu.state"
-                    outlined
                     label="Estado"
-                  ></v-text-field>
+                    :items="itemState"
+                    :item-text="itemState.text"
+                    :item-value="itemState.value"
+                    value="inactivo"
+                    outlined
+                  >
+                  </v-select>
                 </v-col>
               </v-col>
               <!-- codigo qr -->
               <v-col cols="6">
                 <v-subheader v-text="'Código QR'" />
                 <v-sheet
-                  v-if="qrValue.length < 1"
+                  v-if="formu.name.length < 1"
                   height="200"
                   width="200"
                   color="blue-grey lighten-5 d-flex align-center"
@@ -114,7 +121,7 @@
 
                 <vue-qr
                   v-else
-                  :text="qrValue"
+                  :text="formu.slug"
                   :size="200"
                   :callback="qrImage"
                 ></vue-qr>
@@ -168,7 +175,20 @@ export default {
   },
   data: () => ({
     stepper: 1,
-    itemState: ['inactivo', 'libre', 'ocupado'],
+    itemState: [
+      {
+        text: 'Inactivo',
+        value: 'inactivo',
+      },
+      {
+        text: 'Ocupado',
+        value: 'ocupado',
+      },
+      {
+        text: 'Libre',
+        value: 'libre',
+      },
+    ],
     loading: false,
     options: {
       page: 1,
@@ -205,20 +225,21 @@ export default {
     clientName: {
       get() {
         // eslint-disable-next-line vue/no-side-effects-in-computed-properties
-        this.formu.slug = slugify(this.formu.name, {
-          lower: true,
-          strict: true,
-        })
+        this.formu.slug = slugify(
+          this.$auth.user.branch.id + '-' + this.formu.name,
+          {
+            lower: true,
+            strict: true,
+          }
+        )
         return this.formu.name
       },
       set(value) {
         this.formu.name = value
       },
     },
-    qrValue() {
-      return this.formu.slug
-    },
   },
+
   methods: {
     qrImage(dataUrl) {
       this.formu.qr = dataUrl
@@ -269,14 +290,14 @@ export default {
       try {
         this.loading = true
         await this.$store.dispatch(
-          'administracion/category/updateResource',
+          'administracion/table/updateResource',
           this.formu
         )
         this.close()
         await this.$notify({
           group: 'success',
-          title: 'Categoría Actualizado!',
-          text: `La categoría <b>${this.formu.name}</b> fue actualizada con éxito!`,
+          title: 'Mesa Actualizada!',
+          text: `La Mesa <b>${this.formu.name}</b> fue actualizada con éxito!`,
         })
       } catch (error) {
         if (error.response.status === 403) {

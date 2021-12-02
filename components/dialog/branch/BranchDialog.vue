@@ -14,7 +14,7 @@
       :section-actions="false"
     >
       <template #leftCardTitle>
-        <v-btn icon x-small color="primary" @click="close">
+        <v-btn icon x-small color="primary" @click="closeShow">
           <v-icon>mdi-close</v-icon>
         </v-btn>
       </template>
@@ -208,9 +208,9 @@
                     <v-col cols="12" class="pb-0">
                       <v-text-field
                         v-model="formu.slug"
+                        hidden
                         disabled
-                        outlined
-                        label="URL amigable"
+                        class="d-none"
                       ></v-text-field>
                     </v-col>
                     <v-col cols="12" class="pb-0">
@@ -218,6 +218,9 @@
                         v-model="formu.state"
                         label="Estado"
                         :items="itemState"
+                        :item-text="itemState.text"
+                        :item-value="itemState.value"
+                        :item-color="itemState.color"
                         value="activo"
                         outlined
                       >
@@ -366,7 +369,16 @@ export default {
   data: () => ({
     address: null,
     stepper: 1,
-    itemState: ['inactivo', 'activo'],
+    itemState: [
+      {
+        text: 'Inactivo',
+        value: 'inactivo',
+      },
+      {
+        text: 'Activo',
+        value: 'activo',
+      },
+    ],
     loading: false,
     loadingSearch: false,
     options: {
@@ -544,6 +556,9 @@ export default {
     },
     nextStep() {
       return this.stepper++
+    },
+    closeShow() {
+      this.$emit('closeDialog')
     },
     close() {
       this.address = null
