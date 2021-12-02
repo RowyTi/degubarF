@@ -19,7 +19,10 @@ export default {
       { rel: 'icon', type: 'image/x-icon', href: '/favicon.ico' }
     ]
   },
-
+  env: {
+    BASE_URL: process.env.BASE_URL || 'http://bdegubar.test/v1/',
+    BASE_IMG_URL: process.env.BASE_IMG_URL || 'http://bdegubar.test/storage/'
+  },
   router: {
     middleware: ["auth"]
   },

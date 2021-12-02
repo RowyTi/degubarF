@@ -9,7 +9,6 @@
           </v-btn>
         </template>
         <template #body>
-          <!-- {{ tables }} -->
           <v-data-table
             :headers="headers"
             :items="tables"

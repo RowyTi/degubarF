@@ -41,9 +41,7 @@
                   </v-list>
                 </v-col>
                 <v-col cols="6">
-                  <v-img
-                    :src="'http://bdegubar.test/storage/' + formu.qr"
-                  ></v-img>
+                  <v-img :src="imgUrl + formu.qr"></v-img>
                 </v-col>
               </v-row>
             </v-card-text>
@@ -211,6 +209,9 @@ export default {
     },
   },
   computed: {
+    imgUrl() {
+      return process.env.BASE_IMG_URL
+    },
     formu() {
       return this.form
     },
