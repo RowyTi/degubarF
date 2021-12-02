@@ -28,14 +28,14 @@ export default {
   },
 
   // Global CSS: https://go.nuxtjs.dev/config-css
-  css: [
-  ],
+  css: [ ],
 
   // Plugins to run before rendering page: https://go.nuxtjs.dev/config-plugins
   plugins: [
     { src: '~/plugins/vuelidate' },
     { src: "~/plugins/mask" },
     { src: "~/plugins/vue2-google-maps" },
+    { src: "~/plugins/print" },
     { src: '~/plugins/notifications-client', ssr: false }
   ],
 

@@ -59,6 +59,25 @@
       :show-mode="showMode"
       @closeDialog="closeDialog"
     />
+    <!-- <img
+      src="http://localhost:8000/storage/mesas/8/8-mesa-balcon-1.png"
+      id="printMe"
+    /> -->
+    <div id="printMe">
+      <div class="w-48 border-double border-4 pa-1 rounded overflow-hidden m-2">
+        <img
+          class="object-contain h-48 w-full"
+          src="http://localhost:8000/storage/mesas/8/8-mesa-balcon-1.png"
+          alt="Sunset in the mountains"
+        />
+        <!-- <div class="px-6 py-4">
+          <div class="font-bold text-2xl mb-2">Escaneá y comenzá a pedir!</div>
+        </div> -->
+      </div>
+      <p class="font-bold text-xs ml-2">Mesa id: <code>mesa 12</code></p>
+      <p class="font-thin text-xs ml-2">Recortá la imagen sobre el borde</p>
+    </div>
+    <v-btn @click="print">print</v-btn>
   </v-row>
 </template>
 
@@ -73,6 +92,7 @@ export default {
   layout: 'admin',
   middleware: 'permission-table',
   data: () => ({
+    output: null,
     headers: [
       {
         text: 'Mesa',
@@ -131,6 +151,10 @@ export default {
     deep: true,
   },
   methods: {
+    async print() {
+      // Pass the element id here
+      await this.$htmlToPaper('printMe')
+    },
     closeDialog() {
       this.dialog = false
       setTimeout(() => {
@@ -216,4 +240,9 @@ export default {
 </script>
 
 <style>
+/* .test {
+  border-style: dotted !important;
+  border-color: black !important;
+  border-width: 1px !important;
+} */
 </style>
