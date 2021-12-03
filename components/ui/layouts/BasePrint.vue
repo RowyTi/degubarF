@@ -5,7 +5,7 @@
         <div class="w-48 border-double border-4 pa-1 rounded overflow-hidden">
           <img
             class="object-contain h-48 w-full"
-            :src="'http://bdegubar.test/storage/' + table.qr"
+            :src="imgUrl + table.qr"
             :alt="table.name"
           />
           <!-- <div class="px-6 py-4">
@@ -27,6 +27,11 @@ export default {
       type: Array,
       default: () => [],
       require: true,
+    },
+  },
+  computed: {
+    imgUrl() {
+      return process.env.BASE_IMG_URL
     },
   },
   methods: {
