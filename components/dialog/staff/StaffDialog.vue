@@ -275,15 +275,18 @@
                     <v-col v-if="$auth.hasScope('jklr')" cols="12" class="pb-0">
                       <v-autocomplete
                         v-model="formu.branch.id"
+                        :value="formu.branch.id"
                         :items="branches"
                         :loading="isLoading"
                         color="primary"
                         item-text="name"
                         item-value="id"
                         label="Clientes"
+                        no-data-text="El cliente solicitado no existe."
                         outlined
-                        placeholder="Start typing to Search"
+                        placeholder="Buscar cliente"
                       />
+                      {{ formu.branch.id }}
                     </v-col>
                     <v-col cols="12" class="pb-0">
                       <v-select
@@ -538,11 +541,11 @@ export default {
     btnForm() {
       return this.editedIndex === -1 ? 'guardar' : 'Actualizar '
     },
-    branchId: {
-      get() {
-        return this.formu.branch_id === this.formu.branch.id
-      },
-    },
+    // branchId: {
+    //   get() {
+    //     return this.formu.branch_id = this.formu.branches.id
+    //   },
+    // },
     passwordErrors() {
       const errors = []
       if (!this.$v.formu.password.$dirty) return errors
@@ -644,7 +647,8 @@ export default {
         this.$v.$touch()
         if (!this.$v.$invalid) {
           this.loading = true
-          this.formu.branch_id = this.$store.$auth.user.branch_id.toString()
+
+          // this.formu.branch.id = this.$store.$auth.user.branch_id.toString()
           await this.$store.dispatch(
             'administracion/staff/createResource',
             this.formu
@@ -681,6 +685,7 @@ export default {
           'administracion/staff/updateResource',
           this.formu
         )
+        console.log(this.formu)
         this.close()
         await this.$notify({
           group: 'success',
@@ -708,12 +713,20 @@ export default {
     async getBranches() {
       try {
         this.isLoading = true
-        const res = await this.$axios.$get('branches')
+        const res = await this.$axios.$get('branches', {
+          params: {
+            'fields[branches]': 'id,name',
+          },
+        })
         this.branches = deserialize(res, {
           changeCase: 'camelCase',
         })
       } catch (error) {
-        console.error(error)
+        await this.$notify({
+          group: 'error',
+          title: 'Error en la búsqueda',
+          text: error,
+        })
       } finally {
         this.isLoading = false
       }

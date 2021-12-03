@@ -39,12 +39,14 @@
               <v-btn color="primary" icon x-small @click="showItem(item)">
                 <v-icon> mdi-eye </v-icon>
               </v-btn>
-              <v-btn color="success" icon x-small @click="editItem(item)">
-                <v-icon> mdi-pencil </v-icon>
-              </v-btn>
-              <v-btn color="error" icon x-small @click="deleteItem(item)">
-                <v-icon> mdi-delete </v-icon>
-              </v-btn>
+              <div v-if="item.roles[0] !== 'super:admin'" class="d-inline">
+                <v-btn color="success" icon x-small @click="editItem(item)">
+                  <v-icon> mdi-pencil </v-icon>
+                </v-btn>
+                <v-btn color="error" icon x-small @click="deleteItem(item)">
+                  <v-icon> mdi-delete </v-icon>
+                </v-btn>
+              </div>
             </template>
           </v-data-table>
         </template>
@@ -199,13 +201,17 @@ export default {
         const res = await this.$axios.$get(`staff/${item.id}`, {
           params: {
             include: 'profile,profile.address,branch',
+            'fields[branches]': 'id,name',
           },
         })
+
         const deserializeData = deserialize(res, {
           changeCase: 'camelCase',
         })
+
         this.editedIndex = this.staff.indexOf(item)
         this.form = Object.assign({}, deserializeData)
+        console.log(this.form)
         this.dialog = true
       } catch (error) {
         if (error.response.status === 403)
