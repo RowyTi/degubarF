@@ -86,7 +86,7 @@ export const actions = {
   // ACTUALIZAR RECURSO
   async updateResource({ context, dispatch, state }, form) {
     const resource = {
-      id:form.id,
+      id: form.id,
       username: form.username,
       state: form.state,
       password: form.password,
@@ -107,6 +107,7 @@ export const actions = {
       }
     }
     const serialized = serialize(resource, 'staff', { changeCase: 'kebabCase' })
+    console.log(serialized);
     await this.$axios.$patch(`staff/${form.id}`, serialized);
     await dispatch('getList', state.defaultOptions);
   },
