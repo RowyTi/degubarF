@@ -8,8 +8,8 @@
             color="accent"
             small
             class="mr-2"
-            @click="print(tables)"
             :disabled="tables.length < 1"
+            @click="print(tables)"
           >
             Imprimir QR <v-icon right dark v-text="'mdi-qrcode-scan'" />
           </v-btn>
