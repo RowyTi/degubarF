@@ -272,6 +272,19 @@
                         @blur="$v.formu.password.$touch()"
                       ></v-text-field>
                     </v-col>
+                    <v-col v-if="$auth.hasScope('jklr')" cols="12" class="pb-0">
+                      <v-autocomplete
+                        v-model="formu.branch.id"
+                        :items="branches"
+                        :loading="isLoading"
+                        color="primary"
+                        item-text="name"
+                        item-value="id"
+                        label="Clientes"
+                        outlined
+                        placeholder="Start typing to Search"
+                      />
+                    </v-col>
                     <v-col cols="12" class="pb-0">
                       <v-select
                         v-model="formu.state"
@@ -428,6 +441,7 @@
 </template>
 
 <script>
+import { deserialize } from 'jsonapi-fractal'
 import { required, maxLength, numeric } from 'vuelidate/lib/validators'
 import BaseCard from '~/components/ui/BaseCard.vue'
 import BaseListItemContent from '~/components/ui/BaseListItemContent.vue'
@@ -463,6 +477,9 @@ export default {
       page: 1,
       itemsPerPage: 10,
     },
+    // autocomplete
+    branches: [],
+    isLoading: false,
   }),
   validations: {
     formu: {
@@ -520,6 +537,11 @@ export default {
     },
     btnForm() {
       return this.editedIndex === -1 ? 'guardar' : 'Actualizar '
+    },
+    branchId: {
+      get() {
+        return this.formu.branch_id === this.formu.branch.id
+      },
     },
     passwordErrors() {
       const errors = []
@@ -603,6 +625,11 @@ export default {
       return errors
     },
   },
+  created() {
+    if (this.$auth.user.branch_id === null) {
+      this.getBranches()
+    }
+  },
   methods: {
     nextStep() {
       return this.stepper++
@@ -676,6 +703,19 @@ export default {
         }
       } finally {
         this.loading = false
+      }
+    },
+    async getBranches() {
+      try {
+        this.isLoading = true
+        const res = await this.$axios.$get('branches')
+        this.branches = deserialize(res, {
+          changeCase: 'camelCase',
+        })
+      } catch (error) {
+        console.error(error)
+      } finally {
+        this.isLoading = false
       }
     },
   },

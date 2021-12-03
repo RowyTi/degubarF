@@ -97,7 +97,9 @@ export default {
     form: {
       username: '',
       state: 'inactivo',
-      branch_id: null,
+      branch: {
+        id: '',
+      },
       profile: {
         name: '',
         lastName: '',
@@ -116,7 +118,9 @@ export default {
       username: '',
       password: '',
       state: 'inactivo',
-      branch_id: null,
+      branch: {
+        id: '',
+      },
       profile: {
         name: '',
         lastName: '',
@@ -194,7 +198,7 @@ export default {
       try {
         const res = await this.$axios.$get(`staff/${item.id}`, {
           params: {
-            include: 'profile,profile.address',
+            include: 'profile,profile.address,branch',
           },
         })
         const deserializeData = deserialize(res, {
