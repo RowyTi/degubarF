@@ -62,6 +62,7 @@
 </template>
 
 <script>
+import { mapGetters } from 'vuex'
 export default {
   name: 'BaseDrawer',
   props: {
@@ -76,6 +77,7 @@ export default {
     expand: true,
   }),
   computed: {
+    ...mapGetters(['isAuthenticated', 'user']),
     miniMode: {
       get() {
         return this.mini
@@ -85,14 +87,18 @@ export default {
       },
     },
     logoBranch() {
-      return this.$auth.user.branch === null
-        ? '/images/logo-degubar.png'
-        : this.$auth.user.branch.logo
+      if (this.isAuthenticated && this.user.branch !== null) {
+        return this.user.branch.logo
+      } else {
+        return '/images/logo-degubar.png'
+      }
     },
     altLogoBranch() {
-      return this.$auth.user.branch === null
-        ? 'Logo Degubar'
-        : 'Logo ' + this.$auth.user.branch.name
+      if (this.isAuthenticated && this.user.branch !== null) {
+        return this.user.branch.name
+      } else {
+        return 'Logo Degubar'
+      }
     },
   },
   watch: {

@@ -28,7 +28,7 @@ export default {
   },
 
   // Global CSS: https://go.nuxtjs.dev/config-css
-  css: [ ],
+  css: [],
 
   // Plugins to run before rendering page: https://go.nuxtjs.dev/config-plugins
   plugins: [
@@ -48,8 +48,8 @@ export default {
     '@nuxtjs/eslint-module',
     // https://go.nuxtjs.dev/vuetify
     '@nuxtjs/vuetify',
-    ],
-   
+  ],
+
   // Modules: https://go.nuxtjs.dev/config-modules
   modules: [
     '@nuxtjs/auth-next',
@@ -82,7 +82,7 @@ export default {
       local: {
         token: {
           property: "token",
-          maxAge: 1800,
+          maxAge: 60 * 60,
           global: true,
           required: true,
           type: "Bearer"
@@ -90,7 +90,7 @@ export default {
         refreshToken: {
           property: 'refresh_token',
           data: 'refresh_token',
-          maxAge: 60 * 60 * 24 * 30
+          // maxAge: 60 * 60 * 24 * 30
         },
         user: {
           property: false,

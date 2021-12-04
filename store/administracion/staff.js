@@ -79,40 +79,48 @@ export const actions = {
       }
     }
     const serialized = serialize(resource, 'staff', { relationships: ['branches'], changeCase: 'kebabCase' })
+
     await this.$axios.$post("/staff", serialized);
     await dispatch('getList', state.defaultOptions);
   },
 
   // ACTUALIZAR RECURSO
   async updateResource({ context, dispatch, state }, form) {
-    console.log(form);
     const resource = {
-      id: form.id,
-      username: form.username,
-      state: form.state,
-      password: form.password,
-      branches: {
-        id: form.branch.id
-      },
-      profile: {
-        id: form.profile.id,
-        avatar: "rutadefualt.png",
-        dateOfBirth: form.profile.dateOfBirth,
-        lastName: form.profile.lastName,
-        name: form.profile.name,
-        phone: form.profile.phone,
-        address: {
-          cp: form.profile.address.cp,
-          dpto: form.profile.address.dpto,
-          number: form.profile.address.number,
-          piso: form.profile.address.piso,
-          street: form.profile.address.street
+      data: {
+        id: form.id,
+        type: "staff",
+        attributes: {
+          username: form.username,
+          state: form.state,
+          password: form.password,
+          profile: {
+            id: form.profile.id,
+            avatar: "rutadefualt.png",
+            dateOfBirth: form.profile.dateOfBirth,
+            lastName: form.profile.lastName,
+            name: form.profile.name,
+            phone: form.profile.phone,
+            address: {
+              cp: form.profile.address.cp,
+              dpto: form.profile.address.dpto,
+              number: form.profile.address.number,
+              piso: form.profile.address.piso,
+              street: form.profile.address.street
+            },
+          }
+        },
+        relationships: {
+          branch: {
+            data: {
+              type: "branches",
+              id: form.branch.id
+            }
+          }
         }
       }
     }
-    const serialized = serialize(resource, 'staff', { relationships: ['branches'], changeCase: 'kebabCase' })
-    console.log(serialized);
-    await this.$axios.$patch(`staff/${form.id}`, serialized);
+    await this.$axios.$patch(`staff/${form.id}`, resource);
     await dispatch('getList', state.defaultOptions);
   },
 

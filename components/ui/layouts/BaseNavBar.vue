@@ -105,9 +105,11 @@ export default {
   computed: {
     ...mapGetters(['isAuthenticated', 'user']),
     nameBranch() {
-      return this.user.branch === null
-        ? 'Administrador Degubar'
-        : this.user.branch.name
+      if (this.isAuthenticated && this.user.branch !== null) {
+        return this.user.branch.name
+      } else {
+        return 'Administrador Degubar'
+      }
     },
     // nombreCompleto() {
     //     return this.user.first_name + " " + this.user.last_name;

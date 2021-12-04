@@ -6,6 +6,7 @@
     <base-nav-bar />
     <v-main>
       <v-container fluid>
+        <check-state />
         <success-notification />
         <error-notification />
         <nuxt />
@@ -15,13 +16,19 @@
 </template>
 
 <script>
+import CheckState from '~/components/CheckState.vue'
 import ErrorNotification from '~/components/notifications/ErrorNotification.vue'
 import SuccessNotification from '~/components/notifications/SuccessNotification.vue'
 import BaseNavBar from '~/components/ui/layouts/BaseNavBar.vue'
 
 export default {
   name: 'Admin',
-  components: { BaseNavBar, SuccessNotification, ErrorNotification },
+  components: {
+    BaseNavBar,
+    SuccessNotification,
+    ErrorNotification,
+    CheckState,
+  },
 }
 </script>
 <style lang="scss">

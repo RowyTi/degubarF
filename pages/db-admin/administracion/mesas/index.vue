@@ -85,7 +85,7 @@ export default {
   name: 'AdministracionTable',
   components: { BaseCard, TableDialog, BasePrint },
   layout: 'admin',
-  middleware: 'permission-table',
+  middleware: ['permission-table', 'auth'],
   data: () => ({
     qrData: [],
     headers: [

@@ -129,11 +129,21 @@ export default {
         this.$v.$touch()
         if (!this.$v.$invalid) {
           await this.$auth.loginWith('local', { data: this.form })
+
           await this.$auth.$storage.getUniversal('user')
+
           await this.$router.push({ path: '/db-admin/dashboard' })
         }
       } catch (err) {
-        this.errors = err.response.data.errors[0]
+        if (err.response.status === 500) {
+          await this.$notify({
+            group: 'error',
+            title: 'Error',
+            text: 'Ocurrió un problema en el servidor, estamos trabajando para solucionarlo.',
+          })
+        } else {
+          this.errors = err.response.data.errors[0]
+        }
       } finally {
         this.loading = false
       }
