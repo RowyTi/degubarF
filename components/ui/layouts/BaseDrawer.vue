@@ -17,7 +17,23 @@
       </v-list-item>
       <v-divider class="mb-4" />
       <v-list-item
-        v-if="$auth.hasScope('index:dashboard') || $auth.hasScope('jklr')"
+        v-for="m in menu"
+        v-show="$auth.hasScope(m.permission)"
+        :key="m.slug"
+        :to="m.slug"
+        exact
+        exact-active-class="link"
+      >
+        <v-list-item-icon>
+          <v-icon v-text="'mdi-' + m.icon" />
+        </v-list-item-icon>
+
+        <v-list-item-content>
+          <v-list-item-title>{{ m.name }}</v-list-item-title>
+        </v-list-item-content>
+      </v-list-item>
+      <!-- <v-list-item
+        v-if="$auth.hasScope('index:dashboard')"
         to="/db-admin/dashboard"
         exact
         exact-active-class="link"
@@ -29,14 +45,27 @@
         <v-list-item-title class="text-overline">Dashboard</v-list-item-title>
       </v-list-item>
 
-      <template v-for="(m, index) in menu">
-        <template v-if="$auth.hasScope(m.permission) || $auth.hasScope('jklr')">
+      <v-list-item
+        v-if="$auth.hasScope('index:dashboard')"
+        to="/db-admin/dashboard"
+        exact
+        exact-active-class="link"
+      >
+        <v-list-item-icon>
+          <v-icon>mdi-view-dashboard</v-icon>
+        </v-list-item-icon>
+
+        <v-list-item-title class="text-overline">Dashboard</v-list-item-title>
+      </v-list-item> -->
+
+      <!-- <template v-for="(m, index) in menu">
+        <template v-if="$auth.hasScope(m.permission)">
           <v-subheader :key="index" class="text-overline">{{
             m.nombre
           }}</v-subheader>
           <template v-for="sm in m.subMenu">
             <v-list-item
-              v-if="$auth.hasScope(sm.permission) || $auth.hasScope('jklr')"
+              v-if="$auth.hasScope(sm.permission)"
               :key="sm.i"
               :to="'/' + sm.slug"
               exact
@@ -55,8 +84,8 @@
             :key="index"
             class="my-2"
           ></v-divider>
-        </template>
-      </template>
+        </template>-->
+      <!-- </template>  -->
     </v-list>
   </v-navigation-drawer>
 </template>
