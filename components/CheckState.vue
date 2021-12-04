@@ -1,8 +1,6 @@
 <template>
-  <v-overlay
-    v-show="state || $nuxt.isOffline"
-    :absolute="false"
-    :z-index="99999"
+  <!-- v-show="state || $nuxt.isOffline" -->
+  <v-overlay v-show="state" :absolute="false" :z-index="99999"
     ><v-alert v-if="state" prominent type="info" rounded elevation="10">
       <v-row align="center">
         <v-col class="grow text-overline font-weight-bold">
@@ -59,7 +57,7 @@ export default {
     checkState() {
       this.stateId = setInterval(() => {
         this.expiredToken = this.$auth.strategy.token.status().expired()
-        console.log(this.expiredToken)
+        // console.log(this.expiredToken)
       }, 1500)
     },
   },
