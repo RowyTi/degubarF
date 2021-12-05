@@ -272,7 +272,7 @@
                         @blur="$v.formu.password.$touch()"
                       ></v-text-field>
                     </v-col>
-                    <v-col v-if="$auth.hasScope('jklr')" cols="12" class="pb-0">
+                    <v-col v-if="$auth.user.sa" cols="12" class="pb-0">
                       <v-autocomplete
                         v-model="formu.branch.id"
                         :value="formu.branch.id"
@@ -629,7 +629,7 @@ export default {
     },
   },
   created() {
-    if (this.$auth.user.branch_id === null) {
+    if (this.$auth.user.sa) {
       this.getBranches()
     }
   },

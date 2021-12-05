@@ -1,5 +1,5 @@
 <template>
-  <v-row justify="center" align="center">
+  <v-row justify="center" align="center" class="mt-5">
     <v-col cols="12" md="11">
       <base-card :dialog="false">
         <template #rightCardTitle> Administración de Mesas </template>
@@ -13,7 +13,11 @@
           >
             Imprimir QR <v-icon right dark v-text="'mdi-qrcode-scan'" />
           </v-btn>
-          <v-btn color="primary" small @click.stop="dialog = !dialog">
+          <v-btn
+            color="primary accent--text"
+            small
+            @click.stop="dialog = !dialog"
+          >
             Agregar Mesa<v-icon right dark>mdi-table-chair</v-icon>
           </v-btn>
         </template>
@@ -50,7 +54,7 @@
               <v-btn color="accent" icon x-small @click="print([item])">
                 <v-icon> mdi-qrcode-scan </v-icon>
               </v-btn>
-              <v-btn color="primary" icon x-small @click="showItem(item)">
+              <v-btn color="info" icon x-small @click="showItem(item)">
                 <v-icon> mdi-eye </v-icon>
               </v-btn>
               <v-btn color="success" icon x-small @click="editItem(item)">

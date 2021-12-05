@@ -32,7 +32,7 @@ export const actions = {
   async getList({ commit, rootState }, params) {
     const response = await this.$axios.$get(`tables`, {
       params: {
-        'filter[branch_id]': rootState.auth.user.branch_id, // null para super admin
+        'filter[branch_id]': rootState.auth.user.branch ? rootState.auth.user.branch.id : null, // null para super admin
         'page[number]': params.page,
         'page[size]': params.itemsPerPage,
         sort: params.sortDesc[0] ? '-' + params.sortBy[0] : params.sortBy[0]

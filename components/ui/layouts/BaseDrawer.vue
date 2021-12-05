@@ -1,6 +1,6 @@
 <template>
-  <v-navigation-drawer app fixed v-bind="$attrs" v-on="$listeners">
-    <v-list class="pt-0" nav dense>
+  <v-navigation-drawer app fixed v-bind="$attrs" v-on="$listeners" dark>
+    <v-list class="pa-0" dense>
       <v-list-item class="" two-line style="height: 64px !important">
         <v-list-item-avatar tile size="58">
           <!-- <img :src="userFoto" /> -->
@@ -171,3 +171,12 @@ export default {
   },
 }
 </script>
+<style>
+.link {
+  border-left: solid 4px #ffab00 !important;
+  color: #e0e0e0 !important;
+}
+.v-list-item {
+  border-left: solid 4px #363636;
+}
+</style>

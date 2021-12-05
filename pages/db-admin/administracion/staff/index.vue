@@ -1,10 +1,14 @@
 <template>
-  <v-row justify="center" align="center">
+  <v-row justify="center" align="center" class="mt-5">
     <v-col cols="12" md="11">
       <base-card :dialog="false">
         <template #rightCardTitle> Administración de Staff </template>
         <template #leftCardTitle>
-          <v-btn color="primary" small @click.stop="dialog = !dialog">
+          <v-btn
+            color="primary accent--text"
+            small
+            @click.stop="dialog = !dialog"
+          >
             Agregar Empleado<v-icon right dark>mdi-account-plus</v-icon>
           </v-btn>
         </template>
@@ -36,10 +40,10 @@
               />
             </template>
             <template #[`item.acciones`]="{ item }">
-              <v-btn color="primary" icon x-small @click="showItem(item)">
+              <v-btn color="info" icon x-small @click="showItem(item)">
                 <v-icon> mdi-eye </v-icon>
               </v-btn>
-              <div v-if="item.roles[0] !== 'super:admin'" class="d-inline">
+              <div v-if="item.roles[0] !== 'Super Admin'" class="d-inline">
                 <v-btn color="success" icon x-small @click="editItem(item)">
                   <v-icon> mdi-pencil </v-icon>
                 </v-btn>

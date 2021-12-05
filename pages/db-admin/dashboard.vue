@@ -1,5 +1,5 @@
 <template>
-  <v-row>
+  <v-row justify="center" align="center" class="mt-5">
     <v-col cols="6">
       {{ user }}
     </v-col>

@@ -1,13 +1,9 @@
 <template>
   <div>
-    <v-app-bar
-      app
-      :dark="$vuetify.theme.dark"
-      :color="!$vuetify.theme.dark ? 'white' : ''"
-      flat
-      height="64"
-    >
-      <v-app-bar-nav-icon class="primary--text" @click.stop="openDrawer" />
+    <v-app-bar app color="amber accent-4">
+      <v-app-bar-nav-icon @click.stop="openDrawer">
+        <v-icon v-text="'mdi-dots-vertical'" />
+      </v-app-bar-nav-icon>
       <v-toolbar-title class="text-body-1" v-text="nameBranch" />
       <v-spacer></v-spacer>
       <v-btn icon class="mr-2" @click="logout">
@@ -55,12 +51,12 @@ export default {
         icon: 'account',
         permission: 'index:staff',
       },
-      {
-        name: 'Permisos',
-        slug: '/db-admin/administracion/permisos',
-        icon: 'account-lock',
-        permission: 'index:permission',
-      },
+      // {
+      //   name: 'Permisos',
+      //   slug: '/db-admin/administracion/permisos',
+      //   icon: 'account-lock',
+      //   permission: 'index:permission',
+      // },
       {
         name: 'Clientes',
         slug: '/db-admin/administracion/clientes',
@@ -79,23 +75,6 @@ export default {
         icon: 'table-chair',
         permission: 'index:table',
       },
-      //   ],
-      // },
-      /* {
-                nombre: 'gestión',
-                permission: 'gestion',
-                subMenu:[
-                    { id: 4, nombre: 'Productos', slug: 'gestion/productos', icon: 'swap-horizontal-bold', permission: 'index:product' },
-                    { id: 5, nombre: 'Sucursales' , slug: 'administracion/3', icon: 'format-list-text'},
-                ],
-            },
-            {
-                nombre: 'subtitulo 2',
-                permission: 'subtitulo',
-                subMenu:[
-                { id: 7, nombre: 'Item 4', slug: 'administracion/1', icon: 'account' },
-                ],
-            }, */
     ],
   }),
   computed: {

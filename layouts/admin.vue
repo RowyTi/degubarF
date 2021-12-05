@@ -35,7 +35,10 @@ export default {
 html {
   overflow-y: auto !important;
 }
-.bgLight {
-  background-color: #ebecef !important;
+.v-data-table-header__icon {
+  color: #ffb300 !important;
 }
+// .bgLight {
+//   background-color: #ebecef !important;
+// }
 </style>
