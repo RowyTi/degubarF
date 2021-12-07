@@ -43,10 +43,8 @@ export default {
     { src: "~/plugins/print" },
     { src: '~/plugins/notifications-client', ssr: false }
   ],
-
   // Auto import components: https://go.nuxtjs.dev/config-components
   components: true,
-
   // Modules for dev and build (recommended): https://go.nuxtjs.dev/config-modules
   buildModules: [
     // https://go.nuxtjs.dev/eslint
@@ -54,7 +52,6 @@ export default {
     // https://go.nuxtjs.dev/vuetify
     '@nuxtjs/vuetify',
   ],
-
   // Modules: https://go.nuxtjs.dev/config-modules
   modules: [
     '@nuxtjs/auth-next',
@@ -62,8 +59,20 @@ export default {
     '@nuxtjs/axios',
     // https://go.nuxtjs.dev/pwa
     '@nuxtjs/pwa',
+    // https://github.com/shakee93/vue-toasted
+    '@nuxtjs/toast',
   ],
-
+  toast: {
+    position: 'top-right',
+    duration: 5000,
+    action: {
+      icon: 'mdi-close',
+      onClick: (e, toastObject) => {
+        toastObject.goAway(0)
+      },
+    },
+    iconPack: 'mdi',
+  },
   // Axios module configuration: https://go.nuxtjs.dev/config-axios
   axios: {
     // baseUrl: 'https://api.degubar.com.ar/v1/',
@@ -129,14 +138,12 @@ export default {
       }
     }
   },
-
   // PWA module configuration: https://go.nuxtjs.dev/pwa
   pwa: {
     manifest: {
       lang: 'es'
     }
   },
-
   // Vuetify module configuration: https://go.nuxtjs.dev/config-vuetify
   vuetify: {
     customVariables: ['~/assets/variables.scss'],
@@ -165,7 +172,6 @@ export default {
     background: "white",
     height: "4px"
   },
-
   // Build Configuration: https://go.nuxtjs.dev/config-build
   build: {
     maxChunkSize: 1000,

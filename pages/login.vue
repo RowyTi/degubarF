@@ -125,6 +125,7 @@ export default {
     },
     async login() {
       try {
+        this.$toast.show('Logging in...')
         this.loading = true
         this.$v.$touch()
         if (!this.$v.$invalid) {
@@ -133,6 +134,9 @@ export default {
           await this.$auth.$storage.getUniversal('user')
 
           await this.$router.push({ path: '/db-admin/dashboard' })
+          this.$toast.success('Successfully authenticated', {
+            icon: 'mdi-delete',
+          })
         }
       } catch (err) {
         if (err.response.status === 500) {

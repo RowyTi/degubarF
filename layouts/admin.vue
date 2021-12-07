@@ -34,6 +34,7 @@ export default {
 <style lang="scss">
 html {
   overflow-y: auto !important;
+  font-family: 'Roboto';
 }
 .v-data-table-header__icon {
   color: #ffb300 !important;
