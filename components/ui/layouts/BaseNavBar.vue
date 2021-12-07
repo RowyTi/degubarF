@@ -40,10 +40,22 @@ export default {
         permission: 'index:dashboard',
       },
       {
-        name: 'Usuario',
-        slug: '/db-admin/administracion/usuarios',
-        icon: 'account',
-        permission: 'index:user',
+        name: 'Categorias',
+        slug: '/db-admin/administracion/categorias',
+        icon: 'shape',
+        permission: 'index:category',
+      },
+      {
+        name: 'Mi Negocio',
+        slug: '/db-admin/administracion/mi-negocio',
+        icon: 'store',
+        permission: 'index:branch',
+      },
+      {
+        name: 'Clientes',
+        slug: '/db-admin/administracion/clientes',
+        icon: 'store',
+        permission: 'index:customer',
       },
       {
         name: 'Staff',
@@ -51,29 +63,29 @@ export default {
         icon: 'account',
         permission: 'index:staff',
       },
-      // {
-      //   name: 'Permisos',
-      //   slug: '/db-admin/administracion/permisos',
-      //   icon: 'account-lock',
-      //   permission: 'index:permission',
-      // },
       {
-        name: 'Clientes',
-        slug: '/db-admin/administracion/clientes',
-        icon: 'store',
-        permission: 'index:branch',
+        name: 'Usuario',
+        slug: '/db-admin/administracion/usuarios',
+        icon: 'account',
+        permission: 'index:user',
       },
       {
-        name: 'Categorias',
-        slug: '/db-admin/administracion/categorias',
-        icon: 'shape',
-        permission: 'index:category',
+        name: 'Permisos',
+        slug: '/db-admin/administracion/permisos',
+        icon: 'account-lock',
+        permission: 'index:permission',
       },
       {
         name: 'Mesas',
         slug: '/db-admin/administracion/mesas',
         icon: 'table-chair',
         permission: 'index:table',
+      },
+      {
+        name: 'Productos',
+        slug: '/db-admin/administracion/productos',
+        icon: 'silverware',
+        permission: 'index:product',
       },
     ],
   }),
@@ -98,7 +110,14 @@ export default {
       this.drawer = !this.drawer
     },
     async logout() {
-      await this.$auth.logout()
+      const res = await this.$confirm('Está seguro que desea salir?', {
+        title: 'Cerrar Sesión',
+        icon: 'mdi-logout',
+        buttonTrueText: 'Salir',
+      })
+      if (res) {
+        await this.$auth.logout()
+      }
     },
   },
 }

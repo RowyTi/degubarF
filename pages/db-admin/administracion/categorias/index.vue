@@ -20,7 +20,6 @@
               'items-per-page-options': [10, 20, 30],
               'items-per-page-text': 'Filas por página',
             }"
-            c
             :options.sync="options"
             :server-items-length="totalData"
             loading-text="Cargando...Espere por favor!"
@@ -231,15 +230,27 @@ export default {
     },
     async deleteItem(item) {
       try {
-        await this.$store.dispatch(
-          'administracion/category/deleteResource',
-          item.id
+        const res = await this.$confirm(
+          `Está seguro que desea eliminar la categoría ${item.name} ?`,
+          {
+            title: `Eliminar ${item.name}`,
+            icon: 'mdi-delete',
+            color: 'error',
+            with: 'auto',
+            buttonTrueText: 'Eliminar',
+          }
         )
-        await this.$notify({
-          group: 'success',
-          title: 'Categoría Eliminada',
-          text: `La categiría ${item.name} fue elimianda con éxito!`,
-        })
+        if (res) {
+          await this.$store.dispatch(
+            'administracion/category/deleteResource',
+            item.id
+          )
+          await this.$notify({
+            group: 'success',
+            title: 'Categoría Eliminada',
+            text: `La categiría ${item.name} fue elimianda con éxito!`,
+          })
+        }
       } catch (error) {
         if (error.response.status === 403)
           await this.$notify({

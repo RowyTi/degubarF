@@ -30,6 +30,27 @@
               <span v-if="item.roles.length < 1">Sin Asignar</span>
               <span v-else v-text="item.roles[0]"></span>
             </template>
+            <!-- <template #[`item.quantity`]="props">
+              <v-edit-dialog
+                :return-value.sync="props.item.quantity"
+                large
+                persistent
+                @save="save(props.item.id)"
+              >
+                <div>{{ props.item.quantity }}</div>
+                <template #input>
+                  <div class="mt-4 text-h6">Actualizar Stock</div>
+                  <v-text-field
+                    :value="props.item.quantity"
+                    label="Stock"
+                    single-line
+                    counter
+                    autofocus
+                    @input="updateQuantity"
+                  ></v-text-field>
+                </template>
+              </v-edit-dialog>
+            </template> -->
             <template #[`item.state`]="{ item }">
               <v-chip
                 :color="item.state === 'inactivo' ? 'error' : 'success'"
@@ -40,6 +61,9 @@
               />
             </template>
             <template #[`item.acciones`]="{ item }">
+              <v-btn color="accent" icon x-small @click="showItem(item)">
+                <v-icon> mdi-account-lock </v-icon>
+              </v-btn>
               <v-btn color="info" icon x-small @click="showItem(item)">
                 <v-icon> mdi-eye </v-icon>
               </v-btn>
@@ -228,15 +252,27 @@ export default {
     },
     async deleteItem(item) {
       try {
-        await this.$store.dispatch(
-          'administracion/staff/deleteResource',
-          item.id
+        const res = await this.$confirm(
+          `Está seguro que desea eliminar el usuario ${item.username} ?`,
+          {
+            title: `Eliminar ${item.username}`,
+            icon: 'mdi-delete',
+            color: 'error',
+            with: 'auto',
+            buttonTrueText: 'Eliminar',
+          }
         )
-        await this.$notify({
-          group: 'success',
-          title: 'Usuario Eliminado',
-          text: `${item.username} fue elimiando con éxito!`,
-        })
+        if (res) {
+          await this.$store.dispatch(
+            'administracion/staff/deleteResource',
+            item.id
+          )
+          await this.$notify({
+            group: 'success',
+            title: 'Usuario Eliminado',
+            text: `${item.username} fue elimiando con éxito!`,
+          })
+        }
       } catch (error) {
         if (error.response.status === 403)
           await this.$notify({

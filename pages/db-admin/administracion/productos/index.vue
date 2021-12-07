@@ -2,22 +2,20 @@
   <v-row justify="center" align="center" class="mt-5">
     <v-col cols="12" md="11">
       <base-card :dialog="false">
-        <template #rightCardTitle>
-          <span class="ml-3"></span> Administración de Clientes
-        </template>
+        <template #rightCardTitle> Administración de Productos </template>
         <template #leftCardTitle>
           <v-btn
             color="primary accent--text"
             small
             @click.stop="dialog = !dialog"
           >
-            Nuevo Cliente<v-icon right dark>mdi-store-plus</v-icon>
+            Agregar Producto<v-icon right dark>mdi-silverware</v-icon>
           </v-btn>
         </template>
         <template #body>
           <v-data-table
             :headers="headers"
-            :items="branches"
+            :items="products"
             :footer-props="{
               'items-per-page-options': [10, 20, 30],
               'items-per-page-text': 'Filas por página',
@@ -30,23 +28,33 @@
             <v-alert slot="no-result"> no hay resultados </v-alert>
             <template #[`item.state`]="{ item }">
               <v-chip
-                :color="branchState(item.state)"
+                :color="item.state === 'inactivo' ? 'error' : 'success'"
                 label
                 x-small
                 class="text-caption text-uppercase"
                 v-text="item.state"
               />
             </template>
-            <template #[`item.rating`]="{ item }">
-              <v-rating
-                v-model="item.rating"
-                color="yellow darken-3"
-                background-color="grey lighten-2"
-                empty-icon="$ratingFull"
-                half-increments
-                readonly
-                small
-              ></v-rating>
+            <template #[`item.quantity`]="props">
+              <v-edit-dialog
+                :return-value.sync="props.item.quantity"
+                large
+                persistent
+                @save="save(props.item.id)"
+              >
+                <div>{{ props.item.quantity }}</div>
+                <template #input>
+                  <div class="mt-4 text-h6">Actualizar Stock</div>
+                  <v-text-field
+                    :value="props.item.quantity"
+                    label="Stock"
+                    single-line
+                    counter
+                    autofocus
+                    @input="updateQuantity"
+                  ></v-text-field>
+                </template>
+              </v-edit-dialog>
             </template>
             <template #[`item.acciones`]="{ item }">
               <v-btn color="info" icon x-small @click="showItem(item)">
@@ -61,9 +69,10 @@
             </template>
           </v-data-table>
         </template>
+        {{ products }}
       </base-card>
     </v-col>
-    <branch-dialog
+    <product-dialog
       v-model="dialog"
       :form="form"
       :edited-index="editedIndex"
@@ -77,17 +86,28 @@
 import { deserialize } from 'jsonapi-fractal'
 import { mapState } from 'vuex'
 import BaseCard from '~/components/ui/BaseCard.vue'
-import BranchDialog from '~/components/dialog/branch/BranchDialog.vue'
+import ProductDialog from '~/components/dialog/product/ProductDialog.vue'
 export default {
-  name: 'AdministracionDeMiNegocio',
-  components: { BaseCard, BranchDialog },
+  name: 'AdministracionProduct',
+  components: { BaseCard, ProductDialog },
   layout: 'admin',
+  middleware: ['permission-product'],
   data: () => ({
     headers: [
       {
-        text: 'Cliente',
+        text: 'Producto',
         sortable: true,
         value: 'name',
+      },
+      {
+        text: 'Stock',
+        sortable: true,
+        value: 'quantity',
+      },
+      {
+        text: 'Precio',
+        sortable: false,
+        value: 'price',
       },
       {
         text: 'Estado',
@@ -95,15 +115,11 @@ export default {
         value: 'state',
       },
       {
-        text: 'Rating',
-        sortable: false,
-        value: 'rating',
-      },
-      {
-        text: 'Ult. Actualización',
+        text: 'Actualizado',
         sortable: true,
         value: 'updatedAt',
       },
+
       {
         text: 'Acciones',
         value: 'acciones',
@@ -113,49 +129,36 @@ export default {
     ],
     form: {
       name: '',
-      slug: '',
+      description: '',
+      price: '0',
+      quantity: '0',
       state: 'inactivo',
-      longitud: '',
-      latitud: '',
-      address: {
-        street: '',
-        number: '',
-        cp: '',
-        piso: '',
-        dpto: '',
-      },
+      image: '',
     },
     defaultForm: {
       name: '',
-      slug: '',
+      description: '',
+      price: '0',
+      quantity: '0',
       state: 'inactivo',
-      longitud: '',
-      latitud: '',
-      address: {
-        street: '',
-        number: '',
-        cp: '',
-        piso: '',
-        dpto: '',
-      },
+      image: '',
+    },
+    update: {
+      quantity: '',
     },
     loading: false,
     dialog: false,
     editedIndex: -1,
     showMode: false,
-    options: {
-      page: 1,
-      itemsPerPage: 10,
-      sortBy: ['updatedAt'],
-      sortDesc: [true],
-    },
+    options: { sortBy: ['updatedAt'], sortDesc: [true] },
   }),
   head: {
-    title: 'Clientes',
+    title: 'Productos',
   },
   computed: {
-    ...mapState('administracion/branch', ['branches', 'branch', 'totalData']),
+    ...mapState('administracion/product', ['products', 'product', 'totalData']),
   },
+
   watch: {
     options: {
       handler() {
@@ -165,8 +168,18 @@ export default {
     deep: true,
   },
   methods: {
-    branchState(value) {
-      return value === 'inactivo' ? 'error' : 'success'
+    updateQuantity(e) {
+      this.update.quantity = e
+    },
+    async save(id) {
+      const data = Object.assign({ id }, this.update)
+      if (this.update.quantity.length > 0) {
+        await this.$store.dispatch(
+          'administracion/product/updateQuantityResource',
+          data
+        )
+        this.update.quantity = ''
+      }
     },
     closeDialog() {
       this.dialog = false
@@ -182,7 +195,7 @@ export default {
       try {
         this.loading = true
         await this.$store.dispatch(
-          'administracion/branch/getList',
+          'administracion/product/getList',
           this.options
         )
       } catch (error) {
@@ -194,40 +207,35 @@ export default {
     },
     async showItem(item) {
       try {
-        await this.$store.dispatch('administracion/branch/getResource', item.id)
+        await this.$store.dispatch(
+          'administracion/product/getResource',
+          item.id
+        )
         this.showMode = true
         this.$nextTick(() => {
-          this.form = Object.assign({}, this.branch)
+          this.form = Object.assign({}, this.product)
         })
         this.dialog = true
       } catch (error) {
-        if (error.response.status === 403) {
+        if (error.response.status === 403)
           await this.$notify({
             group: 'error',
             title: 'No Autorizado',
             text: 'Usted no está autorizado a realizar esta acción',
           })
-        } else {
-          await this.$notify({
-            group: 'error',
-            title: error.response.status,
-            text: 'Usted no está autorizado a realizar esta acción',
-          })
-        }
       }
     },
     async editItem(item) {
       try {
-        const res = await this.$axios.$get(`branches/${item.id}`, {
+        const res = await this.$axios.$get(`products/${item.id}`, {
           params: {
-            include: 'address',
+            // include: 'branch',
           },
         })
         const deserializeData = deserialize(res, {
           changeCase: 'camelCase',
         })
-
-        this.editedIndex = this.branches.indexOf(item)
+        this.editedIndex = this.products.indexOf(item)
         this.form = Object.assign({}, deserializeData)
         this.dialog = true
       } catch (error) {
@@ -242,7 +250,7 @@ export default {
     async deleteItem(item) {
       try {
         const res = await this.$confirm(
-          `Está seguro que desea eliminar el cliente ${item.name} ?`,
+          `Está seguro que desea eliminar el producto ${item.name} ?`,
           {
             title: `Eliminar ${item.name}`,
             icon: 'mdi-delete',
@@ -253,13 +261,13 @@ export default {
         )
         if (res) {
           await this.$store.dispatch(
-            'administracion/branch/deleteResource',
+            'administracion/product/deleteResource',
             item.id
           )
           await this.$notify({
             group: 'success',
-            title: 'Local Eliminado',
-            text: `${item.name} fue elimiando con éxito!`,
+            title: 'Producto Eliminado',
+            text: `El producto ${item.name} fue elimiando con éxito!`,
           })
         }
       } catch (error) {
@@ -276,4 +284,9 @@ export default {
 </script>
 
 <style>
+/* .test {
+  border-style: dotted !important;
+  border-color: black !important;
+  border-width: 1px !important;
+} */
 </style>

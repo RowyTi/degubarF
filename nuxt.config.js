@@ -19,9 +19,13 @@ export default {
       { rel: 'icon', type: 'image/x-icon', href: '/favicon.ico' }
     ]
   },
+  // env: {
+  //   BASE_URL: 'https://api.degubar.com.ar/v1/',
+  //   BASE_IMG_URL: 'https://api.degubar.com.ar/storage/'
+  // },
   env: {
-    BASE_URL: process.env.BASE_URL || 'http://bdegubar.test/v1/',
-    BASE_IMG_URL: process.env.BASE_IMG_URL || 'http://bdegubar.test/storage/'
+    BASE_URL: process.env.BASE_URL || 'https://api.degubar.com.ar/v1/',
+    BASE_IMG_URL: process.env.BASE_IMG_URL || 'https://api.degubar.com.ar/storage/'
   },
   router: {
     middleware: ["auth"]
@@ -33,6 +37,7 @@ export default {
   // Plugins to run before rendering page: https://go.nuxtjs.dev/config-plugins
   plugins: [
     { src: '~/plugins/vuelidate' },
+    { src: '~/plugins/confirm' },
     { src: "~/plugins/mask" },
     { src: "~/plugins/vue2-google-maps" },
     { src: "~/plugins/print" },
@@ -61,8 +66,9 @@ export default {
 
   // Axios module configuration: https://go.nuxtjs.dev/config-axios
   axios: {
+    // baseUrl: 'https://api.degubar.com.ar/v1/',
     baseUrl: process.env.BASE_URL,
-    credentials: true,
+    credentials: false,
     headers: {
       'Accept': 'application/vnd.api+json',
       'Content-Type': 'application/vnd.api+json'

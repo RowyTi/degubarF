@@ -165,10 +165,22 @@ export default {
     },
     async deleteItem(item) {
       try {
-        await this.$store.dispatch(
-          'administracion/users/deleteResource',
-          item.id
+        const res = await this.$confirm(
+          `Está seguro que desea eliminar el usuario ${item.name} ?`,
+          {
+            title: `Eliminar ${item.name}`,
+            icon: 'mdi-delete',
+            color: 'error',
+            with: 'auto',
+            buttonTrueText: 'Eliminar',
+          }
         )
+        if (res) {
+          await this.$store.dispatch(
+            'administracion/users/deleteResource',
+            item.id
+          )
+        }
       } catch (error) {
         alert(error)
       }

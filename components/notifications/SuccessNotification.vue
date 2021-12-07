@@ -2,7 +2,6 @@
   <notifications
     group="success"
     :duration="5000"
-    :width="400"
     animation-name="v-fade-right"
     position="top right"
   >

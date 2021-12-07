@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "private": true,
   "scripts": {
-    "dev": "nuxt",
+    "dev": "NODE_ENV=dev nuxt",
     "build": "nuxt build",
     "start": "nuxt start",
     "generate": "nuxt generate",
@@ -27,7 +27,8 @@
     "vue-qr": "^3.2.2",
     "vue2-google-maps": "^0.10.7",
     "vuelidate": "^0.7.6",
-    "vuetify": "^2.5.10"
+    "vuetify": "^2.5.10",
+    "vuetify-confirm": "^2.0.6"
   },
   "devDependencies": {
     "@babel/eslint-parser": "^7.14.7",

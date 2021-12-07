@@ -36,19 +36,46 @@
           >
             <v-alert slot="no-result"> no hay resultados </v-alert>
             <template #[`item.state`]="{ item }">
-              <v-chip
-                :color="
-                  item.state === 'inactivo'
-                    ? 'disabled'
-                    : item.state === 'ocupado'
-                    ? 'error'
-                    : 'success'
-                "
-                label
-                x-small
-                class="text-caption text-uppercase"
-                v-text="item.state"
-              />
+              <v-edit-dialog
+                :return-value.sync="item.state"
+                large
+                persistent
+                @save="save(item.id)"
+              >
+                <v-chip
+                  :color="
+                    item.state === 'inactivo'
+                      ? 'disabled'
+                      : item.state === 'ocupado'
+                      ? 'error'
+                      : 'success'
+                  "
+                  label
+                  x-small
+                  class="text-caption text-uppercase"
+                  v-text="item.state"
+                />
+                <template #input>
+                  <div class="mt-4 mb-1 text-h6">Actualizar Estado</div>
+                  <v-select
+                    :value="item.state"
+                    label="Estado"
+                    :items="itemState"
+                    :item-text="itemState.text"
+                    :item-value="itemState.value"
+                    @input="updateState"
+                  >
+                  </v-select>
+                  <!-- <v-text-field
+                    :value="item.state"
+                    label="Stock"
+                    single-line
+                    counter
+                    autofocus
+                    @input="updateState"
+                  ></v-text-field> -->
+                </template>
+              </v-edit-dialog>
             </template>
             <template #[`item.acciones`]="{ item }">
               <v-btn color="accent" icon x-small @click="print([item])">
@@ -92,6 +119,9 @@ export default {
   middleware: ['permission-table', 'auth'],
   data: () => ({
     qrData: [],
+    update: {
+      state: '',
+    },
     headers: [
       {
         text: 'Mesa',
@@ -114,6 +144,20 @@ export default {
         value: 'acciones',
         sortable: false,
         width: '8rem',
+      },
+    ],
+    itemState: [
+      {
+        text: 'Inactivo',
+        value: 'inactivo',
+      },
+      {
+        text: 'Ocupado',
+        value: 'ocupado',
+      },
+      {
+        text: 'Libre',
+        value: 'libre',
       },
     ],
     form: {
@@ -150,6 +194,16 @@ export default {
     deep: true,
   },
   methods: {
+    updateState(e) {
+      this.update.state = e
+    },
+    async save(id) {
+      if (this.update.state.length > 0) {
+        await this.$axios.patch(`tables/state/${id}`, this.update)
+        this.update.state = ''
+        await this.getData()
+      }
+    },
     loadPrintData(value) {
       this.qrData = value
     },
@@ -219,15 +273,27 @@ export default {
     },
     async deleteItem(item) {
       try {
-        await this.$store.dispatch(
-          'administracion/table/deleteResource',
-          item.id
+        const res = await this.$confirm(
+          `Está seguro que desea eliminar la mesa ${item.name} ?`,
+          {
+            title: `Eliminar ${item.name}`,
+            icon: 'mdi-delete',
+            color: 'error',
+            with: 'auto',
+            buttonTrueText: 'Eliminar',
+          }
         )
-        await this.$notify({
-          group: 'success',
-          title: 'Mesa Eliminada',
-          text: `La mesa ${item.name} fue elimianda con éxito!`,
-        })
+        if (res) {
+          await this.$store.dispatch(
+            'administracion/table/deleteResource',
+            item.id
+          )
+          await this.$notify({
+            group: 'success',
+            title: 'Mesa Eliminada',
+            text: `La mesa ${item.name} fue elimianda con éxito!`,
+          })
+        }
       } catch (error) {
         if (error.response.status === 403)
           await this.$notify({

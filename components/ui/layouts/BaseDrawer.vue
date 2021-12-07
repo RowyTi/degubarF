@@ -1,5 +1,5 @@
 <template>
-  <v-navigation-drawer app fixed v-bind="$attrs" v-on="$listeners" dark>
+  <v-navigation-drawer app fixed v-bind="$attrs" dark v-on="$listeners">
     <v-list class="pa-0" dense>
       <v-list-item class="" two-line style="height: 64px !important">
         <v-list-item-avatar tile size="58">
@@ -32,60 +32,6 @@
           <v-list-item-title>{{ m.name }}</v-list-item-title>
         </v-list-item-content>
       </v-list-item>
-      <!-- <v-list-item
-        v-if="$auth.hasScope('index:dashboard')"
-        to="/db-admin/dashboard"
-        exact
-        exact-active-class="link"
-      >
-        <v-list-item-icon>
-          <v-icon>mdi-view-dashboard</v-icon>
-        </v-list-item-icon>
-
-        <v-list-item-title class="text-overline">Dashboard</v-list-item-title>
-      </v-list-item>
-
-      <v-list-item
-        v-if="$auth.hasScope('index:dashboard')"
-        to="/db-admin/dashboard"
-        exact
-        exact-active-class="link"
-      >
-        <v-list-item-icon>
-          <v-icon>mdi-view-dashboard</v-icon>
-        </v-list-item-icon>
-
-        <v-list-item-title class="text-overline">Dashboard</v-list-item-title>
-      </v-list-item> -->
-
-      <!-- <template v-for="(m, index) in menu">
-        <template v-if="$auth.hasScope(m.permission)">
-          <v-subheader :key="index" class="text-overline">{{
-            m.nombre
-          }}</v-subheader>
-          <template v-for="sm in m.subMenu">
-            <v-list-item
-              v-if="$auth.hasScope(sm.permission)"
-              :key="sm.i"
-              :to="'/' + sm.slug"
-              exact
-              exact-active-class="link"
-              class="mx-auto"
-            >
-              <v-list-item-icon>
-                <v-icon v-text="'mdi-' + sm.icon" />
-              </v-list-item-icon>
-              <v-list-item-title v-text="sm.nombre" />
-            </v-list-item>
-          </template>
-
-          <v-divider
-            v-if="index < menu.length - 1"
-            :key="index"
-            class="my-2"
-          ></v-divider>
-        </template>-->
-      <!-- </template>  -->
     </v-list>
   </v-navigation-drawer>
 </template>

@@ -286,7 +286,6 @@
                         outlined
                         placeholder="Buscar cliente"
                       />
-                      {{ formu.branch.id }}
                     </v-col>
                     <v-col cols="12" class="pb-0">
                       <v-select
@@ -337,6 +336,7 @@
                     <v-col cols="12" class="pb-0">
                       <v-text-field
                         v-model="formu.profile.dateOfBirth"
+                        v-mask="'##-##-####'"
                         outlined
                         label="Fecha de nacimiento"
                         :error-messages="dateofbirthErrors"
@@ -647,8 +647,9 @@ export default {
         this.$v.$touch()
         if (!this.$v.$invalid) {
           this.loading = true
-
-          // this.formu.branch.id = this.$store.$auth.user.branch_id.toString()
+          this.formu.branch.id = !this.$auth.user.sa
+            ? this.$auth.user.branch.id.toString()
+            : this.formu.branch.id
           await this.$store.dispatch(
             'administracion/staff/createResource',
             this.formu
@@ -685,7 +686,6 @@ export default {
           'administracion/staff/updateResource',
           this.formu
         )
-        console.log(this.formu)
         this.close()
         await this.$notify({
           group: 'success',

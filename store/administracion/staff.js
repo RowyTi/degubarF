@@ -57,30 +57,38 @@ export const actions = {
   // CREAR RECURSO
   async createResource({ context, dispatch, state }, form) {
     const resource = {
-      username: form.username,
-      state: form.state,
-      password: form.password,
-      branches: {
-        id: form.branch.id
-      },
-      profile: {
-        avatar: "rutadefualt.png",
-        dateOfBirth: form.profile.dateOfBirth,
-        lastName: form.profile.lastName,
-        name: form.profile.name,
-        phone: form.profile.phone,
-        address: {
-          cp: form.profile.address.cp,
-          dpto: form.profile.address.dpto,
-          number: form.profile.address.number,
-          piso: form.profile.address.piso,
-          street: form.profile.address.street
+      data: {
+        type: "staff",
+        attributes: {
+          username: form.username,
+          state: form.state,
+          password: form.password,
+          profile: {
+            avatar: "rutadefualt.png",
+            dateOfBirth: form.profile.dateOfBirth,
+            lastName: form.profile.lastName,
+            name: form.profile.name,
+            phone: form.profile.phone,
+            address: {
+              cp: form.profile.address.cp,
+              dpto: form.profile.address.dpto,
+              number: form.profile.address.number,
+              piso: form.profile.address.piso,
+              street: form.profile.address.street
+            },
+          }
+        },
+        relationships: {
+          branch: {
+            data: {
+              type: "branches",
+              id: form.branch.id
+            }
+          }
         }
       }
     }
-    const serialized = serialize(resource, 'staff', { relationships: ['branches'], changeCase: 'kebabCase' })
-
-    await this.$axios.$post("/staff", serialized);
+    await this.$axios.$post("/staff", resource);
     await dispatch('getList', state.defaultOptions);
   },
 
