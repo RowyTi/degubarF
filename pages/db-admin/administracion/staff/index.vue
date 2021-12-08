@@ -2,7 +2,14 @@
   <v-row justify="center" align="center" class="mt-5">
     <v-col cols="12" md="11">
       <base-card :dialog="false">
-        <template #rightCardTitle> Administración de Staff </template>
+        <template #rightCardTitle>
+          <span class="font-weight-light accent--text">
+            Administración de
+            <span class="primary--text text-uppercase font-weight-bold">
+              Staff</span
+            >
+          </span>
+        </template>
         <template #leftCardTitle>
           <v-btn
             color="primary accent--text"
@@ -25,32 +32,20 @@
             loading-text="Cargando...Espere por favor!"
             :loading="loading"
           >
-            <v-alert slot="no-result"> no hay resultados </v-alert>
+            <v-alert
+              type="info"
+              outlined
+              slot="no-data"
+              dense
+              max-width="400"
+              class="mx-auto mt-4"
+            >
+              No hay personal de staff asociados a este local
+            </v-alert>
             <template #[`item.roles`]="{ item }">
               <span v-if="item.roles.length < 1">Sin Asignar</span>
               <span v-else v-text="item.roles[0]"></span>
             </template>
-            <!-- <template #[`item.quantity`]="props">
-              <v-edit-dialog
-                :return-value.sync="props.item.quantity"
-                large
-                persistent
-                @save="save(props.item.id)"
-              >
-                <div>{{ props.item.quantity }}</div>
-                <template #input>
-                  <div class="mt-4 text-h6">Actualizar Stock</div>
-                  <v-text-field
-                    :value="props.item.quantity"
-                    label="Stock"
-                    single-line
-                    counter
-                    autofocus
-                    @input="updateQuantity"
-                  ></v-text-field>
-                </template>
-              </v-edit-dialog>
-            </template> -->
             <template #[`item.state`]="{ item }">
               <v-chip
                 :color="item.state === 'inactivo' ? 'error' : 'success'"

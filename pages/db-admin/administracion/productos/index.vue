@@ -2,7 +2,14 @@
   <v-row justify="center" align="center" class="mt-5">
     <v-col cols="12" md="11">
       <base-card :dialog="false">
-        <template #rightCardTitle> Administración de Productos </template>
+        <template #rightCardTitle>
+          <span class="font-weight-light accent--text">
+            Administración de
+            <span class="primary--text text-uppercase font-weight-bold">
+              Productos</span
+            >
+          </span>
+        </template>
         <template #leftCardTitle>
           <v-btn
             color="primary accent--text"
@@ -25,7 +32,16 @@
             loading-text="Cargando...Espere por favor!"
             :loading="loading"
           >
-            <v-alert slot="no-result"> no hay resultados </v-alert>
+            <v-alert
+              type="info"
+              outlined
+              slot="no-data"
+              dense
+              max-width="400"
+              class="mx-auto mt-4"
+            >
+              No hay productos asociados a este local
+            </v-alert>
             <template #[`item.state`]="{ item }">
               <v-chip
                 :color="item.state === 'inactivo' ? 'error' : 'success'"
@@ -69,7 +85,6 @@
             </template>
           </v-data-table>
         </template>
-        {{ products }}
       </base-card>
     </v-col>
     <product-dialog

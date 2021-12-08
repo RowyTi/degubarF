@@ -2,7 +2,14 @@
   <v-row justify="center" align="center" class="mt-5">
     <v-col cols="12" md="11">
       <base-card :dialog="false">
-        <template #rightCardTitle> Administración de Categorias </template>
+        <template #rightCardTitle>
+          <span class="font-weight-light accent--text">
+            Administración de
+            <span class="primary--text text-uppercase font-weight-bold">
+              Categorías</span
+            >
+          </span>
+        </template>
         <template #leftCardTitle>
           <v-btn
             color="primary accent--text"
@@ -25,7 +32,16 @@
             loading-text="Cargando...Espere por favor!"
             :loading="loading"
           >
-            <v-alert slot="no-result"> no hay resultados </v-alert>
+            <v-alert
+              type="info"
+              outlined
+              slot="no-data"
+              dense
+              max-width="400"
+              class="mx-auto mt-4"
+            >
+              No hay categorías creadas
+            </v-alert>
             <template #[`item.branches`]="{ item }">
               <v-chip
                 v-if="item.branches.length < 1"

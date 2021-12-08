@@ -125,7 +125,6 @@ export default {
     },
     async login() {
       try {
-        this.$toast.show('Logging in...')
         this.loading = true
         this.$v.$touch()
         if (!this.$v.$invalid) {

@@ -17,10 +17,7 @@
     </v-toolbar>
 
     <v-card-title v-else>
-      <span class="border">
-        <slot name="rightCardTitle"></slot>
-      </span>
-
+      <slot name="rightCardTitle"></slot>
       <v-spacer></v-spacer>
       <slot name="leftCardTitle"></slot>
     </v-card-title>
@@ -76,8 +73,5 @@ export default {
 <style scoped>
 .borderCard {
   border-top: solid #f9a825 5px;
-}
-.border {
-  border-left: solid #f9a825 5px;
 }
 </style>

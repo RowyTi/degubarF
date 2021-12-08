@@ -2,7 +2,14 @@
   <v-row justify="center" align="center" class="mt-5">
     <v-col cols="12" md="11">
       <base-card :dialog="false">
-        <template #rightCardTitle> Administración de Permisos </template>
+        <template #rightCardTitle>
+          <span class="font-weight-light accent--text">
+            Administración de
+            <span class="primary--text text-uppercase font-weight-bold">
+              Permisos</span
+            >
+          </span>
+        </template>
         <template #leftCardTitle>
           <!-- <v-btn color="primary black--text" small @click.stop="dialog = !dialog">
             Asignar Empleado<v-icon right dark>mdi-account-plus</v-icon>

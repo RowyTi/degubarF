@@ -3,7 +3,12 @@
     <v-col cols="12" md="11">
       <base-card :dialog="false">
         <template #rightCardTitle>
-          <span class="ml-3"></span> Administración de Clientes
+          <span class="font-weight-light accent--text">
+            Administración de
+            <span class="primary--text text-uppercase font-weight-bold">
+              Clientes</span
+            >
+          </span>
         </template>
         <template #leftCardTitle>
           <v-btn
@@ -27,7 +32,16 @@
             loading-text="Cargando...Espere por favor!"
             :loading="loading"
           >
-            <v-alert slot="no-result"> no hay resultados </v-alert>
+            <v-alert
+              type="info"
+              outlined
+              slot="no-data"
+              dense
+              max-width="400"
+              class="mx-auto mt-4"
+            >
+              No hay clientes
+            </v-alert>
             <template #[`item.state`]="{ item }">
               <v-chip
                 :color="branchState(item.state)"

@@ -2,7 +2,14 @@
   <v-row justify="center" align="center" class="mt-5">
     <v-col cols="12" md="11">
       <base-card :dialog="false">
-        <template #rightCardTitle> Administración de Usuarios </template>
+        <template #rightCardTitle>
+          <span class="font-weight-light accent--text">
+            Administración de
+            <span class="primary--text text-uppercase font-weight-bold">
+              Usuarios</span
+            >
+          </span>
+        </template>
         <template #leftCardTitle>
           <v-btn
             color="primary accent--text"
