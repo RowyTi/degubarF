@@ -1,8 +1,7 @@
 export default function ({ $auth, redirect }) {
-    if ($auth.hasScope('index:branch') || $auth.hasScope('jklr')){
+    if ($auth.hasScope('dashboard:branch')) {
         return true
-    }else{
+    } else {
         return redirect('/db-admin/dashboard')
     }
 }
-  

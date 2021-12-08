@@ -1,7 +1,7 @@
 export default function ({ $auth, redirect }) {
-  if ($auth.hasScope('index:dashboard') || $auth.hasScope('jklr')){
+  if ($auth.hasScope('dashboard')) {
     return true
-  }else {
+  } else {
     return redirect('/')
   }
 }
