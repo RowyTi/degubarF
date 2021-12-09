@@ -264,9 +264,7 @@ export default {
           this.$toast.success(
             `El usuario ${item.username} fue eliminado con éxito`,
             {
-              class: 'primary--text',
-              icon: 'mdi-check',
-              // position: 'top-center',
+              icon: 'mdi-checkbox-marked-circle-outline',
             }
           )
         }

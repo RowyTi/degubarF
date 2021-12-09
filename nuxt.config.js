@@ -73,6 +73,32 @@ export default {
     },
     className: 'pa-10',
     iconPack: 'mdi',
+    register: [ // Register custom toasts 
+      {
+        name: 'success',
+        // message: 'Oops...Something went wrong',
+        options: {
+          type: 'success',
+          icon: 'mdi-checkbox-marked-circle-outline',
+        }
+      },
+      {
+        name: 'e403',
+        message: 'Usted no esta Autorizado para realizar esta acción',
+        options: {
+          type: 'error',
+          icon: 'mdi-account-cancel-outline',
+        }
+      },
+      {
+        name: 'e500',
+        message: 'Ocurrió un error en el servidor, intentelo de nuevo mas tarde',
+        options: {
+          type: 'error',
+          icon: 'mdi-alert-circle-outline',
+        }
+      }
+    ]
   },
   // Axios module configuration: https://go.nuxtjs.dev/config-axios
   axios: {

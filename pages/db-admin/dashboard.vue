@@ -23,7 +23,6 @@ export default {
     test() {
       this.$toast.success(`El usuario pirulito fue eliminado con éxito`, {
         icon: 'mdi-checkbox-marked-circle-outline',
-        // position: 'top-center',
       })
     },
   },

@@ -339,6 +339,7 @@
                         v-mask="'##-##-####'"
                         outlined
                         label="Fecha de nacimiento"
+                        placeholder="dd-mm-aaaa"
                         :error-messages="dateofbirthErrors"
                         @input="$v.formu.profile.dateOfBirth.$touch()"
                         @blur="$v.formu.profile.dateOfBirth.$touch()"
@@ -384,6 +385,7 @@
                         v-model="formu.profile.address.number"
                         outlined
                         label="Numero"
+                        type="number"
                         :error-messages="numberErrors"
                         @input="$v.formu.profile.address.number.$touch()"
                         @blur="$v.formu.profile.address.number.$touch()"
@@ -404,6 +406,7 @@
                         v-model="formu.profile.address.piso"
                         outlined
                         label="Piso"
+                        type="number"
                         :error-messages="pisoErrors"
                         @input="$v.formu.profile.address.piso.$touch()"
                         @blur="$v.formu.profile.address.piso.$touch()"
@@ -655,25 +658,18 @@ export default {
             this.formu
           )
           this.close()
-          await this.$notify({
-            group: 'success',
-            title: 'Usuario creado!',
-            text: `<b>${this.formu.username}</b> fue creado con éxito!`,
-          })
+          this.$toast.success(
+            `El usuario ${this.formu.username} fue creado con éxito!`,
+            {
+              icon: 'mdi-checkbox-marked-circle-outline',
+            }
+          )
         }
       } catch (error) {
         if (error.response.status === 403) {
-          await this.$notify({
-            group: 'error',
-            title: 'No Autorizado',
-            text: 'Usted no esta Autorizado para realizar esta acción',
-          })
+          await this.$toast.global.e403()
         } else {
-          await this.$notify({
-            group: 'error',
-            title: 'Error',
-            text: 'Ocurrió un error en el servidor, intentelo de nuevo mas tarde..',
-          })
+          await this.$toast.global.e500()
         }
       } finally {
         this.loading = false
@@ -687,24 +683,17 @@ export default {
           this.formu
         )
         this.close()
-        await this.$notify({
-          group: 'success',
-          title: 'Usuario Actualiado!',
-          text: `<b>${this.formu.username}</b> fue actualizado con éxito!`,
-        })
+        await this.$toast.success(
+          `El usuario ${this.formu.username} fue actualizado con éxito`,
+          {
+            icon: 'mdi-checkbox-marked-circle-outline',
+          }
+        )
       } catch (error) {
         if (error.response.status === 403) {
-          await this.$notify({
-            group: 'error',
-            title: 'No Autorizado',
-            text: 'Usted no esta Autorizado para realizar esta acción',
-          })
+          await this.$toast.global.e403()
         } else {
-          await this.$notify({
-            group: 'error',
-            title: 'Error',
-            text: 'Ocurrió un error en el servidor, intentelo de nuevo mas tarde..',
-          })
+          await this.$toast.global.e500()
         }
       } finally {
         this.loading = false
@@ -722,11 +711,7 @@ export default {
           changeCase: 'camelCase',
         })
       } catch (error) {
-        await this.$notify({
-          group: 'error',
-          title: 'Error en la búsqueda',
-          text: error,
-        })
+        console.log(error)
       } finally {
         this.isLoading = false
       }
