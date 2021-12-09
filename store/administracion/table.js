@@ -80,7 +80,7 @@ export const actions = {
       branch_id: rootState.auth.user.branch.id.toString()
     }
     const serialized = serialize(resource, 'tables', { changeCase: 'snakeCase' })
-    console.log(serialized);
+    // console.log(serialized);
     await this.$axios.$patch(`tables/${form.id}`, serialized);
     await dispatch('getList', state.defaultOptions);
   },

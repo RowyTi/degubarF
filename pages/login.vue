@@ -51,7 +51,7 @@
               v-if="errors"
               class="mx-auto error--text text-caption text-center"
             >
-              {{ errors.detail }}
+              {{ errors }}
             </span>
           </v-card-text>
 
@@ -87,7 +87,7 @@ export default {
       password: '',
     },
     loading: false,
-    errors: {},
+    errors: '',
     showPassword: '',
   }),
   validations: {
@@ -133,19 +133,19 @@ export default {
           await this.$auth.$storage.getUniversal('user')
 
           await this.$router.push({ path: '/db-admin/dashboard' })
-          this.$toast.success('Successfully authenticated', {
-            icon: 'mdi-delete',
-          })
         }
       } catch (err) {
         if (err.response.status === 500) {
-          await this.$notify({
-            group: 'error',
-            title: 'Error',
-            text: 'Ocurrió un problema en el servidor, estamos trabajando para solucionarlo.',
-          })
-        } else {
-          this.errors = err.response.data.errors[0]
+          this.$toast.error(
+            'Ocurrió un problema en el servidor, estamos trabajando para solucionarlo.',
+            {
+              icon: 'mdi-alert-circle-outline',
+              // position: 'top-center',
+            }
+          )
+        }
+        if (err.response.status === 422) {
+          this.errors = err.response.data.errors.username[0]
         }
       } finally {
         this.loading = false

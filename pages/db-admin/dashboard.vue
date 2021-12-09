@@ -3,7 +3,7 @@
     <v-col cols="6">
       {{ user }}
     </v-col>
-    <v-col cols="6"> </v-col>
+    <v-col cols="6"> <v-btn @click="test">te</v-btn></v-col>
   </v-row>
 </template>
 
@@ -20,7 +20,12 @@ export default {
   },
 
   methods: {
-    //
+    test() {
+      this.$toast.success(`El usuario pirulito fue eliminado con éxito`, {
+        icon: 'mdi-checkbox-marked-circle-outline',
+        // position: 'top-center',
+      })
+    },
   },
 }
 </script>

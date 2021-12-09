@@ -22,7 +22,7 @@
         <template #body>
           <v-data-table
             :headers="headers"
-            :items="staff"
+            :items.sync="staff"
             :footer-props="{
               'items-per-page-options': [10, 20, 30],
               'items-per-page-text': 'Filas por página',
@@ -33,9 +33,9 @@
             :loading="loading"
           >
             <v-alert
+              slot="no-data"
               type="info"
               outlined
-              slot="no-data"
               dense
               max-width="400"
               class="mx-auto mt-4"
@@ -234,7 +234,6 @@ export default {
 
         this.editedIndex = this.staff.indexOf(item)
         this.form = Object.assign({}, deserializeData)
-        console.log(this.form)
         this.dialog = true
       } catch (error) {
         if (error.response.status === 403)
@@ -262,11 +261,14 @@ export default {
             'administracion/staff/deleteResource',
             item.id
           )
-          await this.$notify({
-            group: 'success',
-            title: 'Usuario Eliminado',
-            text: `${item.username} fue elimiando con éxito!`,
-          })
+          this.$toast.success(
+            `El usuario ${item.username} fue eliminado con éxito`,
+            {
+              class: 'primary--text',
+              icon: 'mdi-check',
+              // position: 'top-center',
+            }
+          )
         }
       } catch (error) {
         if (error.response.status === 403)

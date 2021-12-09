@@ -84,20 +84,18 @@ export const actions = {
       branch_id: rootState.auth.user.branch.id.toString()
     }
     const serialized = serialize(resource, 'products', { changeCase: 'snakeCase' })
-    console.log(serialized);
     await this.$axios.$patch(`products/${form.id}`, serialized);
     await dispatch('getList', state.defaultOptions);
   },
 
   // ACTUALIZAR STOCK
   async updateQuantityResource({ context, dispatch, state }, form) {
-    console.log(form);
     const resource = {
       id: form.id,
       quantity: form.quantity,
+      image: null
     }
     const serialized = serialize(resource, 'products', { changeCase: 'snakeCase' })
-    // await console.log(serialized);
     await this.$axios.$patch(`products/${form.id}`, serialized);
     await dispatch('getList', state.defaultOptions);
   },

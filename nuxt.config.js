@@ -64,13 +64,14 @@ export default {
   ],
   toast: {
     position: 'top-right',
-    duration: 5000,
+    // duration: 5000,
     action: {
       icon: 'mdi-close',
       onClick: (e, toastObject) => {
         toastObject.goAway(0)
       },
     },
+    className: 'pa-10',
     iconPack: 'mdi',
   },
   // Axios module configuration: https://go.nuxtjs.dev/config-axios

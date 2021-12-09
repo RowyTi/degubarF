@@ -207,6 +207,7 @@
                       formu.image.includes('data:image/png;base64,')
                     "
                     :src="formu.image"
+                    class="rounded-lg"
                   >
                     <template #placeholder>
                       <v-row
@@ -223,6 +224,7 @@
                   <v-img
                     v-else-if="formu.image.length > 1"
                     :src="imgUrl + formu.image"
+                    class="rounded-lg"
                   >
                     <template #placeholder>
                       <v-row
@@ -237,7 +239,6 @@
                       </v-row> </template
                   ></v-img>
                 </v-col>
-                {{ formu.image.includes('data:image/jpeg;base64,') }}
               </v-col>
             </v-row>
           </v-container>
@@ -302,12 +303,6 @@ export default {
       page: 1,
       itemsPerPage: 10,
     },
-    // name: '',
-    // description: '',
-    // price: '',
-    // quantity: '',
-    // state: 'inactivo',
-    // image: '',
   }),
   validations: {
     formu: {

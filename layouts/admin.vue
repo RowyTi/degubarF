@@ -39,6 +39,10 @@ html {
 .v-data-table-header__icon {
   color: #ffb300 !important;
 }
+// .toasted-container.top-right {
+//   top: 5% !important;
+//   right: 1% !important;
+// }
 // .bgLight {
 //   background-color: #ebecef !important;
 // }

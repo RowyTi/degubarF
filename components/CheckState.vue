@@ -43,7 +43,7 @@ export default {
     expiredToken(newValue) {
       if (newValue === true) {
         clearInterval(this.stateId)
-        console.info('sesión expirada')
+        // console.info('sesión expirada')
       }
     },
   },

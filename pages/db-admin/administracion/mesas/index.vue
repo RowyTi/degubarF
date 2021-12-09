@@ -42,9 +42,9 @@
             :loading="loading"
           >
             <v-alert
+              slot="no-data"
               type="info"
               outlined
-              slot="no-data"
               dense
               max-width="400"
               class="mx-auto mt-4"

@@ -33,9 +33,9 @@
             :loading="loading"
           >
             <v-alert
+              slot="no-data"
               type="info"
               outlined
-              slot="no-data"
               dense
               max-width="400"
               class="mx-auto mt-4"
@@ -63,6 +63,7 @@
                   <div class="mt-4 text-h6">Actualizar Stock</div>
                   <v-text-field
                     :value="props.item.quantity"
+                    type="number"
                     label="Stock"
                     single-line
                     counter
@@ -98,7 +99,6 @@
 </template>
 
 <script>
-import { deserialize } from 'jsonapi-fractal'
 import { mapState } from 'vuex'
 import BaseCard from '~/components/ui/BaseCard.vue'
 import ProductDialog from '~/components/dialog/product/ProductDialog.vue'
@@ -242,16 +242,12 @@ export default {
     },
     async editItem(item) {
       try {
-        const res = await this.$axios.$get(`products/${item.id}`, {
-          params: {
-            // include: 'branch',
-          },
-        })
-        const deserializeData = deserialize(res, {
-          changeCase: 'camelCase',
-        })
+        await this.$store.dispatch(
+          'administracion/product/getResource',
+          item.id
+        )
         this.editedIndex = this.products.indexOf(item)
-        this.form = Object.assign({}, deserializeData)
+        this.form = Object.assign({}, this.product)
         this.dialog = true
       } catch (error) {
         if (error.response.status === 403)
@@ -297,11 +293,3 @@ export default {
   },
 }
 </script>
-
-<style>
-/* .test {
-  border-style: dotted !important;
-  border-color: black !important;
-  border-width: 1px !important;
-} */
-</style>
