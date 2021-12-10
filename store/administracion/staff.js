@@ -34,7 +34,7 @@ export const actions = {
       params: {
         'filter[branch_id]': rootState.auth.user.branch ? rootState.auth.user.branch.id : null,
         'filter[username]': rootState.auth.user ? rootState.auth.user.username : null,
-        'filter[role]': rootState.auth.user.sa ? 'administrador' : null,
+        'filter[rol]': rootState.auth.user.sa ? 'administrador' : null,
         'include': rootState.auth.user.sa ? 'branch' : null,
         'fields[branches]': 'name',
         'page[number]': params.page,
@@ -60,7 +60,6 @@ export const actions = {
 
   // CREAR RECURSO
   async createResource({ context, dispatch, state }, form) {
-    await console.log(form);
     const resource = {
       data: {
         type: "staff",
@@ -68,8 +67,49 @@ export const actions = {
           username: form.username,
           state: form.state,
           password: form.password,
-          roles: form.roles,
+          role: form.roles,
           profile: {
+            dateOfBirth: form.profile.dateOfBirth,
+            lastName: form.profile.lastName,
+            name: form.profile.name,
+            phone: form.profile.phone,
+            address: {
+              cp: form.profile.address.cp,
+              dpto: form.profile.address.dpto,
+              number: form.profile.address.number,
+              piso: form.profile.address.piso,
+              street: form.profile.address.street
+            },
+          }
+        },
+        relationships: {
+          branch: {
+            data: {
+              type: "branches",
+              id: form.branch.id
+            }
+          }
+        }
+      }
+    }
+    await this.$axios.$post("/staff", resource);
+    await dispatch('getList', state.defaultOptions);
+  },
+
+  // ACTUALIZAR RECURSO
+  async updateResource({ context, dispatch, state }, form) {
+    const resource = {
+      data: {
+        id: form.id,
+        type: "staff",
+        attributes: {
+          username: form.username,
+          state: form.state,
+          password: form.password,
+          role: form.roles,
+          profile: {
+            id: form.profile.id,
+            avatar: form.avatar,
             dateOfBirth: form.profile.dateOfBirth,
             lastName: form.profile.lastName,
             name: form.profile.name,
@@ -94,46 +134,6 @@ export const actions = {
       }
     }
     console.log(resource);
-    await this.$axios.$post("/staff", resource);
-    await dispatch('getList', state.defaultOptions);
-  },
-
-  // ACTUALIZAR RECURSO
-  async updateResource({ context, dispatch, state }, form) {
-    const resource = {
-      data: {
-        id: form.id,
-        type: "staff",
-        attributes: {
-          username: form.username,
-          state: form.state,
-          password: form.password,
-          profile: {
-            id: form.profile.id,
-            avatar: "rutadefualt.png",
-            dateOfBirth: form.profile.dateOfBirth,
-            lastName: form.profile.lastName,
-            name: form.profile.name,
-            phone: form.profile.phone,
-            address: {
-              cp: form.profile.address.cp,
-              dpto: form.profile.address.dpto,
-              number: form.profile.address.number,
-              piso: form.profile.address.piso,
-              street: form.profile.address.street
-            },
-          }
-        },
-        relationships: {
-          branch: {
-            data: {
-              type: "branches",
-              id: form.branch.id
-            }
-          }
-        }
-      }
-    }
     await this.$axios.$patch(`staff/${form.id}`, resource);
     await dispatch('getList', state.defaultOptions);
   },

@@ -278,12 +278,7 @@ export default {
           )
         }
       } catch (error) {
-        if (error.response.status === 403)
-          await this.$notify({
-            group: 'error',
-            title: 'No Autorizado',
-            text: 'Usted no está autorizado a realizar esta acción',
-          })
+        if (error.response.status === 403) await this.$toast.global.e403()
       }
     },
   },
