@@ -33,6 +33,10 @@ export const actions = {
     const response = await this.$axios.$get(`staff`, {
       params: {
         'filter[branch_id]': rootState.auth.user.branch ? rootState.auth.user.branch.id : null,
+        'filter[username]': rootState.auth.user ? rootState.auth.user.username : null,
+        'filter[role]': rootState.auth.user.sa ? 'administrador' : null,
+        'include': rootState.auth.user.sa ? 'branch' : null,
+        'fields[branches]': 'name',
         'page[number]': params.page,
         'page[size]': params.itemsPerPage,
         sort: params.sortDesc[0] ? '-' + params.sortBy[0] : params.sortBy[0]
@@ -56,6 +60,7 @@ export const actions = {
 
   // CREAR RECURSO
   async createResource({ context, dispatch, state }, form) {
+    await console.log(form);
     const resource = {
       data: {
         type: "staff",
@@ -63,8 +68,8 @@ export const actions = {
           username: form.username,
           state: form.state,
           password: form.password,
+          roles: form.roles,
           profile: {
-            avatar: "rutadefualt.png",
             dateOfBirth: form.profile.dateOfBirth,
             lastName: form.profile.lastName,
             name: form.profile.name,
@@ -88,6 +93,7 @@ export const actions = {
         }
       }
     }
+    console.log(resource);
     await this.$axios.$post("/staff", resource);
     await dispatch('getList', state.defaultOptions);
   },

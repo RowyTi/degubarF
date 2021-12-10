@@ -42,6 +42,7 @@
             >
               No hay personal de staff asociados a este local
             </v-alert>
+
             <template #[`item.roles`]="{ item }">
               <span v-if="item.roles.length < 1">Sin Asignar</span>
               <span v-else v-text="item.roles[0]"></span>
@@ -122,6 +123,7 @@ export default {
     form: {
       username: '',
       state: 'inactivo',
+      roles: 'Staff',
       branch: {
         id: '',
       },
@@ -143,6 +145,7 @@ export default {
       username: '',
       password: '',
       state: 'inactivo',
+      roles: 'Staff',
       branch: {
         id: '',
       },
@@ -179,6 +182,15 @@ export default {
       },
     },
     deep: true,
+  },
+  mounted() {
+    if (this.$auth.user.sa) {
+      this.headers.splice(3, 0, {
+        text: 'Cliente',
+        value: 'branch.name',
+        sortable: false,
+      })
+    }
   },
   methods: {
     closeDialog() {
@@ -234,14 +246,11 @@ export default {
 
         this.editedIndex = this.staff.indexOf(item)
         this.form = Object.assign({}, deserializeData)
+        this.form.roles = deserializeData.roles[0]
+        console.log(this.form)
         this.dialog = true
       } catch (error) {
-        if (error.response.status === 403)
-          await this.$notify({
-            group: 'error',
-            title: 'No Autorizado',
-            text: 'Usted no está autorizado a realizar esta acción',
-          })
+        if (error.response.status === 403) this.$toast.global.e403()
       }
     },
     async deleteItem(item) {

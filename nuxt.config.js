@@ -64,7 +64,7 @@ export default {
   ],
   toast: {
     position: 'top-right',
-    // duration: 5000,
+    duration: 5000,
     action: {
       icon: 'mdi-close',
       onClick: (e, toastObject) => {

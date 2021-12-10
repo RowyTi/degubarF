@@ -136,13 +136,7 @@ export default {
         }
       } catch (err) {
         if (err.response.status === 500) {
-          this.$toast.error(
-            'Ocurrió un problema en el servidor, estamos trabajando para solucionarlo.',
-            {
-              icon: 'mdi-alert-circle-outline',
-              // position: 'top-center',
-            }
-          )
+          this.$toast.global.e500()
         }
         if (err.response.status === 422) {
           this.errors = err.response.data.errors.username[0]

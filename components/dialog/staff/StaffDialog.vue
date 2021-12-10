@@ -252,6 +252,7 @@
               <v-stepper-content step="1">
                 <v-container fluid class="mt-2 pt-0">
                   <v-row align="center" justify="center">
+                    {{ formu }}
                     <v-col cols="12" class="pb-0">
                       <v-text-field
                         v-model="formu.username"
@@ -285,6 +286,14 @@
                         no-data-text="El cliente solicitado no existe."
                         outlined
                         placeholder="Buscar cliente"
+                      />
+                    </v-col>
+                    <v-col v-else cols="12" class="pb-0">
+                      <v-select
+                        v-model="formu.roles"
+                        :items="roles"
+                        outlined
+                        label="Rol"
                       />
                     </v-col>
                     <v-col cols="12" class="pb-0">
@@ -485,6 +494,7 @@ export default {
     },
     // autocomplete
     branches: [],
+    roles: [],
     isLoading: false,
   }),
   validations: {
@@ -631,9 +641,11 @@ export default {
       return errors
     },
   },
-  created() {
+  mounted() {
     if (this.$auth.user.sa) {
       this.getBranches()
+    } else {
+      this.getRoles()
     }
   },
   methods: {
@@ -714,6 +726,14 @@ export default {
         console.log(error)
       } finally {
         this.isLoading = false
+      }
+    },
+    async getRoles() {
+      try {
+        const res = await this.$axios.get('role')
+        this.roles = res.data.roles
+      } catch (error) {
+        this.$toast.error('Ocurrio un problema al cargar los roles')
       }
     },
   },
