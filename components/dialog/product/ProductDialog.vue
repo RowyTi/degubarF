@@ -119,14 +119,16 @@
                   ></v-text-field>
                 </v-col>
                 <v-col cols="12" class="pb-0">
-                  <v-text-field
+                  <v-textarea
                     v-model="formu.description"
                     outlined
+                    no-resize
+                    counter="255"
                     label="Descripción"
                     :error-messages="descriptionErrors"
                     @input="$v.formu.description.$touch()"
                     @blur="$v.formu.description.$touch()"
-                  ></v-text-field>
+                  ></v-textarea>
                 </v-col>
                 <v-col cols="12">
                   <v-row>
@@ -135,6 +137,7 @@
                         v-model="formu.quantity"
                         v-mask="'#####'"
                         outlined
+                        placeholder="0"
                         label="Stock"
                         :error-messages="quantityErrors"
                         @input="$v.formu.quantity.$touch()"
@@ -146,6 +149,7 @@
                         v-model="formu.price"
                         outlined
                         prefix="$"
+                        placeholder="0"
                         label="Precio"
                         :error-messages="priceErrors"
                         @input="$v.formu.price.$touch()"
@@ -173,6 +177,7 @@
               <!-- IMAGEN DE PRODUCTO -->
               <v-col cols="6">
                 <v-col cols="12">
+                  <!-- {{ !file }} -->
                   <v-file-input
                     v-model="file"
                     accept="image/jpeg, image/png"
@@ -184,30 +189,24 @@
                     counter
                     show-size
                     small-chips
+                    :error-messages="fileErrors"
+                    @input="$v.file.$touch()"
+                    @blur="$v.file.$touch()"
                     @change="uploadImage"
                   />
                 </v-col>
 
                 <v-col cols="12">
-                  <v-sheet
-                    v-if="formu.image.length < 1"
-                    height="200"
-                    width="200"
-                    color="blue-grey lighten-5 d-flex align-center rounded-lg"
-                    rounded-lg
-                    elevation="5"
-                  >
-                    <v-icon class="mx-auto accent--text" size="72">
-                      mdi-image
-                    </v-icon>
-                  </v-sheet>
                   <v-img
                     v-if="
-                      formu.image.includes('data:image/jpeg;base64,') ||
-                      formu.image.includes('data:image/png;base64,')
+                      image.includes('data:image/jpeg;base64,') ||
+                      image.includes('data:image/png;base64,')
                     "
-                    :src="formu.image"
+                    :src="image"
                     class="rounded-lg"
+                    max-height="200"
+                    max-width="200"
+                    contain
                   >
                     <template #placeholder>
                       <v-row
@@ -225,6 +224,9 @@
                     v-else-if="formu.image.length > 1"
                     :src="imgUrl + formu.image"
                     class="rounded-lg"
+                    max-height="200"
+                    max-width="200"
+                    contain
                   >
                     <template #placeholder>
                       <v-row
@@ -238,6 +240,18 @@
                         ></v-progress-circular>
                       </v-row> </template
                   ></v-img>
+                  <v-sheet
+                    v-else
+                    height="200"
+                    width="200"
+                    color="blue-grey lighten-5 d-flex align-center rounded-lg"
+                    rounded-lg
+                    elevation="5"
+                  >
+                    <v-icon class="mx-auto accent--text" size="72">
+                      mdi-image
+                    </v-icon>
+                  </v-sheet>
                 </v-col>
               </v-col>
             </v-row>
@@ -262,7 +276,7 @@
 </template>
 
 <script>
-import { required, numeric } from 'vuelidate/lib/validators'
+import { required, numeric, requiredIf } from 'vuelidate/lib/validators'
 import BaseCard from '~/components/ui/BaseCard.vue'
 import BaseListItemContent from '~/components/ui/BaseListItemContent.vue'
 export default {
@@ -305,6 +319,11 @@ export default {
     },
   }),
   validations: {
+    file: {
+      required: requiredIf(function (nestedModel) {
+        return this.file === null // New changes
+      }),
+    },
     formu: {
       name: {
         required,
@@ -314,15 +333,13 @@ export default {
       },
       price: {
         required,
+        numeric,
       },
       quantity: {
         required,
         numeric,
       },
       state: {
-        required,
-      },
-      image: {
         required,
       },
     },
@@ -332,6 +349,7 @@ export default {
       return process.env.BASE_IMG_URL
     },
     formu() {
+      // eslint-disable-next-line vue/no-side-effects-in-computed-properties
       return this.form
     },
     formTitle() {
@@ -378,58 +396,62 @@ export default {
         errors.push('Este campo es obligatiorio.')
       return errors
     },
+    fileErrors() {
+      const errors = []
+      if (!this.$v.file.$dirty) return errors
+      !this.$v.file.required && errors.push('Este campo es obligatiorio.')
+      return errors
+    },
   },
-
   methods: {
     uploadImage(imagen) {
       this.createImage(imagen)
     },
     createImage(file) {
-      if (file !== null) {
+      if (file) {
         const reader = new FileReader()
         reader.onload = (e) => {
-          this.formu.image = e.target.result
+          this.image = e.target.result
         }
         reader.readAsDataURL(file)
       } else {
-        this.formu.image = ''
+        this.image = ''
       }
     },
     close() {
       this.$v.$reset()
+      this.file = []
       this.stepper = 1
       this.$emit('closeDialog')
     },
     async createResource() {
       try {
-        // this.$v.$touch()
-        // if (!this.$v.$invalid) {
         this.loading = true
-        await this.$store.dispatch(
-          'administracion/product/createResource',
-          this.formu
-        )
-        this.close()
-        await this.$notify({
-          group: 'success',
-          title: 'Mesa creada!',
-          text: `La Mesa <b>${this.formu.name}</b> fue creado con éxito!`,
-        })
-        // }
-      } catch (error) {
-        if (error.response.status === 403) {
-          await this.$notify({
-            group: 'error',
-            title: 'No Autorizado',
-            text: 'Usted no esta Autorizado para realizar esta acción',
-          })
-        } else {
-          await this.$notify({
-            group: 'error',
-            title: 'Error',
-            text: 'Ocurrió un error en el servidor, intentelo de nuevo mas tarde..',
-          })
+        this.$refs.formulario.validate()
+        this.$v.$touch()
+        if (!this.$v.$invalid) {
+          this.formu.image = this.image
+          await this.$store.dispatch(
+            'administracion/product/createResource',
+            this.formu
+          )
+          this.close()
+          this.$toast.success(
+            `El producto ${this.formu.name} fue creado con éxito!`,
+            {
+              icon: 'mdi-checkbox-marked-circle-outline',
+            }
+          )
         }
+        // this.$refs.formulario.reset()
+      } catch (error) {
+        if (error.response) {
+          if (error.response.status === 500) this.$toast.global.e500()
+          if (error.response.status === 403) this.$toast.global.e403()
+        } else if (error.request) {
+          this.$toast.error('Ocurrió un problema al cargar tu negocio')
+        }
+        console.log(error.toJSON())
       } finally {
         this.loading = false
       }
@@ -437,30 +459,29 @@ export default {
     async updateResource() {
       try {
         this.loading = true
+        if (this.image.length > 0) {
+          this.formu.image = this.image
+        }
+
         await this.$store.dispatch(
           'administracion/product/updateResource',
           this.formu
         )
         this.close()
-        await this.$notify({
-          group: 'success',
-          title: 'Producto Actualizado!',
-          text: `El producto <b>${this.formu.name}</b> fue actualizado con éxito!`,
-        })
+        this.$toast.success(
+          `El producto ${this.formu.name} fue actualizado con éxito!`,
+          {
+            icon: 'mdi-checkbox-marked-circle-outline',
+          }
+        )
       } catch (error) {
-        if (error.response.status === 403) {
-          await this.$notify({
-            group: 'error',
-            title: 'No Autorizado',
-            text: 'Usted no esta Autorizado para realizar esta acción',
-          })
-        } else {
-          await this.$notify({
-            group: 'error',
-            title: 'Error',
-            text: 'Ocurrió un error en el servidor, intentelo de nuevo mas tarde..',
-          })
+        if (error.response) {
+          if (error.response.status === 500) this.$toast.global.e500()
+          if (error.response.status === 403) this.$toast.global.e403()
+        } else if (error.request) {
+          this.$toast.error('Ocurrió un problema al cargar tu negocio')
         }
+        console.log(error.toJSON())
       } finally {
         this.loading = false
       }

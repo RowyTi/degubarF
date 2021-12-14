@@ -129,11 +129,6 @@ export default {
           required: true,
           type: "Bearer"
         },
-        refreshToken: {
-          property: 'refresh_token',
-          data: 'refresh_token',
-          // maxAge: 60 * 60 * 24 * 30
-        },
         user: {
           property: false,
           autoFetch: true,
@@ -154,10 +149,6 @@ export default {
           },
           user: {
             url: "/user",
-            method: "get"
-          },
-          refresh: {
-            url: "/refresh/staff",
             method: "get"
           },
           scope: true,

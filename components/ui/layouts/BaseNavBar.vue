@@ -1,6 +1,6 @@
 <template>
   <div>
-    <v-app-bar app color="amber accent-4">
+    <v-app-bar app color="amber accent-4" flat>
       <v-app-bar-nav-icon @click.stop="openDrawer">
         <v-icon v-text="'mdi-dots-vertical'" />
       </v-app-bar-nav-icon>
@@ -48,7 +48,7 @@ export default {
       {
         name: 'Mi Negocio',
         slug: '/db-admin/administracion/mi-negocio',
-        icon: 'store',
+        icon: 'store-cog',
         permission: 'dashboard:branch',
       },
       {

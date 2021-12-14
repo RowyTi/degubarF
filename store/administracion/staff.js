@@ -109,7 +109,6 @@ export const actions = {
           role: form.roles,
           profile: {
             id: form.profile.id,
-            avatar: form.avatar,
             dateOfBirth: form.profile.dateOfBirth,
             lastName: form.profile.lastName,
             name: form.profile.name,
@@ -133,7 +132,7 @@ export const actions = {
         }
       }
     }
-    console.log(resource);
+    // console.log(resource);
     await this.$axios.$patch(`staff/${form.id}`, resource);
     await dispatch('getList', state.defaultOptions);
   },

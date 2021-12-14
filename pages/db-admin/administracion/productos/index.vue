@@ -54,9 +54,11 @@
             <template #[`item.quantity`]="props">
               <v-edit-dialog
                 :return-value.sync="props.item.quantity"
+                save-text="Guardar"
+                cancel-text="Cancelar"
                 large
                 persistent
-                @save="save(props.item.id)"
+                @save="save(props.item)"
               >
                 <div>{{ props.item.quantity }}</div>
                 <template #input>
@@ -66,7 +68,8 @@
                     type="number"
                     label="Stock"
                     single-line
-                    counter
+                    counter="6"
+                    :rules="rules"
                     autofocus
                     @input="updateQuantity"
                   ></v-text-field>
@@ -108,6 +111,11 @@ export default {
   layout: 'admin',
   middleware: ['permission-product'],
   data: () => ({
+    rules: [
+      (v) => !!v || 'El stock es requerido',
+      (v) => (v && v.length <= 6) || 'Máximo 6 caracteres',
+      (v) => (v && v.length > 0) || 'Mínimico 1 caracteres',
+    ],
     headers: [
       {
         text: 'Producto',
@@ -144,17 +152,19 @@ export default {
     ],
     form: {
       name: '',
+      slug: '',
       description: '',
-      price: '0',
-      quantity: '0',
+      price: '',
+      quantity: '',
       state: 'inactivo',
       image: '',
     },
     defaultForm: {
       name: '',
+      slug: '',
       description: '',
-      price: '0',
-      quantity: '0',
+      price: '',
+      quantity: '',
       state: 'inactivo',
       image: '',
     },
@@ -186,14 +196,33 @@ export default {
     updateQuantity(e) {
       this.update.quantity = e
     },
-    async save(id) {
-      const data = Object.assign({ id }, this.update)
-      if (this.update.quantity.length > 0) {
-        await this.$store.dispatch(
-          'administracion/product/updateQuantityResource',
-          data
-        )
-        this.update.quantity = ''
+    async save(item) {
+      try {
+        if (this.update.quantity.length > 6)
+          return this.$toast.error(
+            'El campo stock puede tener6 carateres como maximo'
+          )
+        const data = Object.assign({ item }, this.update)
+        if (this.update.quantity.length > 0) {
+          await this.$store.dispatch(
+            'administracion/product/updateQuantityResource',
+            data
+          )
+          this.update.quantity = ''
+          this.$toast.success(
+            `El stock del producto ${item.name} fue actualizado con éxito!`,
+            {
+              icon: 'mdi-checkbox-marked-circle-outline',
+            }
+          )
+        }
+      } catch (error) {
+        if (error.response) {
+          // if (error.response.status === 500) return this.$toast.global.e500()
+          if (error.response.status === 403) return this.$toast.global.e403()
+        } else {
+          this.$toast.error('Ocurrió un problema al actualizar el stock')
+        }
       }
     },
     closeDialog() {
@@ -214,8 +243,13 @@ export default {
           this.options
         )
       } catch (error) {
-        if (error.response.status === 403)
-          alert('Usted no esta Autorizado para realizar esta acción')
+        if (error.response) {
+          if (error.response.status === 500) this.$toast.global.e500()
+          if (error.response.status === 403) this.$toast.global.e403()
+        } else if (error.request) {
+          this.$toast.error('Ocurrió un problema al cargar tu negocio')
+        }
+        console.log(error.toJSON())
       } finally {
         this.loading = false
       }
@@ -232,12 +266,13 @@ export default {
         })
         this.dialog = true
       } catch (error) {
-        if (error.response.status === 403)
-          await this.$notify({
-            group: 'error',
-            title: 'No Autorizado',
-            text: 'Usted no está autorizado a realizar esta acción',
-          })
+        if (error.response) {
+          if (error.response.status === 500) this.$toast.global.e500()
+          if (error.response.status === 403) this.$toast.global.e403()
+        } else if (error.request) {
+          this.$toast.error('Ocurrió un problema al cargar tu negocio')
+        }
+        console.log(error.toJSON())
       }
     },
     async editItem(item) {
@@ -250,12 +285,13 @@ export default {
         this.form = Object.assign({}, this.product)
         this.dialog = true
       } catch (error) {
-        if (error.response.status === 403)
-          await this.$notify({
-            group: 'error',
-            title: 'No Autorizado',
-            text: 'Usted no está autorizado a realizar esta acción',
-          })
+        if (error.response) {
+          if (error.response.status === 500) this.$toast.global.e500()
+          if (error.response.status === 403) this.$toast.global.e403()
+        } else if (error.request) {
+          this.$toast.error('Ocurrió un problema al cargar tu negocio')
+        }
+        console.log(error.toJSON())
       }
     },
     async deleteItem(item) {
@@ -275,19 +311,21 @@ export default {
             'administracion/product/deleteResource',
             item.id
           )
-          await this.$notify({
-            group: 'success',
-            title: 'Producto Eliminado',
-            text: `El producto ${item.name} fue elimiando con éxito!`,
-          })
+          this.$toast.success(
+            `El producto ${item.name} fue eliminado con éxito!`,
+            {
+              icon: 'mdi-checkbox-marked-circle-outline',
+            }
+          )
         }
       } catch (error) {
-        if (error.response.status === 403)
-          await this.$notify({
-            group: 'error',
-            title: 'No Autorizado',
-            text: 'Usted no está autorizado a realizar esta acción',
-          })
+        if (error.response) {
+          if (error.response.status === 500) this.$toast.global.e500()
+          if (error.response.status === 403) this.$toast.global.e403()
+        } else if (error.request) {
+          this.$toast.error('Ocurrió un problema al cargar tu negocio')
+        }
+        console.log(error.toJSON())
       }
     },
   },

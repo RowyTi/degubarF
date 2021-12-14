@@ -2,6 +2,8 @@ import { deserialize, serialize } from 'jsonapi-fractal'
 export const state = () => ({
   branches: [],
   branch: {},
+  paymentKey: {},
+  categories: {},
   totalData: null,
   defaultOptions: {
     page: 1,
@@ -18,6 +20,12 @@ export const mutations = {
   },
   SET_BRANCH(state, data) {
     state.branch = data;
+  },
+  SET_PAYMENTKEY(state, data) {
+    state.paymentKey = data;
+  },
+  SET_CATEGORIES(state, data) {
+    state.categories = data;
   },
   SET_TOTAL_DATA(state, data) {
     state.totalData = data;
@@ -44,14 +52,13 @@ export const actions = {
   },
 
   // VER RECURSO {id}
-  async getResource({ commit }, id) {
-    const response = await this.$axios.$get(`branches/${id}`, {
+  async getResource({ commit, }, params) {
+    const response = await this.$axios.$get(`branches/${params.id}`, {
       params: {
-        'include': 'address'
+        'include': params.include
       }
     })
     const serializedData = (deserialize(response, { changeCase: 'camelCase' }))
-    // console.log(serializedData)
     commit("SET_BRANCH", serializedData)
   },
 
@@ -60,15 +67,15 @@ export const actions = {
     const resource = {
       name: form.name,
       slug: form.slug,
-      latitud: form.latitud.toString(),
-      longitud: form.longitud.toString(),
       state: form.state,
       addresses: {
         cp: form.address.cp,
         dpto: form.address.dpto,
         number: form.address.number,
         piso: form.address.piso,
-        street: form.address.street
+        street: form.address.street,
+        latitude: form.address.latitude.toString(),
+        longitude: form.address.longitude.toString(),
       }
     }
     const serialized = serialize(resource, 'branches', { changeCase: 'kebabCase' })
@@ -82,8 +89,6 @@ export const actions = {
       id: form.id,
       name: form.name,
       slug: form.slug,
-      latitud: form.latitud,
-      longitud: form.longitud,
       state: form.state,
       addresses: {
         id: form.address.id,
@@ -91,13 +96,12 @@ export const actions = {
         dpto: form.address.dpto,
         number: form.address.number,
         piso: form.address.piso,
-        street: form.address.street
+        street: form.address.street,
+        latitude: form.address.latitude,
+        longitude: form.address.longitude,
       }
     }
     const serialized = serialize(resource, 'branches', { changeCase: 'kebabCase' })
-    // console.log(form)
-    // console.log(resource);
-    // console.log(serialized)
     await this.$axios.$patch(`branches/${form.id}`, serialized);
     await dispatch('getList', state.defaultOptions);
   },
@@ -107,5 +111,25 @@ export const actions = {
     const serialized = serialize(id, 'branches', { changeCase: 'kebabCase' })
     await this.$axios.$delete(`branches/${id}`, serialized);
     await dispatch('getList', state.defaultOptions);
-  }
+  },
+
+  // BRANCH RELATION PAYMENTKEYS
+  async getPaymentKeys({ commit }, id) {
+    const response = await this.$axios.$get(`branches/${id}/paymentkey`)
+    if (response.data !== null) {
+      const serializedData = (deserialize(response, { changeCase: 'camelCase' }))
+      commit("SET_PAYMENTKEY", serializedData)
+    }
+  },
+
+  // BRANCH RELATION CATEGORIES
+  async getCategories({ commit }, id) {
+    const response = await this.$axios.$get(`branches/${id}/categories?fields[categories]=name,slug`)
+    if (response.data !== null) {
+      const serializedData = (deserialize(response, { changeCase: 'camelCase' }))
+      commit("SET_CATEGORIES", serializedData)
+    }
+  },
+
+
 };

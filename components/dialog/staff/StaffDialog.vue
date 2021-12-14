@@ -252,7 +252,7 @@
               <v-stepper-content step="1">
                 <v-container fluid class="mt-2 pt-0">
                   <v-row align="center" justify="center">
-                    {{ formu }}
+                    <!-- {{ formu }} -->
                     <v-col cols="12" class="pb-0">
                       <v-text-field
                         v-model="formu.username"
@@ -678,11 +678,8 @@ export default {
           )
         }
       } catch (error) {
-        if (error.response.status === 403) {
-          await this.$toast.global.e403()
-        } else {
-          await this.$toast.global.e500()
-        }
+        if (error.response.status === 403) await this.$toast.global.e403()
+        await this.$toast.global.e500()
       } finally {
         this.loading = false
       }
@@ -702,11 +699,9 @@ export default {
           }
         )
       } catch (error) {
-        if (error.response.status === 403) {
-          await this.$toast.global.e403()
-        } else {
-          await this.$toast.global.e500()
-        }
+        if (error.response.status === 403) await this.$toast.global.e403()
+
+        await this.$toast.global.e500()
       } finally {
         this.loading = false
       }
@@ -723,7 +718,9 @@ export default {
           changeCase: 'camelCase',
         })
       } catch (error) {
-        console.log(error)
+        await this.$toast.error(
+          'Ocurrió un problema al cargar los locales, intente nuevamente.'
+        )
       } finally {
         this.isLoading = false
       }

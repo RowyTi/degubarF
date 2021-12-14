@@ -5,6 +5,7 @@
   >
     <base-nav-bar />
     <v-main>
+      <base-breadcrumbs />
       <v-container fluid>
         <check-state />
         <success-notification />
@@ -19,12 +20,14 @@
 import CheckState from '~/components/CheckState.vue'
 import ErrorNotification from '~/components/notifications/ErrorNotification.vue'
 import SuccessNotification from '~/components/notifications/SuccessNotification.vue'
+import BaseBreadcrumbs from '~/components/ui/BaseBreadcrumbs.vue'
 import BaseNavBar from '~/components/ui/layouts/BaseNavBar.vue'
 
 export default {
   name: 'Admin',
   components: {
     BaseNavBar,
+    BaseBreadcrumbs,
     SuccessNotification,
     ErrorNotification,
     CheckState,
@@ -39,11 +42,4 @@ html {
 .v-data-table-header__icon {
   color: #ffb300 !important;
 }
-// .toasted-container.top-right {
-//   top: 5% !important;
-//   right: 1% !important;
-// }
-// .bgLight {
-//   background-color: #ebecef !important;
-// }
 </style>

@@ -2,9 +2,16 @@
   <v-navigation-drawer app fixed v-bind="$attrs" dark v-on="$listeners">
     <v-list class="pa-0" dense>
       <v-list-item class="" two-line style="height: 64px !important">
-        <v-list-item-avatar tile size="58">
+        <v-list-item-avatar tile size="58" rounded-xl>
           <!-- <img :src="userFoto" /> -->
-          <img :src="logoBranch" :alt="altLogoBranch" />
+
+          <v-img
+            v-if="$auth.user.logo !== null"
+            contain
+            class="rounded-lg"
+            :src="logoBranch"
+            :alt="altLogoBranch"
+          />
         </v-list-item-avatar>
 
         <v-list-item-content class="pb-1">
@@ -63,7 +70,7 @@ export default {
     },
     logoBranch() {
       if (this.isAuthenticated && this.user.branch !== null) {
-        return this.user.branch.logo
+        return process.env.BASE_IMG_URL + this.user.branch.logo
       } else {
         return '/images/logo-degubar.png'
       }

@@ -129,28 +129,28 @@ export default {
       name: '',
       slug: '',
       state: 'inactivo',
-      longitud: '',
-      latitud: '',
       address: {
         street: '',
         number: '',
         cp: '',
         piso: '',
         dpto: '',
+        longitude: '',
+        latitude: '',
       },
     },
     defaultForm: {
       name: '',
       slug: '',
       state: 'inactivo',
-      longitud: '',
-      latitud: '',
       address: {
         street: '',
         number: '',
         cp: '',
         piso: '',
         dpto: '',
+        longitude: '',
+        latitude: '',
       },
     },
     loading: false,
@@ -208,7 +208,10 @@ export default {
     },
     async showItem(item) {
       try {
-        await this.$store.dispatch('administracion/branch/getResource', item.id)
+        await this.$store.dispatch('administracion/branch/getResource', {
+          id: item.id,
+          include: 'address',
+        })
         this.showMode = true
         this.$nextTick(() => {
           this.form = Object.assign({}, this.branch)

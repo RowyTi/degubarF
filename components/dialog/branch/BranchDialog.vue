@@ -30,13 +30,13 @@
               Dirección
             </v-tab>
             <v-tab-item>
-              <!-- perfil de usuario -->
+              <!-- perfil de local -->
               <v-card flat>
                 <v-card-text class="py-0">
                   <v-list>
                     <base-list-item-content
                       :avatar="true"
-                      :avatar-link="form.logo"
+                      :avatar-link="imgUrl + form.logo"
                       :logo="form.logo !== null"
                       title="Nombre"
                       :subtitle="form.name"
@@ -389,14 +389,14 @@ export default {
       name: '',
       slug: '',
       state: 'inactivo',
-      longitud: '',
-      latitud: '',
       address: {
         street: 'test',
         street_number: 'test',
         cp: 'test',
         piso: '',
         dpto: '',
+        longitude: '',
+        latitude: '',
       },
     },
   }),
@@ -427,6 +427,9 @@ export default {
     },
   },
   computed: {
+    imgUrl() {
+      return process.env.BASE_IMG_URL
+    },
     formu() {
       return this.form
     },
@@ -502,13 +505,13 @@ export default {
         const latitude =
           this.address !== null
             ? // eslint-disable-next-line vue/no-side-effects-in-computed-properties
-              (this.formu.latitud = this.address.latitude.toString())
-            : this.formu.latitud
+              (this.formu.address.latitude = this.address.latitude.toString())
+            : this.formu.address.latitude
 
         return latitude
       },
       set(value) {
-        this.formu.latitud = value
+        this.formu.address.latitude = value
       },
     },
     longitude: {
@@ -516,13 +519,13 @@ export default {
         const longitude =
           this.address !== null
             ? // eslint-disable-next-line vue/no-side-effects-in-computed-properties
-              (this.formu.longitud = this.address.longitude.toString())
-            : this.formu.longitud
+              (this.formu.address.longitude = this.address.longitude.toString())
+            : this.formu.address.longitude
 
         return longitude
       },
       set(value) {
-        this.formu.longitud = value
+        this.formu.address.longitude = value
       },
     },
     nameErrors() {
@@ -584,20 +587,23 @@ export default {
           })
         }
       } catch (error) {
-        if (error.response.status === 403) {
-          await this.$notify({
-            group: 'error',
-            title: 'No Autorizado',
-            text: 'Usted no esta Autorizado para realizar esta acción',
-          })
-        } else {
-          alert(error)
-          await this.$notify({
-            group: 'error',
-            title: 'Error',
-            text: 'Ocurrió un error en el servidor, intentelo de nuevo mas tarde..',
-          })
-        }
+        console.log(error.toJSON())
+        if (error.response.status === 422)
+          console.log(error.response.data.errors.username[0])
+        // if (error.response.status === 403) {
+        //   await this.$notify({
+        //     group: 'error',
+        //     title: 'No Autorizado',
+        //     text: 'Usted no esta Autorizado para realizar esta acción',
+        //   })
+        // } else {
+        //   alert(error)
+        //   await this.$notify({
+        //     group: 'error',
+        //     title: 'Error',
+        //     text: 'Ocurrió un error en el servidor, intentelo de nuevo mas tarde..',
+        //   })
+        // }
       } finally {
         this.loading = false
       }

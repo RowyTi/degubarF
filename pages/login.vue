@@ -135,12 +135,11 @@ export default {
           await this.$router.push({ path: '/db-admin/dashboard' })
         }
       } catch (err) {
-        if (err.response.status === 500) {
-          this.$toast.global.e500()
-        }
         if (err.response.status === 422) {
           this.errors = err.response.data.errors.username[0]
+          return
         }
+        this.$toast.global.e500()
       } finally {
         this.loading = false
       }
