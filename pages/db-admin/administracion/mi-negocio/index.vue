@@ -1,6 +1,6 @@
 <template>
   <v-row justify="center" align="center" class="mt-5">
-    <v-col cols="10">
+    <v-col cols="12" md="10">
       <v-expansion-panels v-model="panel" focusable>
         <my-store-branch />
         <my-store-location :address="address" />

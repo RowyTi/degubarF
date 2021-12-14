@@ -12,54 +12,45 @@
     </v-expansion-panel-header>
     <v-expansion-panel-content>
       <v-container :branch="branch">
-        <v-sheet max-width="800" min-width="400" class="mx-auto">
-          <v-row align="start" justify="center" class="mx-auto">
-            <!-- <v-col cols="12"
-          ><h4>Datos del Local</h4>
-          <v-divider class="mb-5"></v-divider>
-        </v-col> -->
-            <v-col cols="6" class="mt-10">
+        <v-sheet max-width="800" class="mx-auto">
+          <v-sheet></v-sheet>
+          <v-row v-show="!loading" justify="center" class="mx-auto">
+            <v-col cols="12" md="6" class="mt-10">
               <v-text-field
                 v-model="form.name"
                 label="Nombre de tu negocio"
                 outlined
               ></v-text-field>
 
-              <v-file-input
-                v-show="changeLogo"
-                v-model="file"
-                accept="image/jpeg, image/png"
-                label="Logo"
-                clearable
-                prepend-icon=""
-                prepend-inner-icon=""
-                outlined
-                counter
-                show-size
-                small-chips
-                @change="uploadImage"
-              />
+              <v-checkbox
+                v-model="changeLogo"
+                label="Cambiar logo"
+              ></v-checkbox>
+              <v-expand-transition>
+                <v-file-input
+                  v-show="changeLogo"
+                  v-model="file"
+                  accept="image/jpeg, image/png"
+                  label="Logo"
+                  clearable
+                  prepend-icon=""
+                  prepend-inner-icon=""
+                  outlined
+                  counter
+                  show-size
+                  small-chips
+                  @change="uploadImage"
+                />
+              </v-expand-transition>
             </v-col>
-            <v-col cols="6" class="mt-10">
-              <!-- <v-sheet
-                v-if="form.logo.length < 1"
-                height="200"
-                width="200"
-                color="blue-grey lighten-5 d-flex align-center rounded-lg"
-                rounded-lg
-                elevation="5"
-              >
-                <v-icon class="mx-auto accent--text" size="72">
-                  mdi-image
-                </v-icon>
-              </v-sheet> -->
+            <v-col cols="12" md="6" class="mt-10 d-flex justify-center">
               <v-img
                 v-if="
                   image.includes('data:image/jpeg;base64,') ||
                   image.includes('data:image/png;base64,')
                 "
                 :src="image"
-                class="rounded-lg elevation-3"
+                class="rounded-lg elevation-3 justify-center"
                 contain
                 max-width="200"
                 max-height="200"
@@ -79,7 +70,7 @@
               <v-img
                 v-else-if="form.logo.length > 1"
                 :src="imgUrl + form.logo"
-                class="rounded-lg elevation-3"
+                class="rounded-lg elevation-3 justify-center"
                 contain
                 max-width="200"
                 max-height="200"
@@ -96,13 +87,6 @@
                     ></v-progress-circular>
                   </v-row> </template
               ></v-img>
-
-              <!-- </v-col> -->
-              <!-- </v-col> -->
-              <v-checkbox
-                v-model="changeLogo"
-                label="Cambiar logo"
-              ></v-checkbox>
             </v-col>
             <v-divider></v-divider>
             <v-col cols="12" class="d-flex justify-end">
@@ -122,8 +106,9 @@ export default {
   name: 'MyStoreBranch',
   data: () => ({
     image: '',
-    file: [],
+    file: null,
     changeLogo: false,
+    loading: false,
     form: {
       name: '',
       slug: '',

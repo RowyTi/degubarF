@@ -12,7 +12,14 @@
     <v-expansion-panel-content>
       <v-container>
         <v-row>
-          <v-col cols="12" sm="10" md="8" lg="6" class="mx-auto mt-10">
+          <v-col
+            v-show="!loading"
+            cols="12"
+            sm="10"
+            md="8"
+            lg="6"
+            class="mx-auto mt-10"
+          >
             <vuetify-google-autocomplete
               id="map"
               ref="gmaps"
@@ -58,6 +65,16 @@
               outlined
             ></v-text-field>
           </v-col>
+          <v-col v-if="loading" cols="12">
+            <v-sheet height="500" class="d-flex align-center justify-center">
+              <v-progress-circular
+                v-show="loading"
+                indeterminate
+                color="primary"
+              ></v-progress-circular>
+            </v-sheet>
+          </v-col>
+
           <v-col cols="12" class="d-flex justify-end">
             <v-btn
               color="success"

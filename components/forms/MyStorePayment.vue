@@ -20,27 +20,71 @@
       >
         <v-container>
           <v-row>
-            <v-col cols="12" sm="10" md="8" lg="6" class="mx-auto mt-10">
-              <v-text-field
-                v-model="form.access_token"
-                label="Access Token"
-                outlined
-              ></v-text-field>
-              <v-text-field
-                v-model="form.public_token"
-                label="Public Token"
-                outlined
-              ></v-text-field>
+            <v-col
+              v-if="addKey"
+              cols="12"
+              sm="10"
+              md="8"
+              lg="6"
+              class="mx-auto mt-10"
+            >
+              <v-alert type="info" outlined prominent>
+                <v-row align="center">
+                  <v-col class="grow">
+                    No tienes credenciales registradas.
+                  </v-col>
+                  <v-col class="shrink">
+                    <v-btn color="accent" small @click="addKey = false"
+                      >agregar</v-btn
+                    >
+                  </v-col>
+                </v-row>
+              </v-alert>
             </v-col>
-            <v-col cols="12" class="d-flex justify-end">
-              <v-btn
-                color="success"
-                type="submit"
-                :disabled="loading"
-                :loading="loading"
-                >{{ titleBtn }}</v-btn
-              >
-            </v-col>
+            <v-expand-transition>
+              <v-col v-if="!addKey" cols="12" class="ma-0 pa-0">
+                <v-col
+                  v-show="!loading"
+                  cols="12"
+                  sm="10"
+                  md="8"
+                  lg="6"
+                  class="mx-auto mt-10"
+                >
+                  <v-text-field
+                    v-model="form.access_token"
+                    label="Access Token"
+                    outlined
+                  ></v-text-field>
+                  <v-text-field
+                    v-model="form.public_token"
+                    label="Public Token"
+                    outlined
+                  ></v-text-field>
+                </v-col>
+                <v-col v-if="loading" cols="12">
+                  <v-sheet
+                    height="200"
+                    class="d-flex align-center justify-center"
+                  >
+                    <v-progress-circular
+                      v-show="loading"
+                      indeterminate
+                      color="primary"
+                    ></v-progress-circular>
+                  </v-sheet>
+                </v-col>
+                <v-col cols="12" class="d-flex justify-end">
+                  <v-btn
+                    color="success"
+                    type="submit"
+                    :disabled="loading"
+                    :loading="loading"
+                    >{{ titleBtn }}</v-btn
+                  >
+                </v-col>
+              </v-col>
+            </v-expand-transition>
           </v-row>
         </v-container>
       </v-form>
@@ -60,6 +104,7 @@ export default {
     },
   },
   data: () => ({
+    addKey: false,
     form: {
       access_token: '',
       public_token: '',
@@ -73,11 +118,6 @@ export default {
     titleBtn() {
       return this.paymentKey === null ? 'guardar' : 'actualizar'
     },
-    // formData() {
-    //   // eslint-disable-next-line vue/no-side-effects-in-computed-properties
-    //   this.form = Object.assign({}, this.paymen)
-    //   return this.paymentkey
-    // },
   },
   mounted() {
     this.getPaymentKey(this.$auth.user.branch.id)
@@ -90,10 +130,13 @@ export default {
           id
         )
         this.form = Object.assign({}, this.paymentKey)
+        if (this.paymentKey === null) {
+          this.addKey = true
+        }
       } catch (error) {
         if (error.response) {
-          if (error.response.status === 500) this.$toast.global.e500()
-          if (error.response.status === 403) this.$toast.global.e403()
+          if (error.response.status === 500) return this.$toast.global.e500()
+          if (error.response.status === 403) return this.$toast.global.e403()
         } else if (error.request) {
           this.$toast.error('Ocurrio un problema al cargar las claves de pago')
         } else {
@@ -116,8 +159,8 @@ export default {
         // }
       } catch (error) {
         if (error.response) {
-          if (error.response.status === 500) this.$toast.global.e500()
-          if (error.response.status === 403) this.$toast.global.e403()
+          if (error.response.status === 500) return this.$toast.global.e500()
+          if (error.response.status === 403) return this.$toast.global.e403()
         } else if (error.request) {
           this.$toast.error('Ocurrio un problema al crear las claves de pago')
         } else {
@@ -139,8 +182,8 @@ export default {
         })
       } catch (error) {
         if (error.response) {
-          if (error.response.status === 500) this.$toast.global.e500()
-          if (error.response.status === 403) this.$toast.global.e403()
+          if (error.response.status === 500) return this.$toast.global.e500()
+          if (error.response.status === 403) return this.$toast.global.e403()
         } else if (error.request) {
           this.$toast.error(
             'Ocurrio un problema al actualizar las claves de pago'

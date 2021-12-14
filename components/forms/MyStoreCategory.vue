@@ -11,43 +11,76 @@
     </v-expansion-panel-header>
     <v-expansion-panel-content>
       <v-container>
-        <v-sheet max-width="800" min-width="400" class="mx-auto">
+        <v-sheet max-width="800" class="mx-auto">
           <v-row align="start" justify="center" class="mx-auto">
-            <v-col cols="6" class="mt-10">
+            <v-col cols="12" sm="6" class="mt-10">
               <h3>Categorías asignadas</h3>
               <v-divider class="mb-2"></v-divider>
-              <v-sheet v-if="selectedCategories.length > 0">
-                <v-chip
-                  v-for="(category, i) in selectedCategories"
-                  :key="category.id"
-                  label
-                  close
+              <v-sheet
+                v-if="loading"
+                class="d-flex align-center justify-center"
+                height="200"
+              >
+                <v-progress-circular
+                  v-show="loading"
+                  indeterminate
                   color="primary"
-                  class="ma-1"
-                  @click:close="addCategory(i)"
-                >
-                  {{ category.name }}
-                </v-chip>
+                ></v-progress-circular>
+              </v-sheet>
+
+              <v-sheet
+                v-show="!loading"
+                v-if="selectedCategories.length > 0"
+                height="200"
+              >
+                <v-slide-x-transition group>
+                  <v-chip
+                    v-for="(category, i) in selectedCategories"
+                    :key="category.id"
+                    label
+                    close
+                    color="primary"
+                    class="ma-1"
+                    @click:close="addCategory(i)"
+                  >
+                    {{ category.name }}
+                  </v-chip>
+                </v-slide-x-transition>
               </v-sheet>
               <v-alert v-else type="info" outlined dense
                 >No hay categorías asignadas</v-alert
               >
             </v-col>
             <v-divider vertical></v-divider>
-            <v-col cols="6" class="mt-10">
+            <v-col cols="12" sm="6" class="mt-10">
               <h3>Todas las categorías</h3>
               <v-divider class="mb-2"></v-divider>
+              <v-sheet
+                v-if="loading"
+                class="d-flex align-center justify-center"
+                height="200"
+              >
+                <v-progress-circular
+                  v-show="loading"
+                  indeterminate
+                  color="primary"
+                ></v-progress-circular>
+              </v-sheet>
+
               <v-sheet>
-                <v-chip
-                  v-for="(category, i) in categories"
-                  :key="category.id"
-                  label
-                  color="accent"
-                  class="ma-1"
-                  @click="removeCategory(i)"
-                >
-                  {{ category.name }}
-                </v-chip>
+                <v-slide-x-transition group>
+                  <v-chip
+                    v-for="(category, i) in categories"
+                    v-show="!loading"
+                    :key="category.id"
+                    label
+                    color="accent"
+                    class="ma-1"
+                    @click="removeCategory(i)"
+                  >
+                    {{ category.name }}
+                  </v-chip>
+                </v-slide-x-transition>
               </v-sheet></v-col
             >
             <v-divider></v-divider>
@@ -88,6 +121,7 @@ export default {
   },
   methods: {
     async getSelectedCategories(id) {
+      this.loading = true
       const response = await this.$axios.$get(
         `branches/${id}/categories?fields[categories]=name,slug`
       )
@@ -98,8 +132,10 @@ export default {
         this.selectedCategories = serializedData
       }
       await this.getAllCategories()
+      this.loading = false
     },
     async getAllCategories(value) {
+      this.loading = true
       const assigned = this.pluck(this.selectedCategories, 'slug').toString()
       const res = await this.$axios.get('categories', {
         params: {
@@ -107,7 +143,9 @@ export default {
           'filter[assigned]': assigned,
         },
       })
+
       this.categories = deserialize(res.data, { changeCase: 'camelCase' })
+      this.loading = false
     },
     async updateCategories(id) {
       try {
