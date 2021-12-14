@@ -177,7 +177,6 @@
               <!-- IMAGEN DE PRODUCTO -->
               <v-col cols="6">
                 <v-col cols="12">
-                  <!-- {{ !file }} -->
                   <v-file-input
                     v-model="file"
                     accept="image/jpeg, image/png"
@@ -187,11 +186,10 @@
                     prepend-inner-icon=""
                     outlined
                     counter
-                    show-size
                     small-chips
+                    truncate-length="20"
                     :error-messages="fileErrors"
                     @input="$v.file.$touch()"
-                    @blur="$v.file.$touch()"
                     @change="uploadImage"
                   />
                 </v-col>
@@ -301,7 +299,7 @@ export default {
   },
   data: () => ({
     image: '',
-    file: [],
+    file: null,
     itemState: [
       {
         text: 'Inactivo',
@@ -321,7 +319,7 @@ export default {
   validations: {
     file: {
       required: requiredIf(function (nestedModel) {
-        return this.file === null // New changes
+        return this.file === null
       }),
     },
     formu: {
@@ -420,8 +418,7 @@ export default {
     },
     close() {
       this.$v.$reset()
-      this.file = []
-      this.stepper = 1
+      this.file = null
       this.$emit('closeDialog')
     },
     async createResource() {

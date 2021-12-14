@@ -114,7 +114,7 @@ export default {
     rules: [
       (v) => !!v || 'El stock es requerido',
       (v) => (v && v.length <= 6) || 'Máximo 6 caracteres',
-      (v) => (v && v.length > 0) || 'Mínimico 1 caracteres',
+      (v) => (v && v.length > 0) || 'Mínimo 1 caracteres',
     ],
     headers: [
       {
@@ -199,9 +199,7 @@ export default {
     async save(item) {
       try {
         if (this.update.quantity.length > 6)
-          return this.$toast.error(
-            'El campo stock puede tener6 carateres como maximo'
-          )
+          return this.$toast.error('El stock supera el valor permitido')
         const data = Object.assign({ item }, this.update)
         if (this.update.quantity.length > 0) {
           await this.$store.dispatch(
