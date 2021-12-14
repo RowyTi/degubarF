@@ -2,9 +2,10 @@
   <div>
     <v-app-bar app color="amber accent-4" flat>
       <v-app-bar-nav-icon @click.stop="openDrawer">
-        <v-icon v-text="'mdi-dots-vertical'" />
+        <v-icon v-if="drawer" v-text="'mdi-backburger'" />
+        <v-icon v-else v-text="'mdi-backburger'" class="rotate-180"></v-icon>
       </v-app-bar-nav-icon>
-      <v-toolbar-title class="text-body-1" v-text="nameBranch" />
+      <!-- <v-toolbar-title class="text-body-1" v-text="nameBranch" /> -->
       <v-spacer></v-spacer>
       <v-btn icon class="mr-2" @click="logout">
         <v-icon>mdi-logout-variant</v-icon>
@@ -123,5 +124,13 @@ export default {
 }
 </script>
 
-<style>
+<style lang="scss" scoped>
+.rotate-180 {
+  -webkit-transform: rotate(180deg);
+  -moz-transform: rotate(180deg);
+  -ms-transform: rotate(180deg);
+  -o-transform: rotate(180deg);
+  transform: rotate(180deg);
+  transition: all 0.5s ease-in-out;
+}
 </style>
