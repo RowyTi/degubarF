@@ -60,7 +60,21 @@
                 persistent
                 @save="save(props.item)"
               >
-                <div>{{ props.item.quantity }}</div>
+                <v-chip
+                  v-show="!loading"
+                  small
+                  :color="props.item.quantity <= 5 ? 'error' : 'success'"
+                  style="cursor: pointer"
+                >
+                  {{ props.item.quantity }}
+                </v-chip>
+                <v-progress-circular
+                  v-show="loading"
+                  size="26"
+                  indeterminate
+                  color="primary"
+                ></v-progress-circular>
+
                 <template #input>
                   <div class="mt-4 text-h6">Actualizar Stock</div>
                   <v-text-field
@@ -68,7 +82,6 @@
                     type="number"
                     label="Stock"
                     single-line
-                    counter="6"
                     :rules="rules"
                     autofocus
                     @input="updateQuantity"
@@ -113,8 +126,7 @@ export default {
   data: () => ({
     rules: [
       (v) => !!v || 'El stock es requerido',
-      (v) => (v && v.length <= 6) || 'Máximo 6 caracteres',
-      (v) => (v && v.length > 0) || 'Mínimo 1 caracteres',
+      (v) => (v && v <= 9999) || 'Máximo 9999 unidades',
     ],
     headers: [
       {
@@ -198,8 +210,9 @@ export default {
     },
     async save(item) {
       try {
-        if (this.update.quantity.length > 6)
-          return this.$toast.error('El stock supera el valor permitido')
+        this.loading = true
+        if (this.update.quantity > 9999)
+          return this.$toast.error('El stock supera las cantidades permitidas')
         const data = Object.assign({ item }, this.update)
         if (this.update.quantity.length > 0) {
           await this.$store.dispatch(
@@ -221,6 +234,8 @@ export default {
         } else {
           this.$toast.error('Ocurrió un problema al actualizar el stock')
         }
+      } finally {
+        this.loading = false
       }
     },
     closeDialog() {
