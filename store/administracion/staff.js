@@ -92,7 +92,6 @@ export const actions = {
         }
       }
     }
-    console.log(resource);
     await this.$axios.$post("/staff", resource);
     await dispatch('getList', state.defaultOptions);
   },

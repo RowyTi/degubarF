@@ -343,16 +343,38 @@
                       ></v-text-field>
                     </v-col>
                     <v-col cols="12" class="pb-0">
-                      <v-text-field
-                        v-model="formu.profile.dateOfBirth"
-                        v-mask="'##-##-####'"
-                        outlined
-                        label="Fecha de nacimiento"
-                        placeholder="dd-mm-aaaa"
-                        :error-messages="dateofbirthErrors"
-                        @input="$v.formu.profile.dateOfBirth.$touch()"
-                        @blur="$v.formu.profile.dateOfBirth.$touch()"
-                      ></v-text-field>
+                      <v-menu
+                        ref="menu"
+                        v-model="menu"
+                        :close-on-content-click="false"
+                        transition="scale-transition"
+                        offset-y
+                        min-width="auto"
+                      >
+                        <template #activator="{ on, attrs }">
+                          <v-text-field
+                            v-model="formu.profile.dateOfBirth"
+                            label="Fecha de nacimiento"
+                            outlined
+                            readonly
+                            clearable
+                            v-bind="attrs"
+                            :error-messages="dateofbirthErrors"
+                            @input="$v.formu.profile.dateOfBirth.$touch()"
+                            @blur="$v.formu.profile.dateOfBirth.$touch()"
+                            v-on="on"
+                          ></v-text-field>
+                        </template>
+                        <v-date-picker
+                          v-model="formu.profile.dateOfBirth"
+                          locale="es"
+                          color="accent"
+                          :active-picker.sync="activePicker"
+                          max="2003-12-30"
+                          min="1970-01-01"
+                          @change="save"
+                        ></v-date-picker>
+                      </v-menu>
                     </v-col>
                     <v-col cols="12" class="pb-0">
                       <v-text-field
@@ -496,6 +518,8 @@ export default {
     branches: [],
     roles: [],
     isLoading: false,
+    activePicker: null,
+    menu: false,
   }),
   validations: {
     formu: {
@@ -527,7 +551,6 @@ export default {
             numeric,
           },
           cp: {
-            required,
             maxLength: maxLength(5),
           },
           piso: {
@@ -554,11 +577,8 @@ export default {
     btnForm() {
       return this.editedIndex === -1 ? 'guardar' : 'Actualizar '
     },
-    // branchId: {
-    //   get() {
-    //     return this.formu.branch_id = this.formu.branches.id
-    //   },
-    // },
+
+    // FORM VALIDATION
     passwordErrors() {
       const errors = []
       if (!this.$v.formu.password.$dirty) return errors
@@ -622,8 +642,8 @@ export default {
       if (!this.$v.formu.profile.address.cp.$dirty) return errors
       !this.$v.formu.profile.address.piso.maxLength &&
         errors.push('El campo Piso, no puede tener mas de 5 caracteres.')
-      !this.$v.formu.profile.address.cp.required &&
-        errors.push('Este campo es obligatiorio.')
+      // !this.$v.formu.profile.address.cp.required &&
+      //   errors.push('Este campo es obligatiorio.')
       return errors
     },
     pisoErrors() {
@@ -641,6 +661,11 @@ export default {
       return errors
     },
   },
+  watch: {
+    menu(val) {
+      val && setTimeout(() => (this.activePicker = 'YEAR'))
+    },
+  },
   mounted() {
     if (this.$auth.user.sa) {
       this.getBranches()
@@ -649,6 +674,14 @@ export default {
     }
   },
   methods: {
+    save(date) {
+      this.$refs.menu.save(date)
+    },
+    formatDate(date) {
+      if (!date) return null
+      const [year, month, day] = date.split('-')
+      return `${day}/${month}/${year}`
+    },
     nextStep() {
       return this.stepper++
     },
