@@ -3,7 +3,7 @@
     <v-col cols="12" md="10">
       <v-expansion-panels v-model="panel" focusable>
         <my-store-branch />
-        <my-store-location :address="address" />
+        <my-store-location />
         <my-store-category />
         <my-store-payment />
       </v-expansion-panels>
@@ -12,11 +12,10 @@
 </template>
 
 <script>
-import { mapState } from 'vuex'
-import MyStoreBranch from '~/components/forms/MyStoreBranch.vue'
-import MyStoreCategory from '~/components/forms/MyStoreCategory.vue'
-import MyStoreLocation from '~/components/forms/MyStoreLocation.vue'
-import MyStorePayment from '~/components/forms/MyStorePayment.vue'
+import MyStoreBranch from '~/components/myStore/MyStoreBranch.vue'
+import MyStoreCategory from '~/components/myStore/MyStoreCategory.vue'
+import MyStoreLocation from '~/components/myStore/MyStoreLocation.vue'
+import MyStorePayment from '~/components/myStore/MyStorePayment.vue'
 export default {
   name: 'AdministracionMiNegocio',
   components: {
@@ -29,42 +28,9 @@ export default {
   data: () => ({
     panel: 0,
   }),
-  computed: {
-    ...mapState('administracion/myStore', ['paymentKey', 'address']),
-  },
-  mounted() {
-    this.getPaymentKey()
-    this.getAddress()
-  },
-  methods: {
-    async getPaymentKey() {
-      try {
-        await this.$store.dispatch(
-          'administracion/myStore/getPaymentKeys',
-          this.$auth.user.branch.id
-        )
-      } catch (error) {
-        if (error.response) {
-          if (error.response.status === 500) this.$toast.global.e500()
-          if (error.response.status === 403) this.$toast.global.e403()
-        } else if (error.request) {
-          this.$toast.error('Ocurrio un problema al cargar el método de pago')
-          this.$toast.error('Ocurrio un problema al cargar el método de pago')
-        }
-      }
-    },
-    async getAddress() {
-      try {
-        await this.$store.dispatch(
-          'administracion/myStore/getAddress',
-          this.$auth.user.branch.id
-        )
-      } catch (error) {
-        if (error.response.status === 403) this.$toast.global.e403()
-        this.$toast.global.e500()
-      }
-    },
-  },
+  computed: {},
+  mounted() {},
+  methods: {},
 }
 </script>
 

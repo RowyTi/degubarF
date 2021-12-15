@@ -40,11 +40,17 @@
               v-model="street"
               label="Calle"
               outlined
+              :error-messages="streetErrors"
+              @input="$v.form.street.$touch()"
+              @blur="$v.form.street.$touch()"
             ></v-text-field>
             <v-text-field
               v-model="street_number"
               label="Número"
               outlined
+              :error-messages="numberErrors"
+              @input="$v.form.number.$touch()"
+              @blur="$v.form.number.$touch()"
             ></v-text-field>
             <v-text-field
               v-model="postal_code"
@@ -57,12 +63,18 @@
               label="Latitud"
               disabled
               outlined
+              :error-messages="latitudeErrors"
+              @input="$v.form.latitude.$touch()"
+              @blur="$v.form.latitude.$touch()"
             ></v-text-field>
             <v-text-field
               v-model="longitude"
               label="Longitud"
               disabled
               outlined
+              :error-messages="longitudeErrors"
+              @input="$v.form.longitude.$touch()"
+              @blur="$v.form.longitude.$touch()"
             ></v-text-field>
           </v-col>
           <v-col v-if="loading" cols="12">
@@ -76,10 +88,11 @@
           </v-col>
 
           <v-col cols="12" class="d-flex justify-end">
+            <!-- || $v.$anyError -->
             <v-btn
               color="success"
               type="submit"
-              :disabled="loading"
+              :disabled="loading || $v.$anyError"
               :loading="loading"
               @click="updateAddress"
               >actualizar</v-btn
@@ -92,39 +105,35 @@
 </template>
 
 <script>
+import { mapState } from 'vuex'
+import { required, numeric } from 'vuelidate/lib/validators'
 export default {
   name: 'MyStoreLocation',
-  props: {
-    address: {
-      type: Object,
-      require: true,
-      default: () => {},
-    },
-  },
   data: () => ({
-    location: {},
     gmaps: null,
     loading: false,
-  }),
-
-  computed: {
-    formData() {
-      // eslint-disable-next-line vue/no-side-effects-in-computed-properties
-      this.location = Object.assign({}, this.address)
-      return this.location
+    form: {
+      street: '',
+      number: '',
+      cp: '',
+      latitude: '',
+      longitude: '',
     },
+  }),
+  computed: {
+    ...mapState('administracion/branch', ['address']),
     street: {
       get() {
         const street =
           this.gmaps !== null
             ? // eslint-disable-next-line vue/no-side-effects-in-computed-properties
-              (this.formData.street = this.gmaps.route)
-            : this.formData.street
+              (this.form.street = this.gmaps.route)
+            : this.form.street
 
         return street
       },
       set(value) {
-        this.formData.street = value
+        this.form.street = value
       },
     },
     street_number: {
@@ -132,13 +141,13 @@ export default {
         const number =
           this.gmaps !== null
             ? // eslint-disable-next-line vue/no-side-effects-in-computed-properties
-              (this.formData.number = this.gmaps.street_number)
-            : this.formData.number
+              (this.form.number = this.gmaps.street_number)
+            : this.form.number
 
         return number
       },
       set(value) {
-        this.formData.number = value
+        this.form.number = value
       },
     },
     postal_code: {
@@ -146,13 +155,13 @@ export default {
         const postalCode =
           this.gmaps !== null
             ? // eslint-disable-next-line vue/no-side-effects-in-computed-properties
-              (this.formData.cp = this.gmaps.postal_code)
-            : this.formData.cp
+              (this.form.cp = this.gmaps.postal_code)
+            : this.form.cp
 
         return postalCode
       },
       set(value) {
-        this.formData.cp = value
+        this.form.cp = value
       },
     },
     latitude: {
@@ -160,13 +169,13 @@ export default {
         const latitude =
           this.gmaps !== null
             ? // eslint-disable-next-line vue/no-side-effects-in-computed-properties
-              (this.formData.latitude = this.gmaps.latitude.toString())
-            : this.formData.latitude
+              (this.form.latitude = this.gmaps.latitude.toString())
+            : this.form.latitude
 
         return latitude
       },
       set(value) {
-        this.formData.latitude = value
+        this.form.latitude = value
       },
     },
     longitude: {
@@ -174,32 +183,100 @@ export default {
         const longitude =
           this.gmaps !== null
             ? // eslint-disable-next-line vue/no-side-effects-in-computed-properties
-              (this.location.longitude = this.gmaps.longitude.toString())
-            : this.location.longitude
+              (this.form.longitude = this.gmaps.longitude.toString())
+            : this.form.longitude
 
         return longitude
       },
       set(value) {
-        this.location.longitude = value
+        this.form.longitude = value
+      },
+    },
+    // FORM VALIDATION
+    streetErrors() {
+      const errors = []
+      if (!this.$v.form.street.$dirty) return errors
+      !this.$v.form.street.required && errors.push('Este campo es requerido.')
+      return errors
+    },
+    numberErrors() {
+      const errors = []
+      if (!this.$v.form.number.$dirty) return errors
+      !this.$v.form.number.required && errors.push('Este campo es requerido.')
+      !this.$v.form.number.numeric &&
+        errors.push('Este campo admite solo números.')
+      return errors
+    },
+    latitudeErrors() {
+      const errors = []
+      if (!this.$v.form.latitude.$dirty) return errors
+      !this.$v.form.latitude.required && errors.push('Este campo es requerido.')
+      return errors
+    },
+    longitudeErrors() {
+      const errors = []
+      if (!this.$v.form.longitude.$dirty) return errors
+      !this.$v.form.longitude.required &&
+        errors.push('Este campo es requerido.')
+      return errors
+    },
+  },
+  validations: {
+    form: {
+      street: {
+        required,
+      },
+      number: {
+        required,
+        numeric,
+      },
+      latitude: {
+        required,
+      },
+      longitude: {
+        required,
       },
     },
   },
-  mounted() {},
+  mounted() {
+    this.getAddressBranch()
+  },
   methods: {
     getAddressData(addressData, placeResultData, id) {
       this.gmaps = addressData
     },
+    async getAddressBranch() {
+      try {
+        await this.$store.dispatch(
+          'administracion/branch/getAddress',
+          this.$auth.user.branch.id
+        )
+        this.form = Object.assign({}, this.address)
+      } catch (error) {
+        if (error.response) {
+          if (error.response.status === 500) this.$toast.global.e500()
+          if (error.response.status === 403) this.$toast.global.e403()
+        } else if (error.request) {
+          this.$toast.error('Ocurrio un problema al cargar la dirección')
+        } else {
+          this.$toast.error('Ocurrio un problema al cargar la dirección')
+        }
+      }
+    },
     async updateAddress() {
       try {
         this.loading = true
-        await this.$store.dispatch(
-          'administracion/address/updateResource',
-          this.formData
-        )
-        await this.$toast.success(`La dirección fue actualizada con éxito!`, {
-          icon: 'mdi-checkbox-marked-circle-outline',
-        })
-        this.$refs.gmaps.clear()
+        this.$v.$touch()
+        if (!this.$v.$invalid) {
+          await this.$store.dispatch(
+            'administracion/address/updateResource',
+            this.form
+          )
+          await this.$toast.success(`La dirección fue actualizada con éxito!`, {
+            icon: 'mdi-checkbox-marked-circle-outline',
+          })
+          this.$refs.gmaps.clear()
+        }
       } catch (error) {
         if (error.response) {
           if (error.response.status === 500) this.$toast.global.e500()
@@ -210,7 +287,9 @@ export default {
           this.$toast.error('Ocurrio un problema al actualizar la dirección')
         }
       } finally {
-        this.loading = false
+        setTimeout(() => {
+          this.loading = false
+        }, 1000)
       }
     },
   },

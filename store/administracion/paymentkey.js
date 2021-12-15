@@ -11,27 +11,30 @@ export const mutations = {
 
 export const actions = {
   // CREAR RECURSO
-  async createResource({ context, rootState }, form) {
+  async createResource({ context, dispatch, rootState }, form) {
     const resource = {
       access_token: form.access_token,
       public_token: form.public_token,
       branch_id: rootState.auth.user.branch.id
     }
-    const serialized = serialize(resource, 'paymentkeys', { changeCase: 'kebabCase' })
+    const serialized = serialize(resource, 'paymentkeys', { changeCase: 'snakeCase' })
+    // console.log(serialized);
     await this.$axios.$post("paymentkeys", serialized);
+    await dispatch('getPaymentKey', rootState.auth.user.branch.id);
   },
 
   // ACTUALIZAR RECURSO
-  async updateResource({ context, rootState }, form) {
+  async updateResource({ context, dispatch, rootState }, form) {
     const resource = {
       id: form.id,
       access_token: form.access_token,
       public_token: form.public_token,
       branch_id: rootState.auth.user.branch.id
     }
-    const serialized = serialize(resource, 'paymentkeys', { changeCase: 'kebabCase' })
+    const serialized = serialize(resource, 'paymentkeys', { changeCase: 'snakeCase' })
     // console.log(serialized);
     await this.$axios.$patch(`paymentkeys/${form.id}`, serialized);
+    await dispatch('getPaymentKey', rootState.auth.user.branch.id);
   },
 
   // OBTENER PAYMENTKEYS MEDIANTE RELACION CON BRANCH

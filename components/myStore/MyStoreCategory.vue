@@ -38,10 +38,9 @@
                     v-for="(category, i) in selectedCategories"
                     :key="category.id"
                     label
-                    close
                     color="primary"
                     class="ma-1"
-                    @click:close="addCategory(i)"
+                    @click="addCategory(i)"
                   >
                     {{ category.name }}
                   </v-chip>
@@ -67,7 +66,7 @@
                 ></v-progress-circular>
               </v-sheet>
 
-              <v-sheet>
+              <v-sheet v-if="categories.length > 0">
                 <v-slide-x-transition group>
                   <v-chip
                     v-for="(category, i) in categories"
@@ -81,8 +80,11 @@
                     {{ category.name }}
                   </v-chip>
                 </v-slide-x-transition>
-              </v-sheet></v-col
-            >
+              </v-sheet>
+              <v-alert v-else type="success" outlined dense
+                >Tenés todas las categorías disponibles asignadas</v-alert
+              >
+            </v-col>
             <v-divider></v-divider>
             <v-col cols="12" class="d-flex justify-end">
               <v-btn
@@ -177,7 +179,9 @@ export default {
           this.$toast.error('Ocurrio un problema al asignar las categorias')
         }
       } finally {
-        this.loading = false
+        setTimeout(() => {
+          this.loading = false
+        }, 1000)
       }
     },
     pluck(array, key) {

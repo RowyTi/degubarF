@@ -4,6 +4,7 @@ export const state = () => ({
   branch: {},
   paymentKey: {},
   categories: {},
+  address: {},
   totalData: null,
   defaultOptions: {
     page: 1,
@@ -26,6 +27,9 @@ export const mutations = {
   },
   SET_CATEGORIES(state, data) {
     state.categories = data;
+  },
+  SET_ADDRESS(state, data) {
+    state.address = data;
   },
   SET_TOTAL_DATA(state, data) {
     state.totalData = data;
@@ -102,8 +106,22 @@ export const actions = {
       }
     }
     const serialized = serialize(resource, 'branches', { changeCase: 'kebabCase' })
+    // console.log(serialized);
     await this.$axios.$patch(`branches/${form.id}`, serialized);
     await dispatch('getList', state.defaultOptions);
+  },
+
+  async updateBranch({ context, dispatch, state }, form) {
+    const resource = {
+      id: form.id,
+      name: form.name,
+      slug: form.slug,
+      state: form.state,
+      logo: form.logo
+    }
+    const serialized = serialize(resource, 'branches', { changeCase: 'kebabCase' })
+    // await console.log(serialized);
+    await this.$axios.$patch(`branches/${form.id}`, serialized);
   },
 
   // ELIMINAR RECURSO SOFT
@@ -130,6 +148,16 @@ export const actions = {
       commit("SET_CATEGORIES", serializedData)
     }
   },
+
+  // BRANCH RELATION ADDRESS
+  async getAddress({ commit }, id) {
+    const response = await this.$axios.$get(`branches/${id}/addresses`)
+    if (response.data !== null) {
+      const serializedData = (deserialize(response, { changeCase: 'camelCase' }))
+      commit("SET_ADDRESS", serializedData)
+    }
+  },
+
 
 
 };

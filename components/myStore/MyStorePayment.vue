@@ -52,14 +52,20 @@
                   class="mx-auto mt-10"
                 >
                   <v-text-field
-                    v-model="form.access_token"
-                    label="Access Token"
-                    outlined
-                  ></v-text-field>
-                  <v-text-field
                     v-model="form.public_token"
                     label="Public Token"
                     outlined
+                    :error-messages="public_tokenErrors"
+                    @input="$v.form.public_token.$touch()"
+                    @blur="$v.form.public_token.$touch()"
+                  ></v-text-field>
+                  <v-text-field
+                    v-model="form.access_token"
+                    label="Access Token"
+                    outlined
+                    :error-messages="access_tokenErrors"
+                    @input="$v.form.access_token.$touch()"
+                    @blur="$v.form.access_token.$touch()"
                   ></v-text-field>
                 </v-col>
                 <v-col v-if="loading" cols="12">
@@ -75,10 +81,11 @@
                   </v-sheet>
                 </v-col>
                 <v-col cols="12" class="d-flex justify-end">
+                  <!-- | $v.$anyError  -->
                   <v-btn
                     color="success"
                     type="submit"
-                    :disabled="loading"
+                    :disabled="loading || $v.$anyError"
                     :loading="loading"
                     >{{ titleBtn }}</v-btn
                   >
@@ -94,15 +101,9 @@
 
 <script>
 import { mapState } from 'vuex'
+import { required } from 'vuelidate/lib/validators'
 export default {
   name: 'MyStorePayment',
-  props: {
-    data: {
-      type: Object,
-      require: true,
-      default: () => {},
-    },
-  },
   data: () => ({
     addKey: false,
     form: {
@@ -117,6 +118,31 @@ export default {
 
     titleBtn() {
       return this.paymentKey === null ? 'guardar' : 'actualizar'
+    },
+    // FORM VALIDATION
+    access_tokenErrors() {
+      const errors = []
+      if (!this.$v.form.access_token.$dirty) return errors
+      !this.$v.form.access_token.required &&
+        errors.push('Este campo es requerido.')
+      return errors
+    },
+    public_tokenErrors() {
+      const errors = []
+      if (!this.$v.form.public_token.$dirty) return errors
+      !this.$v.form.public_token.required &&
+        errors.push('Este campo es requerido.')
+      return errors
+    },
+  },
+  validations: {
+    form: {
+      access_token: {
+        required,
+      },
+      public_token: {
+        required,
+      },
     },
   },
   mounted() {
@@ -146,17 +172,17 @@ export default {
     },
     async createResource() {
       try {
-        // this.$v.$touch()
-        // if (!this.$v.$invalid) {
         this.loading = true
-        await this.$store.dispatch(
-          'administracion/paymentkey/createResource',
-          this.form
-        )
-        await this.$toast.success(`Las claves fueron guardadas con éxito!`, {
-          icon: 'mdi-checkbox-marked-circle-outline',
-        })
-        // }
+        this.$v.$touch()
+        if (!this.$v.$invalid) {
+          await this.$store.dispatch(
+            'administracion/paymentkey/createResource',
+            this.form
+          )
+          await this.$toast.success(`Las claves fueron guardadas con éxito!`, {
+            icon: 'mdi-checkbox-marked-circle-outline',
+          })
+        }
       } catch (error) {
         if (error.response) {
           if (error.response.status === 500) return this.$toast.global.e500()
@@ -167,19 +193,27 @@ export default {
           this.$toast.error('Ocurrio un problema al crear las claves de pago')
         }
       } finally {
-        this.loading = false
+        setTimeout(() => {
+          this.loading = false
+        }, 1000)
       }
     },
     async updatePaymentKey() {
       try {
         this.loading = true
-        await this.$store.dispatch(
-          'administracion/paymentkey/updateResource',
-          this.form
-        )
-        await this.$toast.success(`Las claves fueron actualizadas con éxito!`, {
-          icon: 'mdi-checkbox-marked-circle-outline',
-        })
+        this.$v.$touch()
+        if (!this.$v.$invalid) {
+          await this.$store.dispatch(
+            'administracion/paymentkey/updateResource',
+            this.form
+          )
+          await this.$toast.success(
+            `Las claves fueron actualizadas con éxito!`,
+            {
+              icon: 'mdi-checkbox-marked-circle-outline',
+            }
+          )
+        }
       } catch (error) {
         if (error.response) {
           if (error.response.status === 500) return this.$toast.global.e500()
@@ -194,7 +228,9 @@ export default {
           )
         }
       } finally {
-        this.loading = false
+        setTimeout(() => {
+          this.loading = false
+        }, 1000)
       }
     },
   },
