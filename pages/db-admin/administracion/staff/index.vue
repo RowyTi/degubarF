@@ -131,6 +131,7 @@ export default {
         name: '',
         lastName: '',
         dateOfBirth: '',
+        codArea: '',
         phone: '',
         address: {
           street: '',
@@ -153,6 +154,7 @@ export default {
         name: '',
         lastName: '',
         dateOfBirth: '',
+        codArea: '',
         phone: '',
         address: {
           street: '',

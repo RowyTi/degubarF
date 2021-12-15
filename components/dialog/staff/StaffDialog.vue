@@ -94,7 +94,7 @@
                         title="Teléfono"
                         :subtitle="
                           form.profile && form.profile.phone
-                            ? form.profile.phone
+                            ? phoneFull
                             : 'sin completar'
                         "
                       />
@@ -376,10 +376,24 @@
                         ></v-date-picker>
                       </v-menu>
                     </v-col>
-                    <v-col cols="12" class="pb-0">
+                    <v-col cols="4" class="pb-0">
+                      <v-text-field
+                        v-model="formu.profile.codArea"
+                        v-mask="'######'"
+                        outlined
+                        label="Cod"
+                        hint="Código de área"
+                        :error-messages="codareaErrors"
+                        @input="$v.formu.profile.codArea.$touch()"
+                        @blur="$v.formu.profile.codArea.$touch()"
+                      ></v-text-field>
+                    </v-col>
+                    <v-col cols="8" class="pb-0">
                       <v-text-field
                         v-model="formu.profile.phone"
+                        v-mask="'####-####'"
                         outlined
+                        hint="Ingrese el número sin el 15"
                         label="Teléfono"
                         :error-messages="phoneErrors"
                         @input="$v.formu.profile.phone.$touch()"
@@ -539,6 +553,9 @@ export default {
         dateOfBirth: {
           required,
         },
+        codArea: {
+          required,
+        },
         phone: {
           required,
         },
@@ -577,7 +594,9 @@ export default {
     btnForm() {
       return this.editedIndex === -1 ? 'guardar' : 'Actualizar '
     },
-
+    phoneFull() {
+      return '(' + this.form.profile.codArea + ') ' + this.form.profile.phone
+    },
     // FORM VALIDATION
     passwordErrors() {
       const errors = []
@@ -611,6 +630,13 @@ export default {
       const errors = []
       if (!this.$v.formu.profile.dateOfBirth.$dirty) return errors
       !this.$v.formu.profile.dateOfBirth.required &&
+        errors.push('Este campo es obligatiorio.')
+      return errors
+    },
+    codareaErrors() {
+      const errors = []
+      if (!this.$v.formu.profile.codArea.$dirty) return errors
+      !this.$v.formu.profile.codArea.required &&
         errors.push('Este campo es obligatiorio.')
       return errors
     },

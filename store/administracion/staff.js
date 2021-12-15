@@ -72,6 +72,7 @@ export const actions = {
             dateOfBirth: form.profile.dateOfBirth,
             lastName: form.profile.lastName,
             name: form.profile.name,
+            codArea: form.profile.codArea,
             phone: form.profile.phone,
             address: {
               cp: form.profile.address.cp,
@@ -112,6 +113,7 @@ export const actions = {
             dateOfBirth: form.profile.dateOfBirth,
             lastName: form.profile.lastName,
             name: form.profile.name,
+            codArea: form.profile.codArea,
             phone: form.profile.phone,
             address: {
               cp: form.profile.address.cp,
