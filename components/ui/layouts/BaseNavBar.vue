@@ -52,6 +52,13 @@ export default {
         icon: 'store-cog',
         permission: 'dashboard:branch',
       },
+
+      {
+        name: 'Mis Ordenes',
+        slug: '/db-admin/administracion/ordenes',
+        icon: 'format-list-bulleted-square',
+        permission: 'dashboard:order',
+      },
       {
         name: 'Clientes',
         slug: '/db-admin/administracion/clientes',

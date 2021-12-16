@@ -1,11 +1,7 @@
 import { deserialize, serialize } from 'jsonapi-fractal'
 export const state = () => ({
-  branches: [],
-  branch: {},
-  paymentKey: {},
-  categories: {},
-  address: {},
   orders: [],
+  order: {},
   totalData: null,
   defaultOptions: {
     page: 1,
@@ -17,23 +13,11 @@ export const state = () => ({
 });
 
 export const mutations = {
-  SET_BRANCHES(state, data) {
-    state.branches = data;
-  },
-  SET_BRANCH(state, data) {
-    state.branch = data;
-  },
-  SET_PAYMENTKEY(state, data) {
-    state.paymentKey = data;
-  },
-  SET_CATEGORIES(state, data) {
-    state.categories = data;
-  },
-  SET_ADDRESS(state, data) {
-    state.address = data;
-  },
   SET_ORDERS(state, data) {
     state.orders = data;
+  },
+  SET_ORDER(state, data) {
+    state.order = data;
   },
   SET_TOTAL_DATA(state, data) {
     state.totalData = data;
@@ -45,18 +29,22 @@ export const mutations = {
 
 export const actions = {
   // LISTAR RECURSOS 10/pag default
-  async getList({ commit }, params) {
+  async getList({ commit, rootState }, params) {
     // console.log(params)
-    const response = await this.$axios.$get(`branches`, {
+    const response = await this.$axios.$get(`orders`, {
       params: {
+        'filter[branch_id]': rootState.auth.user.branch ? rootState.auth.user.branch.id : null,
+        // 'include': rootState.auth.user.sa ? 'branch' : null,
+        // 'fields[branches]': 'name',
         'page[number]': params.page,
         'page[size]': params.itemsPerPage,
         sort: params.sortDesc[0] ? '-' + params.sortBy[0] : params.sortBy[0]
+
       },
     })
     commit("SET_TOTAL_DATA", response.meta.page.total)
     const data = deserialize(response, { changeCase: 'camelCase' })
-    commit("SET_BRANCHES", data)
+    commit("SET_ORDERS", data)
   },
 
   // VER RECURSO {id}
@@ -159,24 +147,6 @@ export const actions = {
     if (response.data !== null) {
       const serializedData = (deserialize(response, { changeCase: 'camelCase' }))
       commit("SET_ADDRESS", serializedData)
-    }
-  },
-
-  // BRANCH RELATION ORDER
-  async getOrders({ commit }, params) {
-    await console.log(params);
-    const response = await this.$axios.$get(`branches/${params.id}/orders`, {
-      params: {
-        'page[number]': params.page,
-        'page[size]': params.itemsPerPage,
-        sort: params.sortDesc[0] ? '-' + params.sortBy[0] : params.sortBy[0]
-
-      },
-    })
-    if (response.data !== null) {
-      commit("SET_TOTAL_DATA", response.meta.page.total)
-      const serializedData = (deserialize(response, { changeCase: 'camelCase' }))
-      commit("SET_ORDERS", serializedData)
     }
   },
 

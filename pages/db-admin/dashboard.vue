@@ -1,7 +1,7 @@
 <template>
   <v-row justify="center" align="center" class="mt-5">
     <v-col cols="6">
-      {{ user }}
+      {{ result }}
     </v-col>
     <!-- <v-col cols="6"> <v-btn @click="test">te</v-btn></v-col> -->
   </v-row>
@@ -13,6 +13,20 @@ export default {
   layout: 'admin',
   middleware: 'permission-dashboard',
   data: () => ({
+    result: {},
+    order: [
+      // items: [
+      {
+        id: '1',
+        name: 'pizza',
+        description: 'pizza comun',
+        image: 'productos/7/7-pizza.jpeg',
+        quantity: '3',
+        unit_price: '22',
+        total_price: '66',
+      },
+      // ],
+    ],
     items: [
       {
         text: 'Dashboard',
@@ -34,9 +48,14 @@ export default {
   computed: {
     ...mapGetters(['isAuthenticated', 'user']),
   },
-
+  mounted() {
+    this.enJson()
+  },
   methods: {
-    //
+    enJson() {
+      this.result = JSON.stringify(this.order)
+      console.log(JSON.parse(this.result))
+    },
   },
 }
 </script>
