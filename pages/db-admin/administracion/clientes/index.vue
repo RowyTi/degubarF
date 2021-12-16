@@ -158,10 +158,10 @@ export default {
     editedIndex: -1,
     showMode: false,
     options: {
-      page: 1,
-      itemsPerPage: 10,
-      sortBy: ['updatedAt'],
-      sortDesc: [true],
+      // page: 1,
+      // itemsPerPage: 10,
+      // sortBy: ['updatedAt'],
+      // sortDesc: [true],
     },
   }),
   head: {

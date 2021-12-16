@@ -66,7 +66,6 @@ export const actions = {
       branch_id: rootState.auth.user.branch.id.toString()
     }
     const serialized = serialize(resource, 'products', { changeCase: 'snakeCase' })
-    await console.log(serialized);
     await this.$axios.$post("products", serialized);
     await dispatch('getList', state.defaultOptions);
   },
@@ -84,8 +83,6 @@ export const actions = {
       branch_id: rootState.auth.user.branch.id.toString()
     }
     const serialized = serialize(resource, 'products', { changeCase: 'snakeCase' })
-
-    console.log(serialized);
     await this.$axios.$patch(`products/${form.id}`, serialized);
     await dispatch('getList', state.defaultOptions);
   },
@@ -103,7 +100,6 @@ export const actions = {
       branch_id: rootState.auth.user.branch.id.toString()
     }
     const serialized = serialize(resource, 'products', { changeCase: 'snakeCase' })
-    console.log(serialized);
     await this.$axios.$patch(`products/${form.item.id}`, serialized);
     await dispatch('getList', state.defaultOptions);
   },

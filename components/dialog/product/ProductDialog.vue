@@ -419,6 +419,7 @@ export default {
     close() {
       this.$v.$reset()
       this.file = null
+      this.image = ''
       this.$emit('closeDialog')
     },
     async createResource() {

@@ -1,6 +1,7 @@
 <template>
   <v-row justify="center" align="center" class="mt-5">
     <v-col cols="12" md="11">
+      {{ loadingP }}
       <base-card :dialog="false">
         <template #rightCardTitle>
           <span class="font-weight-light accent--text">
@@ -51,25 +52,27 @@
                 v-text="item.state"
               />
             </template>
-            <template #[`item.quantity`]="props">
+            <!-- <template #[`item.quantity`]="props"> -->
+            <template #[`item.quantity`]="{ item, index }">
+              <!-- {{ index }} {{ item }} -->
               <v-edit-dialog
-                :return-value.sync="props.item.quantity"
+                :return-value.sync="item.quantity"
                 save-text="Guardar"
                 cancel-text="Cancelar"
                 large
                 persistent
-                @save="save(props.item)"
+                @save="save(item, index)"
               >
                 <v-chip
-                  v-show="!loading"
+                  v-if="!loadingP[index]"
                   small
-                  :color="props.item.quantity <= 5 ? 'error' : 'success'"
+                  :color="item.quantity <= 5 ? 'error' : 'success'"
                   style="cursor: pointer"
                 >
-                  {{ props.item.quantity }}
+                  {{ item.quantity }}
                 </v-chip>
                 <v-progress-circular
-                  v-show="loading"
+                  v-else
                   size="26"
                   indeterminate
                   color="primary"
@@ -78,7 +81,7 @@
                 <template #input>
                   <div class="mt-4 text-h6">Actualizar Stock</div>
                   <v-text-field
-                    :value="props.item.quantity"
+                    :value="item.quantity"
                     type="number"
                     label="Stock"
                     single-line
@@ -124,6 +127,7 @@ export default {
   layout: 'admin',
   middleware: ['permission-product'],
   data: () => ({
+    loadingP: [],
     rules: [
       (v) => !!v || 'El stock es requerido',
       (v) => (v && v <= 9999) || 'Máximo 9999 unidades',
@@ -208,9 +212,9 @@ export default {
     updateQuantity(e) {
       this.update.quantity = e
     },
-    async save(item) {
+    async save(item, index) {
       try {
-        this.loading = true
+        this.loadingP[index] = true
         if (this.update.quantity > 9999)
           return this.$toast.error('El stock supera las cantidades permitidas')
         const data = Object.assign({ item }, this.update)
@@ -220,6 +224,7 @@ export default {
             data
           )
           this.update.quantity = ''
+          this.loadingP[index] = false
           this.$toast.success(
             `El stock del producto ${item.name} fue actualizado con éxito!`,
             {
@@ -235,7 +240,7 @@ export default {
           this.$toast.error('Ocurrió un problema al actualizar el stock')
         }
       } finally {
-        this.loading = false
+        this.loadingP[index] = false
       }
     },
     closeDialog() {
