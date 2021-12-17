@@ -774,8 +774,15 @@ export default {
           )
         }
       } catch (error) {
-        if (error.response.status === 403) await this.$toast.global.e403()
-        await this.$toast.global.e500()
+        if (error.response) {
+          if (error.response.status === 500) this.$toast.global.e500()
+          if (error.response.status === 403) this.$toast.global.e403()
+          if (error.response.status === 422) this.$toast.global.e422()
+        } else if (error.request) {
+          this.$toast.error(
+            `Ocurrió un problema al crear el usuario ${this.formu.username}`
+          )
+        }
       } finally {
         this.loading = false
       }
@@ -795,9 +802,15 @@ export default {
           }
         )
       } catch (error) {
-        if (error.response.status === 403) await this.$toast.global.e403()
-
-        await this.$toast.global.e500()
+        if (error.response) {
+          if (error.response.status === 500) this.$toast.global.e500()
+          if (error.response.status === 403) this.$toast.global.e403()
+          if (error.response.status === 422) this.$toast.global.e422()
+        } else if (error.request) {
+          this.$toast.error(
+            `Ocurrió un problema al actualizar el usuario ${this.formu.username}`
+          )
+        }
       } finally {
         this.loading = false
       }
@@ -814,9 +827,13 @@ export default {
           changeCase: 'camelCase',
         })
       } catch (error) {
-        await this.$toast.error(
-          'Ocurrió un problema al cargar los locales, intente nuevamente.'
-        )
+        if (error.response) {
+          if (error.response.status === 500) this.$toast.global.e500()
+          if (error.response.status === 403) this.$toast.global.e403()
+          if (error.response.status === 422) this.$toast.global.e422()
+        } else if (error.request) {
+          this.$toast.error('Ocurrió un problema al cargar los locales')
+        }
       } finally {
         this.isLoading = false
       }
@@ -826,7 +843,13 @@ export default {
         const res = await this.$axios.get('role')
         this.roles = res.data.roles
       } catch (error) {
-        this.$toast.error('Ocurrio un problema al cargar los roles')
+        if (error.response) {
+          if (error.response.status === 500) this.$toast.global.e500()
+          if (error.response.status === 403) this.$toast.global.e403()
+          if (error.response.status === 422) this.$toast.global.e422()
+        } else if (error.request) {
+          this.$toast.error('Ocurrió un problema al cargar los roles')
+        }
       }
     },
   },
