@@ -148,6 +148,7 @@
             type="submit"
             :disabled="loading || !valid"
             :loading="loading"
+            @click="validate"
           >
             {{ btnForm }}
           </v-btn>
@@ -262,20 +263,20 @@ export default {
       this.$refs.form.resetValidation()
       this.$emit('closeDialog')
     },
+    validate() {
+      this.$refs.form.validate()
+    },
     async createResource() {
       try {
-        this.$v.$touch()
-        if (!this.$v.$invalid) {
-          this.loading = true
-          await this.$store.dispatch(
-            'administracion/table/createResource',
-            this.formu
-          )
-          this.close()
-          this.$toast.success(`La Mesa fue creada con éxito!`, {
-            icon: 'mdi-checkbox-marked-circle-outline',
-          })
-        }
+        this.loading = true
+        await this.$store.dispatch(
+          'administracion/table/createResource',
+          this.formu
+        )
+        this.close()
+        this.$toast.success(`La Mesa fue creada con éxito!`, {
+          icon: 'mdi-checkbox-marked-circle-outline',
+        })
       } catch (error) {
         if (error.response) {
           if (error.response.status === 500) this.$toast.global.e500()
@@ -291,20 +292,18 @@ export default {
     },
     async updateResource() {
       try {
-        if (this.$refs.form.validate()) {
-          this.loading = true
-          await this.$store.dispatch(
-            'administracion/table/updateResource',
-            this.formu
-          )
-          this.close()
-          this.$toast.success(
-            `La Mesa  ${this.formu.name} fue actualizada con éxito!`,
-            {
-              icon: 'mdi-checkbox-marked-circle-outline',
-            }
-          )
-        }
+        this.loading = true
+        await this.$store.dispatch(
+          'administracion/table/updateResource',
+          this.formu
+        )
+        this.close()
+        this.$toast.success(
+          `La Mesa  ${this.formu.name} fue actualizada con éxito!`,
+          {
+            icon: 'mdi-checkbox-marked-circle-outline',
+          }
+        )
       } catch (error) {
         if (error.response) {
           if (error.response.status === 500) this.$toast.global.e500()
