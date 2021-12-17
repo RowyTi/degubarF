@@ -242,6 +242,7 @@ export default {
   },
   watch: {
     tableName() {
+      if (this.formu.slug === '') return false
       if (this.formu.slug !== this.formu.oSlug) {
         this.$axios.$get(`/table-validate/${this.formu.slug}`).then((valid) => {
           this.errors = valid.valido

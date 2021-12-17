@@ -187,6 +187,8 @@
     <!-- create & edit -->
     <v-form
       v-else
+      ref="form"
+      v-model="valid"
       lazy-validation
       @submit.prevent="editedIndex === -1 ? createResource() : updateResource()"
     >
@@ -208,10 +210,7 @@
                 :complete="stepper > 1"
                 step="1"
                 editable
-                :rules="[
-                  () => !$v.formu.username.$error,
-                  () => !$v.formu.password.$error,
-                ]"
+                :rules="[() => valid, () => !$v.formu.password.$error]"
               >
                 Usuario
               </v-stepper-step>
@@ -236,6 +235,7 @@
 
               <v-stepper-step
                 step="3"
+                editable
                 :rules="[
                   () => !$v.formu.profile.address.street.$error,
                   () => !$v.formu.profile.address.number.$error,
@@ -255,12 +255,14 @@
                     <!-- {{ formu }} -->
                     <v-col cols="12" class="pb-0">
                       <v-text-field
-                        v-model="formu.username"
+                        v-model="username"
                         outlined
                         label="Nombre de Usuario"
-                        :error-messages="usernameErrors"
-                        @input="$v.formu.username.$touch()"
-                        @blur="$v.formu.username.$touch()"
+                        :error-messages="errors"
+                        :rules="[
+                          (v) => !!v || 'El nombre de usuario es requerido',
+                        ]"
+                        required
                       ></v-text-field>
                     </v-col>
                     <v-col cols="12" class="pb-0">
@@ -310,10 +312,10 @@
                 </v-container>
 
                 <div class="d-flex justify-end">
-                  <v-btn color="error" text :disabled="loading" @click="close">
+                  <v-btn color="error" text class="mr-3" @click="close">
                     Cancelar
                   </v-btn>
-                  <v-btn color="primary" right @click="nextStep">
+                  <v-btn color="primary" right class="mr-3" @click="nextStep">
                     continuar
                   </v-btn>
                 </div>
@@ -403,10 +405,10 @@
                   </v-row>
                 </v-container>
                 <div class="d-flex justify-end">
-                  <v-btn color="error" text :disabled="loading" @click="close">
+                  <v-btn color="error" text class="mr-3" @click="close">
                     Cancelar
                   </v-btn>
-                  <v-btn color="primary" @click="stepper = 3">
+                  <v-btn color="primary" class="mr-3" @click="stepper = 3">
                     continuar
                   </v-btn>
                 </div>
@@ -470,14 +472,22 @@
                   </v-row>
                 </v-container>
                 <div class="d-flex justify-end">
-                  <v-btn color="error" text :disabled="loading" @click="close">
+                  <v-btn
+                    color="error"
+                    text
+                    :disabled="loading"
+                    class="mr-3"
+                    @click="close"
+                  >
                     Cancelar
                   </v-btn>
                   <v-btn
+                    class="mr-3"
                     color="success"
                     type="submit"
-                    :disabled="loading || $v.$anyError"
+                    :disabled="loading || ($v.$anyError && !valid)"
                     :loading="loading"
+                    @click="validate"
                   >
                     {{ btnForm }}
                   </v-btn>
@@ -534,12 +544,14 @@ export default {
     isLoading: false,
     activePicker: null,
     menu: false,
+    errors: [],
+    valid: true,
   }),
   validations: {
     formu: {
-      username: {
-        required,
-      },
+      // username: {
+      //   required,
+      // },
       password: {
         required,
       },
@@ -586,10 +598,18 @@ export default {
         return this.form
       },
     },
+    username: {
+      get() {
+        return this.formu.username
+      },
+      set(value) {
+        this.formu.username = value
+      },
+    },
     formTitle() {
       return this.editedIndex === -1
         ? 'Empleado Nuevo'
-        : 'Editar  ' + this.form.username
+        : 'Editar  ' + this.formu.oUsername
     },
     btnForm() {
       return this.editedIndex === -1 ? 'guardar' : 'Actualizar '
@@ -605,13 +625,13 @@ export default {
         errors.push('Este campo es obligatiorio.')
       return errors
     },
-    usernameErrors() {
-      const errors = []
-      if (!this.$v.formu.username.$dirty) return errors
-      !this.$v.formu.username.required &&
-        errors.push('Este campo es obligatiorio.')
-      return errors
-    },
+    // usernameErrors() {
+    //   const errors = []
+    //   if (!this.$v.formu.username.$dirty) return errors
+    //   !this.$v.formu.username.required &&
+    //     errors.push('Este campo es obligatiorio.')
+    //   return errors
+    // },
     nameErrors() {
       const errors = []
       if (!this.$v.formu.profile.name.$dirty) return errors
@@ -691,6 +711,18 @@ export default {
     menu(val) {
       val && setTimeout(() => (this.activePicker = 'YEAR'))
     },
+    username() {
+      if (this.formu.username === '') return false
+      if (this.formu.username !== this.formu.oUsername) {
+        this.$axios
+          .$get(`/staff-validate/${this.formu.username}`)
+          .then((valid) => {
+            this.errors = valid.valido
+              ? [`El usuario ${this.formu.username} ya existe!`]
+              : []
+          })
+      }
+    },
   },
   mounted() {
     if (this.$auth.user.sa) {
@@ -708,11 +740,16 @@ export default {
       const [year, month, day] = date.split('-')
       return `${day}/${month}/${year}`
     },
+    validate() {
+      this.$refs.form.validate()
+    },
     nextStep() {
       return this.stepper++
     },
     close() {
       this.$v.$reset()
+      this.errors = []
+      this.$refs.form.resetValidation()
       this.stepper = 1
       this.$emit('closeDialog')
     },
