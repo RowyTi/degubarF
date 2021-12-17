@@ -210,8 +210,13 @@ export default {
         this.loading = true
         await this.$store.dispatch('administracion/staff/getList', this.options)
       } catch (error) {
-        if (error.response.status === 403)
-          alert('Usted no esta Autorizado para realizar esta acción')
+        if (error.response) {
+          if (error.response.status === 500) this.$toast.global.e500()
+          if (error.response.status === 403) this.$toast.global.e403()
+          if (error.response.status === 422) this.$toast.global.e422()
+        } else if (error.request) {
+          this.$toast.error('Ocurrió un problema al cargar los usuarios')
+        }
       } finally {
         this.loading = false
       }
@@ -225,12 +230,13 @@ export default {
         })
         this.dialog = true
       } catch (error) {
-        if (error.response.status === 403)
-          await this.$notify({
-            group: 'error',
-            title: 'No Autorizado',
-            text: 'Usted no está autorizado a realizar esta acción',
-          })
+        if (error.response) {
+          if (error.response.status === 500) this.$toast.global.e500()
+          if (error.response.status === 403) this.$toast.global.e403()
+          if (error.response.status === 422) this.$toast.global.e422()
+        } else if (error.request) {
+          this.$toast.error('Ocurrió un problema al cargar los usuarios')
+        }
       }
     },
     async editItem(item) {
@@ -252,7 +258,13 @@ export default {
         console.log(this.form)
         this.dialog = true
       } catch (error) {
-        if (error.response.status === 403) this.$toast.global.e403()
+        if (error.response) {
+          if (error.response.status === 500) this.$toast.global.e500()
+          if (error.response.status === 403) this.$toast.global.e403()
+          if (error.response.status === 422) this.$toast.global.e422()
+        } else if (error.request) {
+          this.$toast.error('Ocurrió un problema al cargar los usuarios')
+        }
       }
     },
     async deleteItem(item) {
@@ -280,7 +292,13 @@ export default {
           )
         }
       } catch (error) {
-        if (error.response.status === 403) await this.$toast.global.e403()
+        if (error.response) {
+          if (error.response.status === 500) this.$toast.global.e500()
+          if (error.response.status === 403) this.$toast.global.e403()
+          if (error.response.status === 422) this.$toast.global.e422()
+        } else if (error.request) {
+          this.$toast.error('Ocurrió un problema al cargar los usuarios')
+        }
       }
     },
   },
