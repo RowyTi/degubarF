@@ -97,6 +97,14 @@ export default {
           type: 'error',
           icon: 'mdi-alert-circle-outline',
         }
+      },
+      {
+        name: 'e422',
+        message: 'Estas enviando datos inválidos, corregilos y volvé a intentarlo!',
+        options: {
+          type: 'error',
+          icon: 'mdi-alert-outline',
+        }
       }
     ]
   },

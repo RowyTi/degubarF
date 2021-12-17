@@ -72,6 +72,8 @@
                   v-model="formu.email"
                   outlined
                   label="Email"
+                  :error-messages="emailErrors"
+                  @input="delayTouch($v.formu.email)"
                 ></v-text-field>
               </v-col>
               <v-col cols="12" class="pb-0">
@@ -105,6 +107,7 @@
 <script>
 import { required, email } from 'vuelidate/lib/validators'
 import BaseCard from '~/components/ui/BaseCard.vue'
+const touchMap = new WeakMap()
 export default {
   name: 'UserDialog',
   components: { BaseCard },
@@ -133,13 +136,18 @@ export default {
     },
   }),
   validations: {
-    data: {
+    formu: {
       name: {
         required,
       },
       email: {
         required,
         email,
+        async isUnique(value) {
+          if (value === '') return true
+          const res = await this.$axios.$get(`/user-validate/${value}`)
+          return !res.valido
+        },
       },
       password: {
         required,
@@ -160,11 +168,28 @@ export default {
     btnForm() {
       return this.editedIndex === -1 ? 'guardar' : 'Actualizar '
     },
+
+    // FORM VALIDATION
+    emailErrors() {
+      const errors = []
+      if (!this.$v.formu.email.$dirty) return errors
+      !this.$v.formu.email.required && errors.push('El email es requerido.')
+      !this.$v.formu.email.isUnique &&
+        errors.push('Este Email ya esta registrado')
+      return errors
+    },
   },
   methods: {
     close() {
       this.$v.$reset()
       this.$emit('closeDialog')
+    },
+    delayTouch($v) {
+      $v.$reset()
+      if (touchMap.has($v)) {
+        clearTimeout(touchMap.get($v))
+      }
+      touchMap.set($v, setTimeout($v.$touch, 1000))
     },
     async createResource() {
       try {

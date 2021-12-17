@@ -181,12 +181,14 @@ export default {
       slug: '',
       state: 'inactivo',
       qr: '',
+      oSlug: '',
     },
     defaultForm: {
       name: '',
       slug: '',
       state: 'inactivo',
       qr: '',
+      oSlug: '',
     },
     loading: false,
     dialog: false,
@@ -214,10 +216,23 @@ export default {
       this.update.state = e
     },
     async save(id) {
-      if (this.update.state.length > 0) {
-        await this.$axios.patch(`tables/state/${id}`, this.update)
-        this.update.state = ''
-        await this.getData()
+      try {
+        if (this.update.state.length > 0) {
+          await this.$axios.patch(`tables/state/${id}`, this.update)
+          this.update.state = ''
+          this.$toast.success(`La Mesa fue actualizada con éxito!`, {
+            icon: 'mdi-checkbox-marked-circle-outline',
+          })
+          await this.getData()
+        }
+      } catch (error) {
+        if (error.response) {
+          if (error.response.status === 500) this.$toast.global.e500()
+          if (error.response.status === 403) this.$toast.global.e403()
+          if (error.response.status === 422) this.$toast.global.e422()
+        } else if (error.request) {
+          this.$toast.error('Ocurrió un problema al cargar las mesas')
+        }
       }
     },
     loadPrintData(value) {
@@ -242,8 +257,13 @@ export default {
         this.loading = true
         await this.$store.dispatch('administracion/table/getList', this.options)
       } catch (error) {
-        if (error.response.status === 403)
-          alert('Usted no esta Autorizado para realizar esta acción')
+        if (error.response) {
+          if (error.response.status === 500) this.$toast.global.e500()
+          if (error.response.status === 403) this.$toast.global.e403()
+          if (error.response.status === 422) this.$toast.global.e422()
+        } else if (error.request) {
+          this.$toast.error('Ocurrió un problema al cargar las mesas')
+        }
       } finally {
         this.loading = false
       }
@@ -257,12 +277,13 @@ export default {
         })
         this.dialog = true
       } catch (error) {
-        if (error.response.status === 403)
-          await this.$notify({
-            group: 'error',
-            title: 'No Autorizado',
-            text: 'Usted no está autorizado a realizar esta acción',
-          })
+        if (error.response) {
+          if (error.response.status === 500) this.$toast.global.e500()
+          if (error.response.status === 403) this.$toast.global.e403()
+          if (error.response.status === 422) this.$toast.global.e422()
+        } else if (error.request) {
+          this.$toast.error('Ocurrió un problema al cargar las mesas')
+        }
       }
     },
     async editItem(item) {
@@ -279,12 +300,13 @@ export default {
         this.form = Object.assign({}, deserializeData)
         this.dialog = true
       } catch (error) {
-        if (error.response.status === 403)
-          await this.$notify({
-            group: 'error',
-            title: 'No Autorizado',
-            text: 'Usted no está autorizado a realizar esta acción',
-          })
+        if (error.response) {
+          if (error.response.status === 500) this.$toast.global.e500()
+          if (error.response.status === 403) this.$toast.global.e403()
+          if (error.response.status === 422) this.$toast.global.e422()
+        } else if (error.request) {
+          this.$toast.error('Ocurrió un problema al cargar las mesas')
+        }
       }
     },
     async deleteItem(item) {
@@ -304,19 +326,18 @@ export default {
             'administracion/table/deleteResource',
             item.id
           )
-          await this.$notify({
-            group: 'success',
-            title: 'Mesa Eliminada',
-            text: `La mesa ${item.name} fue elimianda con éxito!`,
+          this.$toast.success(`La mesa ${item.name} fue elimianda con éxito!`, {
+            icon: 'mdi-checkbox-marked-circle-outline',
           })
         }
       } catch (error) {
-        if (error.response.status === 403)
-          await this.$notify({
-            group: 'error',
-            title: 'No Autorizado',
-            text: 'Usted no está autorizado a realizar esta acción',
-          })
+        if (error.response) {
+          if (error.response.status === 500) this.$toast.global.e500()
+          if (error.response.status === 403) this.$toast.global.e403()
+          if (error.response.status === 422) this.$toast.global.e422()
+        } else if (error.request) {
+          this.$toast.error('Ocurrió un problema al cargar las mesas')
+        }
       }
     },
   },

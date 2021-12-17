@@ -52,7 +52,8 @@
     <!-- create & edit -->
     <v-form
       v-else
-      ref="formulario"
+      ref="form"
+      v-model="valid"
       lazy-validation
       @submit.prevent="editedIndex === -1 ? createResource() : updateResource()"
     >
@@ -71,19 +72,30 @@
           <v-container fluid class="mt-5 pt-0">
             <v-row>
               <v-col cols="6">
+                <!-- {{ formu.slug }}
+                <v-text-field v-model="tableName" :error-messages="errors" />
+                <v-text-field v-model="formu.slug" :error-messages="errors" />
+                {{ errors }} -->
                 <v-col cols="12" class="pb-0">
                   <v-text-field
-                    v-model="clientName"
+                    v-model="tableName"
                     outlined
-                    label="Número de Mesa"
-                  ></v-text-field>
+                    placeholder="mesa 1"
+                    hint="Ej mesa 1"
+                    label="Nombre de Mesa"
+                    :error-messages="errors"
+                    :rules="[(v) => !!v || 'El nombre de la mesa es requerido']"
+                    required
+                  >
+                    ></v-text-field
+                  >
                 </v-col>
                 <v-col cols="12" class="pb-0">
                   <v-text-field
                     v-model="formu.slug"
-                    hidden
                     disabled
                     outlined
+                    hidden
                     class="d-none"
                   ></v-text-field>
                 </v-col>
@@ -134,7 +146,7 @@
           <v-btn
             color="success"
             type="submit"
-            :disabled="loading"
+            :disabled="loading || !valid"
             :loading="loading"
           >
             {{ btnForm }}
@@ -148,9 +160,10 @@
 <script>
 import slugify from 'slugify'
 import VueQr from 'vue-qr'
-import { required } from 'vuelidate/lib/validators'
+// import { required } from 'vuelidate/lib/validators'
 import BaseCard from '~/components/ui/BaseCard.vue'
 import BaseListItemContent from '~/components/ui/BaseListItemContent.vue'
+// const touchMap = new WeakMap()
 export default {
   name: 'TableDialog',
   components: { BaseCard, BaseListItemContent, VueQr },
@@ -172,7 +185,8 @@ export default {
     },
   },
   data: () => ({
-    stepper: 1,
+    valid: true,
+    errors: [],
     itemState: [
       {
         text: 'Inactivo',
@@ -192,22 +206,7 @@ export default {
       page: 1,
       itemsPerPage: 10,
     },
-    // name: '',
-    // slug: '',
-    // state: '',
-    // qr: '',
-    // branhc_id: '',
   }),
-  validations: {
-    formu: {
-      name: {
-        required,
-      },
-      slug: {
-        required,
-      },
-    },
-  },
   computed: {
     imgUrl() {
       return process.env.BASE_IMG_URL
@@ -223,7 +222,7 @@ export default {
     btnForm() {
       return this.editedIndex === -1 ? 'Guardar' : 'Actualizar '
     },
-    clientName: {
+    tableName: {
       get() {
         // eslint-disable-next-line vue/no-side-effects-in-computed-properties
         this.formu.slug = slugify(
@@ -240,17 +239,27 @@ export default {
       },
     },
   },
-
+  watch: {
+    tableName() {
+      if (this.formu.slug !== this.formu.oSlug) {
+        this.$axios.$get(`/table-validate/${this.formu.slug}`).then((valid) => {
+          this.errors = valid.valido
+            ? [`La mesa ${this.formu.name} ya existe!`]
+            : []
+        })
+      }
+    },
+  },
+  mounted() {
+    //
+  },
   methods: {
     qrImage(dataUrl) {
       this.formu.qr = dataUrl
     },
-    nextStep() {
-      return this.stepper++
-    },
     close() {
-      this.$v.$reset()
-      this.stepper = 1
+      this.errors = []
+      this.$refs.form.resetValidation()
       this.$emit('closeDialog')
     },
     async createResource() {
@@ -263,56 +272,46 @@ export default {
             this.formu
           )
           this.close()
-          await this.$notify({
-            group: 'success',
-            title: 'Mesa creada!',
-            text: `La Mesa <b>${this.formu.name}</b> fue creado con éxito!`,
+          this.$toast.success(`La Mesa fue creada con éxito!`, {
+            icon: 'mdi-checkbox-marked-circle-outline',
           })
         }
       } catch (error) {
-        if (error.response.status === 403) {
-          await this.$notify({
-            group: 'error',
-            title: 'No Autorizado',
-            text: 'Usted no esta Autorizado para realizar esta acción',
-          })
-        } else {
-          await this.$notify({
-            group: 'error',
-            title: 'Error',
-            text: 'Ocurrió un error en el servidor, intentelo de nuevo mas tarde..',
-          })
+        if (error.response) {
+          if (error.response.status === 500) this.$toast.global.e500()
+          if (error.response.status === 403) this.$toast.global.e403()
+          if (error.response.status === 422) this.$toast.global.e422()
+        } else if (error.request) {
+          this.$toast.error('Ocurrió un problema al cargar las mesas')
         }
+        // console.log(error)
       } finally {
         this.loading = false
       }
     },
     async updateResource() {
       try {
-        this.loading = true
-        await this.$store.dispatch(
-          'administracion/table/updateResource',
-          this.formu
-        )
-        this.close()
-        await this.$notify({
-          group: 'success',
-          title: 'Mesa Actualizada!',
-          text: `La Mesa <b>${this.formu.name}</b> fue actualizada con éxito!`,
-        })
+        if (this.$refs.form.validate()) {
+          this.loading = true
+          await this.$store.dispatch(
+            'administracion/table/updateResource',
+            this.formu
+          )
+          this.close()
+          this.$toast.success(
+            `La Mesa  ${this.formu.name} fue actualizada con éxito!`,
+            {
+              icon: 'mdi-checkbox-marked-circle-outline',
+            }
+          )
+        }
       } catch (error) {
-        if (error.response.status === 403) {
-          await this.$notify({
-            group: 'error',
-            title: 'No Autorizado',
-            text: 'Usted no esta Autorizado para realizar esta acción',
-          })
-        } else {
-          await this.$notify({
-            group: 'error',
-            title: 'Error',
-            text: 'Ocurrió un error en el servidor, intentelo de nuevo mas tarde..',
-          })
+        if (error.response) {
+          if (error.response.status === 500) this.$toast.global.e500()
+          if (error.response.status === 403) this.$toast.global.e403()
+          if (error.response.status === 422) this.$toast.global.e422()
+        } else if (error.request) {
+          this.$toast.error('Ocurrió un problema al cargar las mesas')
         }
       } finally {
         this.loading = false
