@@ -82,6 +82,8 @@
       :form="form"
       :edited-index="editedIndex"
       :show-mode="showMode"
+      :name="original.name"
+      :slug="original.slug"
       @closeDialog="closeDialog"
     />
   </v-row>
@@ -162,6 +164,10 @@ export default {
       // itemsPerPage: 10,
       // sortBy: ['updatedAt'],
       // sortDesc: [true],
+    },
+    original: {
+      name: '',
+      slug: '',
     },
   }),
   head: {
@@ -244,6 +250,8 @@ export default {
           changeCase: 'camelCase',
         })
 
+        this.original.name = item.name
+        this.original.slug = item.slug
         this.editedIndex = this.branches.indexOf(item)
         this.form = Object.assign({}, deserializeData)
         this.dialog = true

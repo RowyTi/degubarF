@@ -86,6 +86,7 @@
       :form="form"
       :edited-index="editedIndex"
       :show-mode="showMode"
+      :name="original.name"
       @closeDialog="closeDialog"
     />
   </v-row>
@@ -101,6 +102,9 @@ export default {
   components: { BaseCard, CategoryDialog },
   layout: 'admin',
   data: () => ({
+    original: {
+      name: '',
+    },
     headers: [
       {
         text: 'Categoría',
@@ -232,6 +236,7 @@ export default {
         })
 
         this.editedIndex = this.categories.indexOf(item)
+        this.original.name = item.name
         this.form = Object.assign({}, deserializeData)
         this.dialog = true
       } catch (error) {

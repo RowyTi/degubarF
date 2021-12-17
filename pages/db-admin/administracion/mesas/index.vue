@@ -116,6 +116,7 @@
       :form="form"
       :edited-index="editedIndex"
       :show-mode="showMode"
+      :name="original.name"
       @closeDialog="closeDialog"
     />
     <base-print :qr="qrData" @print="print" />
@@ -134,6 +135,9 @@ export default {
   layout: 'admin',
   middleware: ['permission-table', 'auth'],
   data: () => ({
+    original: {
+      name: '',
+    },
     qrData: [],
     update: {
       state: '',
@@ -212,6 +216,17 @@ export default {
     deep: true,
   },
   methods: {
+    closeDialog() {
+      this.dialog = false
+      setTimeout(() => {
+        this.$nextTick(() => {
+          this.original.name = ''
+          this.form = Object.assign({}, this.defaultForm)
+          this.editedIndex = -1
+          this.showMode = false
+        })
+      }, 500)
+    },
     updateState(e) {
       this.update.state = e
     },
@@ -242,16 +257,7 @@ export default {
       await this.loadPrintData(data)
       await this.$htmlToPaper('printMe')
     },
-    closeDialog() {
-      this.dialog = false
-      setTimeout(() => {
-        this.$nextTick(() => {
-          this.form = Object.assign({}, this.defaultForm)
-          this.editedIndex = -1
-          this.showMode = false
-        })
-      }, 500)
-    },
+
     async getData() {
       try {
         this.loading = true
@@ -296,6 +302,7 @@ export default {
         const deserializeData = deserialize(res, {
           changeCase: 'camelCase',
         })
+        this.original.name = item.name
         this.editedIndex = this.tables.indexOf(item)
         this.form = Object.assign({}, deserializeData)
         this.dialog = true

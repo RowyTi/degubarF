@@ -137,7 +137,7 @@
     <!-- create & edit -->
     <v-form
       v-else
-      ref="formulario"
+      ref="form"
       lazy-validation
       @submit.prevent="editedIndex === -1 ? createResource() : updateResource()"
     >
@@ -201,8 +201,7 @@
                         label="Nombre del cliente"
                         :error-messages="nameErrors"
                         hint="Ej: Degubar Palermo"
-                        @input="$v.formu.name.$touch()"
-                        @blur="$v.formu.name.$touch()"
+                        @input="delayTouch($v.formu.slug)"
                       ></v-text-field>
                     </v-col>
                     <v-col cols="12" class="pb-0">
@@ -211,6 +210,7 @@
                         hidden
                         disabled
                         class="d-none"
+                        @input="delayTouch($v.formu.slug)"
                       ></v-text-field>
                     </v-col>
                     <v-col cols="12" class="pb-0">
@@ -346,6 +346,7 @@ import slugify from 'slugify'
 import { required, numeric, maxLength } from 'vuelidate/lib/validators'
 import BaseCard from '~/components/ui/BaseCard.vue'
 import BaseListItemContent from '~/components/ui/BaseListItemContent.vue'
+const touchMap = new WeakMap()
 export default {
   name: 'BranchDialog',
   components: { BaseCard, BaseListItemContent },
@@ -363,6 +364,16 @@ export default {
     showMode: {
       type: Boolean,
       default: false,
+      required: false,
+    },
+    name: {
+      type: String,
+      default: '',
+      required: false,
+    },
+    slug: {
+      type: String,
+      default: '',
       required: false,
     },
   },
@@ -405,6 +416,15 @@ export default {
       name: {
         required,
       },
+      slug: {
+        required,
+        async isUnique(value) {
+          if (value === '') return true
+          if (value === this.slug) return true
+          const res = await this.$axios.$get(`branch-validate/${value}`)
+          return !res.valido
+        },
+      },
       address: {
         street: {
           required,
@@ -434,9 +454,7 @@ export default {
       return this.form
     },
     formTitle() {
-      return this.editedIndex === -1
-        ? 'Cliente Nuevo'
-        : 'Editar  ' + this.form.name
+      return this.editedIndex === -1 ? 'Cliente Nuevo' : 'Editar  ' + this.name
     },
     btnForm() {
       return this.editedIndex === -1 ? 'Guardar' : 'Actualizar '
@@ -530,8 +548,10 @@ export default {
     },
     nameErrors() {
       const errors = []
-      if (!this.$v.formu.name.$dirty) return errors
+      if (!this.$v.formu.slug.$dirty) return errors
       !this.$v.formu.name.required && errors.push('Este campo es obligatiorio.')
+      !this.$v.formu.slug.isUnique &&
+        errors.push('El nombre ingresado ya existe!')
       return errors
     },
     pisoErrors() {
@@ -569,6 +589,13 @@ export default {
       this.$v.$reset()
       this.stepper = 1
       this.$emit('closeDialog')
+    },
+    delayTouch($v) {
+      $v.$reset()
+      if (touchMap.has($v)) {
+        clearTimeout(touchMap.get($v))
+      }
+      touchMap.set($v, setTimeout($v.$touch, 1000))
     },
     async createResource() {
       try {

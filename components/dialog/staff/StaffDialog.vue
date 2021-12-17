@@ -188,7 +188,6 @@
     <v-form
       v-else
       ref="form"
-      v-model="valid"
       lazy-validation
       @submit.prevent="editedIndex === -1 ? createResource() : updateResource()"
     >
@@ -210,7 +209,10 @@
                 :complete="stepper > 1"
                 step="1"
                 editable
-                :rules="[() => valid, () => !$v.formu.password.$error]"
+                :rules="[
+                  () => !$v.formu.username.$error,
+                  () => !$v.formu.password.$error,
+                ]"
               >
                 Usuario
               </v-stepper-step>
@@ -258,11 +260,8 @@
                         v-model="username"
                         outlined
                         label="Nombre de Usuario"
-                        :error-messages="errors"
-                        :rules="[
-                          (v) => !!v || 'El nombre de usuario es requerido',
-                        ]"
-                        required
+                        :error-messages="usernameErrors"
+                        @input="delayTouch($v.formu.username)"
                       ></v-text-field>
                     </v-col>
                     <v-col cols="12" class="pb-0">
@@ -485,9 +484,8 @@
                     class="mr-3"
                     color="success"
                     type="submit"
-                    :disabled="loading || ($v.$anyError && !valid)"
+                    :disabled="loading || $v.$anyError"
                     :loading="loading"
-                    @click="validate"
                   >
                     {{ btnForm }}
                   </v-btn>
@@ -506,6 +504,7 @@ import { deserialize } from 'jsonapi-fractal'
 import { required, maxLength, numeric } from 'vuelidate/lib/validators'
 import BaseCard from '~/components/ui/BaseCard.vue'
 import BaseListItemContent from '~/components/ui/BaseListItemContent.vue'
+const touchMap = new WeakMap()
 export default {
   name: 'StaffDialog',
   components: { BaseCard, BaseListItemContent },
@@ -523,6 +522,11 @@ export default {
     showMode: {
       type: Boolean,
       default: false,
+      required: false,
+    },
+    name: {
+      type: String,
+      default: '',
       required: false,
     },
   },
@@ -544,54 +548,7 @@ export default {
     isLoading: false,
     activePicker: null,
     menu: false,
-    errors: [],
-    valid: true,
   }),
-  validations: {
-    formu: {
-      // username: {
-      //   required,
-      // },
-      password: {
-        required,
-      },
-      profile: {
-        name: {
-          required,
-        },
-        lastName: {
-          required,
-        },
-        dateOfBirth: {
-          required,
-        },
-        codArea: {
-          required,
-        },
-        phone: {
-          required,
-        },
-        address: {
-          street: {
-            required,
-          },
-          number: {
-            required,
-            numeric,
-          },
-          cp: {
-            maxLength: maxLength(5),
-          },
-          piso: {
-            maxLength: maxLength(3),
-          },
-          dpto: {
-            maxLength: maxLength(3),
-          },
-        },
-      },
-    },
-  },
   computed: {
     formu: {
       get() {
@@ -607,9 +564,7 @@ export default {
       },
     },
     formTitle() {
-      return this.editedIndex === -1
-        ? 'Empleado Nuevo'
-        : 'Editar  ' + this.formu.oUsername
+      return this.editedIndex === -1 ? 'Empleado Nuevo' : 'Editar  ' + this.name
     },
     btnForm() {
       return this.editedIndex === -1 ? 'guardar' : 'Actualizar '
@@ -625,13 +580,15 @@ export default {
         errors.push('Este campo es obligatiorio.')
       return errors
     },
-    // usernameErrors() {
-    //   const errors = []
-    //   if (!this.$v.formu.username.$dirty) return errors
-    //   !this.$v.formu.username.required &&
-    //     errors.push('Este campo es obligatiorio.')
-    //   return errors
-    // },
+    usernameErrors() {
+      const errors = []
+      if (!this.$v.formu.username.$dirty) return errors
+      !this.$v.formu.username.required &&
+        errors.push('Este campo es obligatiorio.')
+      !this.$v.formu.username.isUnique &&
+        errors.push('El usuario ingresado ya se encuntra registrado.')
+      return errors
+    },
     nameErrors() {
       const errors = []
       if (!this.$v.formu.profile.name.$dirty) return errors
@@ -707,21 +664,61 @@ export default {
       return errors
     },
   },
+  validations: {
+    formu: {
+      username: {
+        required,
+        async isUnique(value) {
+          if (value === '') return true
+          if (value === this.name) return true
+          const res = await this.$axios.$get(`staff-validate/${value}`)
+          return !res.valido
+        },
+      },
+      password: {
+        required,
+      },
+      profile: {
+        name: {
+          required,
+        },
+        lastName: {
+          required,
+        },
+        dateOfBirth: {
+          required,
+        },
+        codArea: {
+          required,
+        },
+        phone: {
+          required,
+        },
+        address: {
+          street: {
+            required,
+          },
+          number: {
+            required,
+            numeric,
+          },
+          cp: {
+            maxLength: maxLength(5),
+          },
+          piso: {
+            maxLength: maxLength(3),
+          },
+          dpto: {
+            maxLength: maxLength(3),
+          },
+        },
+      },
+    },
+  },
+
   watch: {
     menu(val) {
       val && setTimeout(() => (this.activePicker = 'YEAR'))
-    },
-    username() {
-      if (this.formu.username === '') return false
-      if (this.formu.username !== this.formu.oUsername) {
-        this.$axios
-          .$get(`/staff-validate/${this.formu.username}`)
-          .then((valid) => {
-            this.errors = valid.valido
-              ? [`El usuario ${this.formu.username} ya existe!`]
-              : []
-          })
-      }
     },
   },
   mounted() {
@@ -740,18 +737,20 @@ export default {
       const [year, month, day] = date.split('-')
       return `${day}/${month}/${year}`
     },
-    validate() {
-      this.$refs.form.validate()
-    },
     nextStep() {
       return this.stepper++
     },
     close() {
       this.$v.$reset()
-      this.errors = []
-      this.$refs.form.resetValidation()
       this.stepper = 1
       this.$emit('closeDialog')
+    },
+    delayTouch($v) {
+      $v.$reset()
+      if (touchMap.has($v)) {
+        clearTimeout(touchMap.get($v))
+      }
+      touchMap.set($v, setTimeout($v.$touch, 1000))
     },
     async createResource() {
       try {

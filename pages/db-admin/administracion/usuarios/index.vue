@@ -53,6 +53,7 @@
       :form="form"
       :edited-index="editedIndex"
       :show-mode="showMode"
+      :name="original.name"
       @closeDialog="closeDialog"
     />
   </v-row>
@@ -107,6 +108,9 @@ export default {
     editedIndex: -1,
     showMode: false,
     options: {},
+    original: {
+      name: '',
+    },
   }),
   head: {
     title: 'Usuarios',
@@ -127,6 +131,7 @@ export default {
       this.dialog = false
       setTimeout(() => {
         this.$nextTick(() => {
+          this.original.name = ''
           this.form = Object.assign({}, this.defaultForm)
           this.editedIndex = -1
           this.showMode = false
@@ -160,6 +165,7 @@ export default {
     async editItem(item) {
       try {
         await this.$store.dispatch('administracion/users/getResource', item.id)
+        this.original.name = item.email
         this.editedIndex = this.usuarios.indexOf(item)
         this.$nextTick(() => {
           this.form = Object.assign({}, this.usuario)

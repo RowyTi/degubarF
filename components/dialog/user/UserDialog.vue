@@ -19,26 +19,24 @@
         </v-btn>
       </template>
       <template #body>
-        <v-form class="my-10">
-          <v-container fluid class="mt-0 pt-0">
-            <v-row>
-              <v-col cols="12" class="pb-0">
-                <v-text-field
-                  v-model="formu.name"
-                  outlined
-                  label="Nombre"
-                ></v-text-field>
-              </v-col>
-              <v-col cols="12" class="pb-0">
-                <v-text-field
-                  v-model="formu.email"
-                  outlined
-                  label="Email"
-                ></v-text-field>
-              </v-col>
-            </v-row>
-          </v-container>
-        </v-form>
+        <v-container fluid class="mt-0 pt-0">
+          <v-card flat>
+            <v-card-text class="py-0">
+              <v-list>
+                <base-list-item-content title="Nombre" :subtitle="formu.name" />
+                <base-list-item-content title="Email" :subtitle="formu.email" />
+                <base-list-item-content
+                  title="Actualizado"
+                  :subtitle="formu.updatedAt"
+                />
+                <base-list-item-content
+                  title="Estado"
+                  :subtitle="formu.state"
+                />
+              </v-list>
+            </v-card-text>
+          </v-card>
+        </v-container>
       </template>
     </base-card>
     <!-- create & edit -->
@@ -93,7 +91,7 @@
           <v-btn
             color="success"
             type="submit"
-            :disabled="loading"
+            :disabled="loading || $v.$anyError"
             :loading="loading"
           >
             {{ btnForm }}
@@ -107,10 +105,11 @@
 <script>
 import { required, email } from 'vuelidate/lib/validators'
 import BaseCard from '~/components/ui/BaseCard.vue'
+import BaseListItemContent from '~/components/ui/BaseListItemContent.vue'
 const touchMap = new WeakMap()
 export default {
   name: 'UserDialog',
-  components: { BaseCard },
+  components: { BaseCard, BaseListItemContent },
   props: {
     form: {
       type: Object,
@@ -125,6 +124,11 @@ export default {
     showMode: {
       type: Boolean,
       default: false,
+      required: false,
+    },
+    name: {
+      type: String,
+      default: '',
       required: false,
     },
   },
@@ -145,6 +149,7 @@ export default {
         email,
         async isUnique(value) {
           if (value === '') return true
+          if (value === this.name) return true
           const res = await this.$axios.$get(`/user-validate/${value}`)
           return !res.valido
         },
@@ -161,9 +166,7 @@ export default {
       },
     },
     formTitle() {
-      return this.editedIndex === -1
-        ? 'Usuario Nuevo'
-        : 'Editar  ' + this.formu.name
+      return this.editedIndex === -1 ? 'Usuario Nuevo' : 'Editar  ' + this.name
     },
     btnForm() {
       return this.editedIndex === -1 ? 'guardar' : 'Actualizar '
@@ -193,12 +196,15 @@ export default {
     },
     async createResource() {
       try {
-        this.loading = true
-        await this.$store.dispatch(
-          'administracion/users/createResource',
-          this.formu
-        )
-        this.close()
+        this.$v.$touch()
+        if (!this.$v.$invalid) {
+          this.loading = true
+          await this.$store.dispatch(
+            'administracion/users/createResource',
+            this.formu
+          )
+          this.close()
+        }
       } catch (error) {
         if (error.response.status === 403)
           alert('Usted no esta Autorizado para realizar esta acción')
@@ -208,12 +214,15 @@ export default {
     },
     async updateResource() {
       try {
-        this.loading = true
-        await this.$store.dispatch(
-          'administracion/users/updateResource',
-          this.formu
-        )
-        this.close()
+        this.$v.$touch()
+        if (!this.$v.$invalid) {
+          this.loading = true
+          await this.$store.dispatch(
+            'administracion/users/updateResource',
+            this.formu
+          )
+          this.close()
+        }
       } catch (error) {
         if (error.response.status === 403)
           alert('Usted no esta Autorizado para realizar esta acción')

@@ -53,7 +53,6 @@
     <v-form
       v-else
       ref="form"
-      v-model="valid"
       lazy-validation
       @submit.prevent="editedIndex === -1 ? createResource() : updateResource()"
     >
@@ -72,10 +71,6 @@
           <v-container fluid class="mt-5 pt-0">
             <v-row>
               <v-col cols="6">
-                <!-- {{ formu.slug }}
-                <v-text-field v-model="tableName" :error-messages="errors" />
-                <v-text-field v-model="formu.slug" :error-messages="errors" />
-                {{ errors }} -->
                 <v-col cols="12" class="pb-0">
                   <v-text-field
                     v-model="tableName"
@@ -83,8 +78,8 @@
                     placeholder="mesa 1"
                     hint="Ej mesa 1"
                     label="Nombre de Mesa"
-                    :error-messages="errors"
-                    :rules="[(v) => !!v || 'El nombre de la mesa es requerido']"
+                    :error-messages="nameErrors"
+                    @input="delayTouch($v.formu.slug)"
                     required
                   >
                     ></v-text-field
@@ -97,6 +92,7 @@
                     outlined
                     hidden
                     class="d-none"
+                    @input="delayTouch($v.formu.slug)"
                   ></v-text-field>
                 </v-col>
                 <v-col cols="12" class="pb-0">
@@ -146,9 +142,8 @@
           <v-btn
             color="success"
             type="submit"
-            :disabled="loading || !valid"
+            :disabled="loading || $v.$anyError"
             :loading="loading"
-            @click="validate"
           >
             {{ btnForm }}
           </v-btn>
@@ -159,12 +154,13 @@
 </template>
 
 <script>
+import { mapGetters } from 'vuex'
 import slugify from 'slugify'
 import VueQr from 'vue-qr'
-// import { required } from 'vuelidate/lib/validators'
+import { required } from 'vuelidate/lib/validators'
 import BaseCard from '~/components/ui/BaseCard.vue'
 import BaseListItemContent from '~/components/ui/BaseListItemContent.vue'
-// const touchMap = new WeakMap()
+const touchMap = new WeakMap()
 export default {
   name: 'TableDialog',
   components: { BaseCard, BaseListItemContent, VueQr },
@@ -182,6 +178,11 @@ export default {
     showMode: {
       type: Boolean,
       default: false,
+      required: false,
+    },
+    name: {
+      type: String,
+      default: '',
       required: false,
     },
   },
@@ -209,6 +210,7 @@ export default {
     },
   }),
   computed: {
+    ...mapGetters(['user']),
     imgUrl() {
       return process.env.BASE_IMG_URL
     },
@@ -216,9 +218,7 @@ export default {
       return this.form
     },
     formTitle() {
-      return this.editedIndex === -1
-        ? 'Mesa Nueva'
-        : 'Editar  ' + this.form.name
+      return this.editedIndex === -1 ? 'Mesa Nueva' : 'Editar  ' + this.name
     },
     btnForm() {
       return this.editedIndex === -1 ? 'Guardar' : 'Actualizar '
@@ -226,58 +226,73 @@ export default {
     tableName: {
       get() {
         // eslint-disable-next-line vue/no-side-effects-in-computed-properties
-        this.formu.slug = slugify(
-          this.$auth.user.branch.id + '-' + this.formu.name,
-          {
-            lower: true,
-            strict: true,
-          }
-        )
+        this.formu.slug = slugify(this.user.branch.id + '-' + this.formu.name, {
+          lower: true,
+          strict: true,
+        })
         return this.formu.name
       },
       set(value) {
         this.formu.name = value
       },
     },
-  },
-  watch: {
-    tableName() {
-      if (this.formu.slug === '') return false
-      if (this.formu.slug !== this.formu.oSlug) {
-        this.$axios.$get(`/table-validate/${this.formu.slug}`).then((valid) => {
-          this.errors = valid.valido
-            ? [`La mesa ${this.formu.name} ya existe!`]
-            : []
-        })
-      }
+
+    // FORM VALIDATION
+    nameErrors() {
+      const errors = []
+      if (!this.$v.formu.slug.$dirty) return errors
+      !this.$v.formu.name.required &&
+        errors.push('El nombre de la mesa es requerido.')
+      !this.$v.formu.slug.isUnique &&
+        errors.push('La mesa ingresada ya existe!')
+      return errors
     },
   },
-  mounted() {
-    //
+  validations: {
+    formu: {
+      name: {
+        required,
+      },
+      slug: {
+        required,
+        async isUnique(value) {
+          if (value === '') return true
+          if (value === this.formu.id) return true
+          const res = await this.$axios.$get(`table-validate/${value}`)
+          return !res.valido
+        },
+      },
+    },
   },
   methods: {
     qrImage(dataUrl) {
       this.formu.qr = dataUrl
     },
     close() {
-      this.errors = []
-      this.$refs.form.resetValidation()
+      this.$v.$reset()
       this.$emit('closeDialog')
     },
-    validate() {
-      this.$refs.form.validate()
+    delayTouch($v) {
+      $v.$reset()
+      if (touchMap.has($v)) {
+        clearTimeout(touchMap.get($v))
+      }
+      touchMap.set($v, setTimeout($v.$touch, 1000))
     },
     async createResource() {
       try {
-        this.loading = true
-        await this.$store.dispatch(
-          'administracion/table/createResource',
-          this.formu
-        )
-        this.close()
-        this.$toast.success(`La Mesa fue creada con éxito!`, {
-          icon: 'mdi-checkbox-marked-circle-outline',
-        })
+        this.$v.$touch()
+        if (!this.$v.$invalid) {
+          this.loading = true
+          await this.$store.dispatch(
+            'administracion/table/createResource',
+            this.formu
+          )
+          this.close()
+          this.$toast.success(`La Mesa fue creada con éxito!`, {
+            icon: 'mdi-checkbox-marked-circle-outline',
+          })
+        }
       } catch (error) {
         if (error.response) {
           if (error.response.status === 500) this.$toast.global.e500()

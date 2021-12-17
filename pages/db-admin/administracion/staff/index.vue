@@ -81,6 +81,7 @@
       :form="form"
       :edited-index="editedIndex"
       :show-mode="showMode"
+      :name="original.name"
       @closeDialog="closeDialog"
     />
   </v-row>
@@ -170,6 +171,9 @@ export default {
     editedIndex: -1,
     showMode: false,
     options: {},
+    original: {
+      name: '',
+    },
   }),
   head: {
     title: 'Staff',
@@ -199,6 +203,7 @@ export default {
       this.dialog = false
       setTimeout(() => {
         this.$nextTick(() => {
+          this.original.name = ''
           this.form = Object.assign({}, this.defaultForm)
           this.editedIndex = -1
           this.showMode = false
@@ -252,10 +257,10 @@ export default {
           changeCase: 'camelCase',
         })
 
+        this.original.name = item.username
         this.editedIndex = this.staff.indexOf(item)
         this.form = Object.assign({}, deserializeData)
         this.form.roles = deserializeData.roles[0]
-        console.log(this.form)
         this.dialog = true
       } catch (error) {
         if (error.response) {

@@ -11,11 +11,7 @@
       </template>
     </v-expansion-panel-header>
     <v-expansion-panel-content>
-      <v-form
-        ref="formulario"
-        lazy-validation
-        @submit.prevent="updateResource()"
-      >
+      <v-form ref="form" lazy-validation @submit.prevent="updateResource()">
         <v-container>
           <v-sheet max-width="800" class="mx-auto">
             <v-row justify="center" class="mx-auto">
@@ -41,18 +37,17 @@
                       hint="Ej: Degubar Palermo"
                       class="text-capitalize"
                       :error-messages="nameErrors"
-                      @input="$v.form.name.$touch()"
-                      @blur="$v.form.name.$touch()"
+                      @input="delayTouch($v.form.slug)"
                     ></v-text-field>
                     <v-text-field
                       v-model="form.slug"
                       label="Url"
                       disabled
                       outlined
+                      hidden
+                      class="d-none"
                       hint="Se genera automaticamente"
-                      :error-messages="slugErrors"
-                      @input="$v.form.slug.$touch()"
-                      @blur="$v.form.slug.$touch()"
+                      @input="delayTouch($v.form.slug)"
                     ></v-text-field>
                     <v-checkbox
                       v-model="changeLogo"
@@ -146,9 +141,13 @@
 import { mapState } from 'vuex'
 import slugify from 'slugify'
 import { required } from 'vuelidate/lib/validators'
+const touchMap = new WeakMap()
 export default {
   name: 'MyStoreBranch',
   data: () => ({
+    original: {
+      slug: '',
+    },
     image: '',
     file: null,
     changeLogo: false,
@@ -166,6 +165,12 @@ export default {
       },
       slug: {
         required,
+        async isUnique(value) {
+          if (value === '') return true
+          if (value === this.original.slug) return true
+          const res = await this.$axios.$get(`branch-validate/${value}`)
+          return !res.valido
+        },
       },
     },
   },
@@ -190,15 +195,11 @@ export default {
     // FORM VALIDATION
     nameErrors() {
       const errors = []
-      if (!this.$v.form.name.$dirty) return errors
+      if (!this.$v.form.slug.$dirty) return errors
       !this.$v.form.name.required &&
         errors.push('El nombre de tu negocio es requerido.')
-      return errors
-    },
-    slugErrors() {
-      const errors = []
-      if (!this.$v.form.slug.$dirty) return errors
-      !this.$v.form.slug.required && errors.push('Este campo es requerido.')
+      !this.$v.form.slug.isUnique &&
+        errors.push('El nombre ingresado ya existe!')
       return errors
     },
   },
@@ -206,11 +207,19 @@ export default {
     this.getBranch()
   },
   methods: {
+    delayTouch($v) {
+      $v.$reset()
+      if (touchMap.has($v)) {
+        clearTimeout(touchMap.get($v))
+      }
+      touchMap.set($v, setTimeout($v.$touch, 1000))
+    },
     async getBranch() {
       try {
         await this.$store.dispatch('administracion/branch/getResource', {
           id: this.$auth.user.branch.id,
         })
+        this.original.slug = this.branch.slug
         this.form = Object.assign({}, this.branch)
       } catch (error) {
         if (error.response) {
@@ -249,7 +258,7 @@ export default {
             'administracion/branch/updateBranch',
             this.form
           )
-
+          await this.getBranch()
           const user = await this.$axios.get('user')
           this.$auth.setUser(user.data)
           this.file = null
