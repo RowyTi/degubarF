@@ -1,5 +1,63 @@
 <template>
-  <v-row justify="center" align="center" class="mt-5">
+  <v-row justify="center" align="center" class="my-5">
+    <v-col cols="3">
+      <v-sheet
+        rounded="lg"
+        height="100"
+        color="primary"
+        class="pa-5 d-flex flex-row"
+        elevation="3"
+        dark
+      >
+        PENDIENTE
+        <v-spacer></v-spacer>
+        <span class="display-3 font-weight-black">10</span>
+      </v-sheet>
+    </v-col>
+    <v-col cols="3">
+      <a>
+        <v-sheet
+          rounded="lg"
+          height="100"
+          color="info"
+          class="pa-5 d-flex flex-row"
+          elevation="3"
+          dark
+        >
+          EN PREPARACION
+          <v-spacer></v-spacer>
+          <span class="display-3 font-weight-black">6</span>
+        </v-sheet>
+      </a>
+    </v-col>
+    <v-col cols="3">
+      <v-sheet
+        rounded="lg"
+        height="100"
+        color="success"
+        class="pa-5 d-flex flex-row"
+        elevation="3"
+        dark
+      >
+        ENTREGADO
+        <v-spacer></v-spacer>
+        <span class="display-3 font-weight-black">79</span>
+      </v-sheet>
+    </v-col>
+    <v-col cols="3">
+      <v-sheet
+        rounded="lg"
+        height="100"
+        color="error"
+        class="pa-5 d-flex flex-row"
+        elevation="3"
+        dark
+      >
+        ANULADO
+        <v-spacer></v-spacer>
+        <span class="display-3 font-weight-black">--</span>
+      </v-sheet>
+    </v-col>
     <v-col cols="12" md="11">
       <base-card :dialog="false">
         <template #rightCardTitle>
@@ -10,24 +68,6 @@
             >
           </span>
         </template>
-        <!-- <template #leftCardTitle>
-          <v-btn
-            color="accent"
-            small
-            class="mr-2"
-            :disabled="tables.length < 1"
-            @click="print(tables)"
-          >
-            Imprimir QR <v-icon right dark v-text="'mdi-qrcode-scan'" />
-          </v-btn>
-          <v-btn
-            color="primary accent--text"
-            small
-            @click.stop="dialog = !dialog"
-          >
-            Agregar Mesa<v-icon right dark>mdi-table-chair</v-icon>
-          </v-btn>
-        </template> -->
         <template #body>
           <v-data-table
             :headers="headers"
@@ -85,14 +125,14 @@
                 <v-icon> mdi-eye </v-icon>
               </v-btn>
               <v-btn color="error" icon x-small @click="deleteItem(item)">
-                <v-icon> mdi-delete </v-icon>
+                <v-icon> mdi-cancel </v-icon>
               </v-btn>
             </template>
           </v-data-table>
         </template>
       </base-card>
     </v-col>
-    <table-dialog
+    <order-dialog
       v-model="dialog"
       :form="form"
       :edited-index="editedIndex"
@@ -106,10 +146,10 @@
 import { deserialize } from 'jsonapi-fractal'
 import { mapState } from 'vuex'
 import BaseCard from '~/components/ui/BaseCard.vue'
-import TableDialog from '~/components/dialog/table/TableDialog.vue'
+import OrderDialog from '~/components/dialog/order/OrderDialog.vue'
 export default {
   name: 'AdministracionOrder',
-  components: { BaseCard, TableDialog },
+  components: { BaseCard, OrderDialog },
   layout: 'admin',
   middleware: ['permission-order'],
   data: () => ({
@@ -167,16 +207,18 @@ export default {
       },
     ],
     form: {
-      name: '',
-      slug: '',
-      state: 'inactivo',
-      qr: '',
+      content: '',
+      takeAway: false,
+      paymentMethod: '',
+      state: '',
+      total: '',
     },
     defaultForm: {
-      name: '',
-      slug: '',
-      state: 'inactivo',
-      qr: '',
+      content: '',
+      takeAway: false,
+      paymentMethod: '',
+      state: '',
+      total: '',
     },
     loading: false,
     dialog: false,
@@ -219,49 +261,34 @@ export default {
           this.options
         )
       } catch (error) {
-        if (error.response.status === 403)
-          alert('Usted no esta Autorizado para realizar esta acción')
+        if (error.response) {
+          if (error.response.status === 500) this.$toast.global.e500()
+          if (error.response.status === 403) this.$toast.global.e403()
+        } else if (error.request) {
+          this.$toast.error(`Ocurrió un problema al cargar las ordenenes`)
+        }
       } finally {
         this.loading = false
       }
     },
     async showItem(item) {
       try {
-        await this.$store.dispatch('administracion/table/getResource', item.id)
+        const res = await this.$axios.get(`orders/${item.id}`)
+        const serializedData = deserialize(res.data, {
+          changeCase: 'snakeCase',
+        })
         this.showMode = true
-        this.$nextTick(() => {
-          this.form = Object.assign({}, this.table)
-        })
+        this.form = Object.assign({}, serializedData)
         this.dialog = true
       } catch (error) {
-        if (error.response.status === 403)
-          await this.$notify({
-            group: 'error',
-            title: 'No Autorizado',
-            text: 'Usted no está autorizado a realizar esta acción',
-          })
-      }
-    },
-    async editItem(item) {
-      try {
-        const res = await this.$axios.$get(`tables/${item.id}`, {
-          params: {
-            // include: 'branch',
-          },
-        })
-        const deserializeData = deserialize(res, {
-          changeCase: 'camelCase',
-        })
-        this.editedIndex = this.tables.indexOf(item)
-        this.form = Object.assign({}, deserializeData)
-        this.dialog = true
-      } catch (error) {
-        if (error.response.status === 403)
-          await this.$notify({
-            group: 'error',
-            title: 'No Autorizado',
-            text: 'Usted no está autorizado a realizar esta acción',
-          })
+        if (error.response) {
+          if (error.response.status === 500) this.$toast.global.e500()
+          if (error.response.status === 403) this.$toast.global.e403()
+        } else if (error.request) {
+          this.$toast.error(
+            `Ocurrió un problema al cargar la orden nro ${item.id}`
+          )
+        }
       }
     },
     async deleteItem(item) {
@@ -281,19 +308,22 @@ export default {
             'administracion/table/deleteResource',
             item.id
           )
-          await this.$notify({
-            group: 'success',
-            title: 'Mesa Eliminada',
-            text: `La mesa ${item.name} fue elimianda con éxito!`,
-          })
+          this.$toast.success(
+            `La orden nro ${item.id} fue anulada con éxito!`,
+            {
+              icon: 'mdi-checkbox-marked-circle-outline',
+            }
+          )
         }
       } catch (error) {
-        if (error.response.status === 403)
-          await this.$notify({
-            group: 'error',
-            title: 'No Autorizado',
-            text: 'Usted no está autorizado a realizar esta acción',
-          })
+        if (error.response) {
+          if (error.response.status === 500) this.$toast.global.e500()
+          if (error.response.status === 403) this.$toast.global.e403()
+        } else if (error.request) {
+          this.$toast.error(
+            `Ocurrió un problema al anular la orden nro ${item.id}`
+          )
+        }
       }
     },
     setTakeAway(value) {
