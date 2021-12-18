@@ -85,6 +85,21 @@
                   label="Contraseña"
                 ></v-text-field>
               </v-col>
+              <v-col cols="12" class="pb-0">
+                <v-select
+                  v-model="formu.state"
+                  label="Estado"
+                  :items="itemState"
+                  :item-text="itemState.text"
+                  :item-value="itemState.value"
+                  value="inactivo"
+                  outlined
+                  :error-messages="stateErrors"
+                  @input="$v.formu.state.$touch()"
+                  @blur="$v.formu.state.$touch()"
+                >
+                </v-select>
+              </v-col>
             </v-row>
           </v-container>
         </template>
@@ -137,6 +152,16 @@ export default {
     },
   },
   data: () => ({
+    itemState: [
+      {
+        text: 'Inactivo',
+        value: 'inactivo',
+      },
+      {
+        text: 'Activo',
+        value: 'activo',
+      },
+    ],
     loading: false,
     options: {
       page: 1,
@@ -158,7 +183,7 @@ export default {
           return !res.valido
         },
       },
-      password: {
+      state: {
         required,
       },
     },
@@ -177,6 +202,12 @@ export default {
     },
 
     // FORM VALIDATION
+    stateErrors() {
+      const errors = []
+      if (!this.$v.formu.state.$dirty) return errors
+      !this.$v.formu.state.required && errors.push('El estado es requerido.')
+      return errors
+    },
     nameErrors() {
       const errors = []
       if (!this.$v.formu.name.$dirty) return errors
@@ -215,6 +246,12 @@ export default {
             this.formu
           )
           this.close()
+          this.$toast.success(
+            `El usuario ${this.formu.name} fue creado con éxito!`,
+            {
+              icon: 'mdi-checkbox-marked-circle-outline',
+            }
+          )
         }
       } catch (error) {
         if (error.response) {
@@ -222,7 +259,9 @@ export default {
           if (error.response.status === 403) this.$toast.global.e403()
           if (error.response.status === 422) this.$toast.global.e422()
         } else if (error.request) {
-          this.$toast.error('Ocurrió un problema al cargar los locales')
+          this.$toast.error(
+            `Ocurrió un problema al actualizar el usuario ${this.formu.email}`
+          )
         }
       } finally {
         this.loading = false
@@ -231,22 +270,28 @@ export default {
     async updateResource() {
       try {
         this.$v.$touch()
-        // if (!this.$v.$invalid) {
-        this.loading = true
-        await this.$store.dispatch(
-          'administracion/users/updateResource',
-          this.formu
-        )
-        console.log(this.formu)
-        this.close()
-        // }
+        if (!this.$v.$invalid) {
+          this.loading = true
+          await this.$store.dispatch(
+            'administracion/users/updateResource',
+            this.formu
+          )
+          this.close()
+          this.$toast.success(
+            `El usuario ${this.formu.name} fue actualizado con éxito!`,
+            {
+              icon: 'mdi-checkbox-marked-circle-outline',
+            }
+          )
+        }
       } catch (error) {
         if (error.response) {
           if (error.response.status === 500) this.$toast.global.e500()
           if (error.response.status === 403) this.$toast.global.e403()
-          if (error.response.status === 422) this.$toast.global.e422()
         } else if (error.request) {
-          this.$toast.error('Ocurrió un problema al cargar los locales')
+          this.$toast.error(
+            `Ocurrió un problema al actualizar el usuario ${this.formu.email}`
+          )
         }
       } finally {
         this.loading = false

@@ -1,15 +1,10 @@
 <template>
-  <v-app
-    :dark="$vuetify.theme.dark"
-    :class="!$vuetify.theme.dark ? 'bgLight' : ''"
-  >
+  <v-app>
     <base-nav-bar />
     <v-main>
       <base-breadcrumbs />
       <v-container fluid>
         <check-state />
-        <success-notification />
-        <error-notification />
         <nuxt />
       </v-container>
     </v-main>
@@ -18,8 +13,6 @@
 
 <script>
 import CheckState from '~/components/CheckState.vue'
-import ErrorNotification from '~/components/notifications/ErrorNotification.vue'
-import SuccessNotification from '~/components/notifications/SuccessNotification.vue'
 import BaseBreadcrumbs from '~/components/ui/BaseBreadcrumbs.vue'
 import BaseNavBar from '~/components/ui/layouts/BaseNavBar.vue'
 
@@ -28,8 +21,6 @@ export default {
   components: {
     BaseNavBar,
     BaseBreadcrumbs,
-    SuccessNotification,
-    ErrorNotification,
     CheckState,
   },
 }

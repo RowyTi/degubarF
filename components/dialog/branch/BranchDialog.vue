@@ -607,30 +607,22 @@ export default {
             this.formu
           )
           this.close()
-          await this.$notify({
-            group: 'success',
-            title: 'Usuario creado!',
-            text: `<b>${this.formu.name}</b> fue creado con éxito!`,
-          })
+          this.$toast.success(
+            `El cliente ${this.formu.name} fue registrado con éxito!`,
+            {
+              icon: 'mdi-checkbox-marked-circle-outline',
+            }
+          )
         }
       } catch (error) {
-        console.log(error.toJSON())
-        if (error.response.status === 422)
-          console.log(error.response.data.errors.username[0])
-        // if (error.response.status === 403) {
-        //   await this.$notify({
-        //     group: 'error',
-        //     title: 'No Autorizado',
-        //     text: 'Usted no esta Autorizado para realizar esta acción',
-        //   })
-        // } else {
-        //   alert(error)
-        //   await this.$notify({
-        //     group: 'error',
-        //     title: 'Error',
-        //     text: 'Ocurrió un error en el servidor, intentelo de nuevo mas tarde..',
-        //   })
-        // }
+        if (error.response) {
+          if (error.response.status === 500) this.$toast.global.e500()
+          if (error.response.status === 403) this.$toast.global.e403()
+        } else if (error.request) {
+          this.$toast.error(
+            `Ocurrió un problema al crear el cliente ${this.formu.name}`
+          )
+        }
       } finally {
         this.loading = false
       }
@@ -643,24 +635,20 @@ export default {
           this.formu
         )
         this.close()
-        await this.$notify({
-          group: 'success',
-          title: 'Usuario Actualiado!',
-          text: `<b>${this.formu.name}</b> fue actualizado con éxito!`,
-        })
+        this.$toast.success(
+          `El cliente ${this.formu.name} fue actualizado con éxito!`,
+          {
+            icon: 'mdi-checkbox-marked-circle-outline',
+          }
+        )
       } catch (error) {
-        if (error.response.status === 403) {
-          await this.$notify({
-            group: 'error',
-            title: 'No Autorizado',
-            text: 'Usted no esta Autorizado para realizar esta acción',
-          })
-        } else {
-          await this.$notify({
-            group: 'error',
-            title: 'Error',
-            text: 'Ocurrió un error en el servidor, intentelo de nuevo mas tarde..',
-          })
+        if (error.response) {
+          if (error.response.status === 500) this.$toast.global.e500()
+          if (error.response.status === 403) this.$toast.global.e403()
+        } else if (error.request) {
+          this.$toast.error(
+            `Ocurrió un problema al actualizar el cliente ${this.formu.name}`
+          )
         }
       } finally {
         this.loading = false

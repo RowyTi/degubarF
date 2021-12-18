@@ -224,18 +224,13 @@ export default {
         })
         this.dialog = true
       } catch (error) {
-        if (error.response.status === 403) {
-          await this.$notify({
-            group: 'error',
-            title: 'No Autorizado',
-            text: 'Usted no está autorizado a realizar esta acción',
-          })
-        } else {
-          await this.$notify({
-            group: 'error',
-            title: error.response.status,
-            text: 'Usted no está autorizado a realizar esta acción',
-          })
+        if (error.response) {
+          if (error.response.status === 500) this.$toast.global.e500()
+          if (error.response.status === 403) this.$toast.global.e403()
+        } else if (error.request) {
+          this.$toast.error(
+            `Ocurrió un problema al cargar los datos del cliente`
+          )
         }
       }
     },
@@ -256,12 +251,14 @@ export default {
         this.form = Object.assign({}, deserializeData)
         this.dialog = true
       } catch (error) {
-        if (error.response.status === 403)
-          await this.$notify({
-            group: 'error',
-            title: 'No Autorizado',
-            text: 'Usted no está autorizado a realizar esta acción',
-          })
+        if (error.response) {
+          if (error.response.status === 500) this.$toast.global.e500()
+          if (error.response.status === 403) this.$toast.global.e403()
+        } else if (error.request) {
+          this.$toast.error(
+            `Ocurrió un problema al cargar los datos del cliente`
+          )
+        }
       }
     },
     async deleteItem(item) {
@@ -281,19 +278,22 @@ export default {
             'administracion/branch/deleteResource',
             item.id
           )
-          await this.$notify({
-            group: 'success',
-            title: 'Local Eliminado',
-            text: `${item.name} fue elimiando con éxito!`,
-          })
+          this.$toast.success(
+            `El cliente ${item.name} fue eliminado con éxito!`,
+            {
+              icon: 'mdi-checkbox-marked-circle-outline',
+            }
+          )
         }
       } catch (error) {
-        if (error.response.status === 403)
-          await this.$notify({
-            group: 'error',
-            title: 'No Autorizado',
-            text: 'Usted no está autorizado a realizar esta acción',
-          })
+        if (error.response) {
+          if (error.response.status === 500) this.$toast.global.e500()
+          if (error.response.status === 403) this.$toast.global.e403()
+        } else if (error.request) {
+          this.$toast.error(
+            `Ocurrió un problema al eliminar el cliente ${item.name}`
+          )
+        }
       }
     },
   },

@@ -262,7 +262,6 @@ export default {
         } else if (error.request) {
           this.$toast.error('Ocurrió un problema al cargar tu negocio')
         }
-        console.log(error.toJSON())
       } finally {
         this.loading = false
       }
@@ -285,7 +284,6 @@ export default {
         } else if (error.request) {
           this.$toast.error('Ocurrió un problema al cargar tu negocio')
         }
-        console.log(error.toJSON())
       }
     },
     async editItem(item) {
@@ -306,7 +304,6 @@ export default {
         } else if (error.request) {
           this.$toast.error('Ocurrió un problema al cargar tu negocio')
         }
-        console.log(error.toJSON())
       }
     },
     async deleteItem(item) {
@@ -340,7 +337,6 @@ export default {
         } else if (error.request) {
           this.$toast.error('Ocurrió un problema al eliminar el producto')
         }
-        console.log(error.toJSON())
       }
     },
   },

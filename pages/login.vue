@@ -40,12 +40,14 @@
             <v-text-field
               v-model="form.username"
               label="Usuario"
+              class="font-weight-light"
               :error-messages="usernameErrors"
               @input="$v.form.username.$touch()"
               @blur="$v.form.username.$touch()"
             />
             <v-text-field
               v-model="form.password"
+              class="font-weight-light"
               :type="showPassword ? 'text' : 'password'"
               label="Contraseña"
               :append-icon="showPassword ? 'mdi-eye' : 'mdi-eye-off'"

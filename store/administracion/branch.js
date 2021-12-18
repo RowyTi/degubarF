@@ -164,7 +164,6 @@ export const actions = {
 
   // BRANCH RELATION ORDER
   async getOrders({ commit }, params) {
-    await console.log(params);
     const response = await this.$axios.$get(`branches/${params.id}/orders`, {
       params: {
         'page[number]': params.page,

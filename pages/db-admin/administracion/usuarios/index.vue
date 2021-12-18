@@ -31,8 +31,18 @@
             :server-items-length="totalData"
             loading-text="Cargando...Espere por favor!"
             :loading="loading"
+            class="font-weight-light disabled--text"
           >
             <v-alert slot="no-result"> no hay resultados </v-alert>
+            <template #[`item.state`]="{ item }">
+              <v-chip
+                :color="item.state === 'inactivo' ? 'error' : 'success'"
+                label
+                x-small
+                class="text-caption text-uppercase"
+                v-text="item.state"
+              />
+            </template>
             <template #[`item.acciones`]="{ item }">
               <v-btn color="info" icon x-small @click="showItem(item)">
                 <v-icon> mdi-eye </v-icon>
@@ -143,8 +153,12 @@ export default {
         this.loading = true
         await this.$store.dispatch('administracion/users/getList', this.options)
       } catch (error) {
-        if (error.response.status === 403)
-          alert('Usted no esta Autorizado para realizar esta acción')
+        if (error.response) {
+          if (error.response.status === 500) this.$toast.global.e500()
+          if (error.response.status === 403) this.$toast.global.e403()
+        } else if (error.request) {
+          this.$toast.error('Ocurrió un problema al cargar los usuarios')
+        }
       } finally {
         this.loading = false
       }
@@ -158,8 +172,12 @@ export default {
         })
         this.dialog = true
       } catch (error) {
-        if (error.response.status === 403)
-          alert('Usted no esta Autorizado para realizar esta acción')
+        if (error.response) {
+          if (error.response.status === 500) this.$toast.global.e500()
+          if (error.response.status === 403) this.$toast.global.e403()
+        } else if (error.request) {
+          this.$toast.error('Ocurrió un problema al cargar el usuario')
+        }
       }
     },
     async editItem(item) {
@@ -172,8 +190,15 @@ export default {
         })
         this.dialog = true
       } catch (error) {
-        if (error.response.status === 403)
-          alert('Usted no esta Autorizado para realizar esta acción')
+        if (error.response) {
+          if (error.response.status === 500) this.$toast.global.e500()
+          if (error.response.status === 403) this.$toast.global.e403()
+          if (error.response.status === 422) this.$toast.global.e422()
+        } else if (error.request) {
+          this.$toast.error(
+            `Ocurrió un problema al cargar el usuario ${item.email}`
+          )
+        }
       }
     },
     async deleteItem(item) {
@@ -193,9 +218,23 @@ export default {
             'administracion/users/deleteResource',
             item.id
           )
+          this.$toast.success(
+            `El usuario ${item.mail} fue eliminado con éxito!`,
+            {
+              icon: 'mdi-checkbox-marked-circle-outline',
+            }
+          )
         }
       } catch (error) {
-        alert(error)
+        if (error.response) {
+          if (error.response.status === 500) this.$toast.global.e500()
+          if (error.response.status === 403) this.$toast.global.e403()
+          if (error.response.status === 422) this.$toast.global.e422()
+        } else if (error.request) {
+          this.$toast.error(
+            `Ocurrió un problema al eliminar el usuario ${item.email}`
+          )
+        }
       }
     },
   },

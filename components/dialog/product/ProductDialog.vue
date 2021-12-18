@@ -225,7 +225,10 @@
                       </v-row> </template
                   ></v-img>
                   <v-img
-                    v-else-if="formu.image.length > 1"
+                    v-else-if="
+                      formu.image.length > 1 &&
+                      !formu.image.includes('data:image/')
+                    "
                     :src="imgUrl + formu.image"
                     class="rounded-lg"
                     max-height="200"
@@ -373,6 +376,7 @@ export default {
     imgUrl() {
       return process.env.BASE_IMG_URL
     },
+
     formu() {
       // eslint-disable-next-line vue/no-side-effects-in-computed-properties
       return this.form
@@ -498,9 +502,8 @@ export default {
           if (error.response.status === 500) this.$toast.global.e500()
           if (error.response.status === 403) this.$toast.global.e403()
         } else if (error.request) {
-          this.$toast.error('Ocurrió un problema al cargar tu negocio')
+          this.$toast.error('Ocurrió un problema al crear tu producto')
         }
-        console.log(error.toJSON())
       } finally {
         this.loading = false
       }
@@ -528,9 +531,8 @@ export default {
           if (error.response.status === 500) this.$toast.global.e500()
           if (error.response.status === 403) this.$toast.global.e403()
         } else if (error.request) {
-          this.$toast.error('Ocurrió un problema al cargar tu negocio')
+          this.$toast.error('Ocurrió un problema al actualizar tu producto')
         }
-        console.log(error.toJSON())
       } finally {
         this.loading = false
       }

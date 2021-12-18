@@ -343,7 +343,9 @@ export default {
           if (error.response.status === 403) this.$toast.global.e403()
           if (error.response.status === 422) this.$toast.global.e422()
         } else if (error.request) {
-          this.$toast.error('Ocurrió un problema al cargar las mesas')
+          this.$toast.error(
+            `Ocurrió un problema al eliminar la mesa ${item.name}`
+          )
         }
       }
     },

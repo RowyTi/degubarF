@@ -226,25 +226,21 @@ export default {
             this.formu
           )
           this.close()
-          await this.$notify({
-            group: 'success',
-            title: 'Categoría creada!',
-            text: `La categoría <b>${this.formu.name}</b> fue creado con éxito!`,
-          })
+          this.$toast.success(
+            `La categoría ${this.formu.name} fue registrado con éxito!`,
+            {
+              icon: 'mdi-checkbox-marked-circle-outline',
+            }
+          )
         }
       } catch (error) {
-        if (error.response.status === 403) {
-          await this.$notify({
-            group: 'error',
-            title: 'No Autorizado',
-            text: 'Usted no esta Autorizado para realizar esta acción',
-          })
-        } else {
-          await this.$notify({
-            group: 'error',
-            title: 'Error',
-            text: 'Ocurrió un error en el servidor, intentelo de nuevo mas tarde..',
-          })
+        if (error.response) {
+          if (error.response.status === 500) this.$toast.global.e500()
+          if (error.response.status === 403) this.$toast.global.e403()
+        } else if (error.request) {
+          this.$toast.error(
+            `Ocurrió un problema al crear la categoría ${this.formu.name}`
+          )
         }
       } finally {
         this.loading = false
@@ -260,25 +256,21 @@ export default {
             this.formu
           )
           this.close()
-          await this.$notify({
-            group: 'success',
-            title: 'Categoría Actualizado!',
-            text: `La categoría <b>${this.formu.name}</b> fue actualizada con éxito!`,
-          })
+          this.$toast.success(
+            `La categorīa ${this.formu.name} fue actualizado con éxito!`,
+            {
+              icon: 'mdi-checkbox-marked-circle-outline',
+            }
+          )
         }
       } catch (error) {
-        if (error.response.status === 403) {
-          await this.$notify({
-            group: 'error',
-            title: 'No Autorizado',
-            text: 'Usted no esta Autorizado para realizar esta acción',
-          })
-        } else {
-          await this.$notify({
-            group: 'error',
-            title: 'Error',
-            text: 'Ocurrió un error en el servidor, intentelo de nuevo mas tarde..',
-          })
+        if (error.response) {
+          if (error.response.status === 500) this.$toast.global.e500()
+          if (error.response.status === 403) this.$toast.global.e403()
+        } else if (error.request) {
+          this.$toast.error(
+            `Ocurrió un problema al actualizar la categoría ${this.formu.name}`
+          )
         }
       } finally {
         this.loading = false
