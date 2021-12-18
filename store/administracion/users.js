@@ -3,11 +3,11 @@ export const state = () => ({
   usuarios: [],
   usuario: {},
   totalData: null,
-  defaultOptions:{
+  defaultOptions: {
     page: 1,
     itemsPerPage: 10,
-    sortBy:[],
-    sortDesc:[]
+    sortBy: [],
+    sortDesc: []
   },
   searchUrl: ""
 });
@@ -69,13 +69,14 @@ export const actions = {
       email: form.email,
       password: form.password
     }
+    console.log(form);
     const serialized = serialize(resource, 'users', { changeCase: 'kebabCase' })
     await this.$axios.$patch(`users/${form.id}`, serialized);
     await dispatch('getList', state.defaultOptions);
   },
 
   // ELIMINAR RECURSO SOFT
-  async deleteResource( {context, dispatch, state}, id ){
+  async deleteResource({ context, dispatch, state }, id) {
     const serialized = serialize(id, 'users', { changeCase: 'kebabCase' })
     await this.$axios.$delete(`users/${id}`, serialized);
     await dispatch('getList', state.defaultOptions);

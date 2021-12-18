@@ -116,11 +116,6 @@ export default {
         sortable: true,
         value: 'branches',
       },
-      // {
-      //   text: 'Rating',
-      //   sortable: false,
-      //   value: 'rating',
-      // },
       {
         text: 'Ult. Actualización',
         sortable: true,

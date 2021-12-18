@@ -42,6 +42,7 @@
     <!-- create & edit -->
     <v-form
       v-else
+      lazy-validation
       @submit.prevent="editedIndex === -1 ? createResource() : updateResource()"
     >
       <base-card
@@ -63,6 +64,9 @@
                   v-model="formu.name"
                   outlined
                   label="Nombre"
+                  :error-messages="nameErrors"
+                  @input="$v.formu.name.$touch()"
+                  @blur="$v.formu.name.$touch()"
                 ></v-text-field>
               </v-col>
               <v-col cols="12" class="pb-0">
@@ -173,10 +177,17 @@ export default {
     },
 
     // FORM VALIDATION
+    nameErrors() {
+      const errors = []
+      if (!this.$v.formu.name.$dirty) return errors
+      !this.$v.formu.name.required && errors.push('El nombre es requerido.')
+      return errors
+    },
     emailErrors() {
       const errors = []
       if (!this.$v.formu.email.$dirty) return errors
       !this.$v.formu.email.required && errors.push('El email es requerido.')
+      !this.$v.formu.email.email && errors.push('El email no es valido.')
       !this.$v.formu.email.isUnique &&
         errors.push('Este Email ya esta registrado')
       return errors
@@ -206,8 +217,13 @@ export default {
           this.close()
         }
       } catch (error) {
-        if (error.response.status === 403)
-          alert('Usted no esta Autorizado para realizar esta acción')
+        if (error.response) {
+          if (error.response.status === 500) this.$toast.global.e500()
+          if (error.response.status === 403) this.$toast.global.e403()
+          if (error.response.status === 422) this.$toast.global.e422()
+        } else if (error.request) {
+          this.$toast.error('Ocurrió un problema al cargar los locales')
+        }
       } finally {
         this.loading = false
       }
@@ -215,17 +231,23 @@ export default {
     async updateResource() {
       try {
         this.$v.$touch()
-        if (!this.$v.$invalid) {
-          this.loading = true
-          await this.$store.dispatch(
-            'administracion/users/updateResource',
-            this.formu
-          )
-          this.close()
-        }
+        // if (!this.$v.$invalid) {
+        this.loading = true
+        await this.$store.dispatch(
+          'administracion/users/updateResource',
+          this.formu
+        )
+        console.log(this.formu)
+        this.close()
+        // }
       } catch (error) {
-        if (error.response.status === 403)
-          alert('Usted no esta Autorizado para realizar esta acción')
+        if (error.response) {
+          if (error.response.status === 500) this.$toast.global.e500()
+          if (error.response.status === 403) this.$toast.global.e403()
+          if (error.response.status === 422) this.$toast.global.e422()
+        } else if (error.request) {
+          this.$toast.error('Ocurrió un problema al cargar los locales')
+        }
       } finally {
         this.loading = false
       }

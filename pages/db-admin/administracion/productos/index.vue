@@ -1,7 +1,6 @@
 <template>
   <v-row justify="center" align="center" class="mt-5">
     <v-col cols="12" md="11">
-      {{ loadingP }}
       <base-card :dialog="false">
         <template #rightCardTitle>
           <span class="font-weight-light accent--text">
@@ -52,32 +51,22 @@
                 v-text="item.state"
               />
             </template>
-            <!-- <template #[`item.quantity`]="props"> -->
-            <template #[`item.quantity`]="{ item, index }">
-              <!-- {{ index }} {{ item }} -->
+            <template #[`item.quantity`]="{ item }">
               <v-edit-dialog
                 :return-value.sync="item.quantity"
                 save-text="Guardar"
                 cancel-text="Cancelar"
                 large
                 persistent
-                @save="save(item, index)"
+                @save="save(item)"
               >
                 <v-chip
-                  v-if="!loadingP[index]"
                   small
                   :color="item.quantity <= 5 ? 'error' : 'success'"
                   style="cursor: pointer"
                 >
                   {{ item.quantity }}
                 </v-chip>
-                <v-progress-circular
-                  v-else
-                  size="26"
-                  indeterminate
-                  color="primary"
-                ></v-progress-circular>
-
                 <template #input>
                   <div class="mt-4 text-h6">Actualizar Stock</div>
                   <v-text-field
@@ -112,6 +101,8 @@
       :form="form"
       :edited-index="editedIndex"
       :show-mode="showMode"
+      :name="original.name"
+      :slug="original.slug"
       @closeDialog="closeDialog"
     />
   </v-row>
@@ -127,7 +118,6 @@ export default {
   layout: 'admin',
   middleware: ['permission-product'],
   data: () => ({
-    loadingP: [],
     rules: [
       (v) => !!v || 'El stock es requerido',
       (v) => (v && v <= 9999) || 'Máximo 9999 unidades',
@@ -192,6 +182,10 @@ export default {
     editedIndex: -1,
     showMode: false,
     options: { sortBy: ['updatedAt'], sortDesc: [true] },
+    original: {
+      name: '',
+      slug: '',
+    },
   }),
   head: {
     title: 'Productos',
@@ -212,9 +206,9 @@ export default {
     updateQuantity(e) {
       this.update.quantity = e
     },
-    async save(item, index) {
+    async save(item) {
       try {
-        this.loadingP[index] = true
+        this.loading = true
         if (this.update.quantity > 9999)
           return this.$toast.error('El stock supera las cantidades permitidas')
         const data = Object.assign({ item }, this.update)
@@ -224,7 +218,6 @@ export default {
             data
           )
           this.update.quantity = ''
-          this.loadingP[index] = false
           this.$toast.success(
             `El stock del producto ${item.name} fue actualizado con éxito!`,
             {
@@ -240,13 +233,15 @@ export default {
           this.$toast.error('Ocurrió un problema al actualizar el stock')
         }
       } finally {
-        this.loadingP[index] = false
+        this.loading = false
       }
     },
     closeDialog() {
       this.dialog = false
       setTimeout(() => {
         this.$nextTick(() => {
+          this.original.name = ''
+          this.original.slug = ''
           this.form = Object.assign({}, this.defaultForm)
           this.editedIndex = -1
           this.showMode = false
@@ -299,6 +294,8 @@ export default {
           'administracion/product/getResource',
           item.id
         )
+        this.original.name = item.name
+        this.original.slug = item.slug
         this.editedIndex = this.products.indexOf(item)
         this.form = Object.assign({}, this.product)
         this.dialog = true
@@ -341,7 +338,7 @@ export default {
           if (error.response.status === 500) this.$toast.global.e500()
           if (error.response.status === 403) this.$toast.global.e403()
         } else if (error.request) {
-          this.$toast.error('Ocurrió un problema al cargar tu negocio')
+          this.$toast.error('Ocurrió un problema al eliminar el producto')
         }
         console.log(error.toJSON())
       }

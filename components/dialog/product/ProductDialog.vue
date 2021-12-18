@@ -110,12 +110,18 @@
               <v-col cols="6">
                 <v-col cols="12" class="pb-0">
                   <v-text-field
-                    v-model="formu.name"
+                    v-model="productName"
                     outlined
                     label="Producto"
                     :error-messages="nameErrors"
-                    @input="$v.formu.name.$touch()"
-                    @blur="$v.formu.name.$touch()"
+                    @input="delayTouch($v.formu.slug)"
+                  ></v-text-field>
+                  <v-text-field
+                    v-model="formu.slug"
+                    outlined
+                    hidden
+                    class="d-none"
+                    @input="delayTouch($v.formu.slug)"
                   ></v-text-field>
                 </v-col>
                 <v-col cols="12" class="pb-0">
@@ -262,7 +268,7 @@
           <v-btn
             color="success"
             type="submit"
-            :disabled="loading"
+            :disabled="loading || $v.$anyError"
             :loading="loading"
           >
             {{ btnForm }}
@@ -274,9 +280,11 @@
 </template>
 
 <script>
+import slugify from 'slugify'
 import { required, numeric, requiredIf } from 'vuelidate/lib/validators'
 import BaseCard from '~/components/ui/BaseCard.vue'
 import BaseListItemContent from '~/components/ui/BaseListItemContent.vue'
+const touchMap = new WeakMap()
 export default {
   name: 'ProductDialog',
   components: { BaseCard, BaseListItemContent },
@@ -294,6 +302,16 @@ export default {
     showMode: {
       type: Boolean,
       default: false,
+      required: false,
+    },
+    name: {
+      type: String,
+      default: '',
+      required: false,
+    },
+    slug: {
+      type: String,
+      default: '',
       required: false,
     },
   },
@@ -326,6 +344,15 @@ export default {
       name: {
         required,
       },
+      slug: {
+        required,
+        async isUnique(value) {
+          if (value === '') return true
+          if (value === this.slug) return true
+          const res = await this.$axios.$get(`product-validate/${value}`)
+          return !res.valido
+        },
+      },
       description: {
         required,
       },
@@ -351,17 +378,34 @@ export default {
       return this.form
     },
     formTitle() {
-      return this.editedIndex === -1
-        ? 'Producto nuevo'
-        : 'Editar  ' + this.form.name
+      return this.editedIndex === -1 ? 'Producto nuevo' : 'Editar  ' + this.name
     },
     btnForm() {
       return this.editedIndex === -1 ? 'Guardar' : 'Actualizar '
     },
+    productName: {
+      get() {
+        // eslint-disable-next-line vue/no-side-effects-in-computed-properties
+        this.formu.slug = slugify(
+          this.$auth.user.branch.id + '-' + this.formu.name,
+          {
+            lower: true,
+            strict: true,
+          }
+        )
+        return this.formu.name
+      },
+      set(value) {
+        this.formu.name = value
+      },
+    },
     nameErrors() {
       const errors = []
-      if (!this.$v.formu.name.$dirty) return errors
-      !this.$v.formu.name.required && errors.push('Este campo es obligatiorio.')
+      if (!this.$v.formu.slug.$dirty) return errors
+      !this.$v.formu.name.required &&
+        errors.push('El nombre del producto es obligatiorio.')
+      !this.$v.formu.slug.isUnique &&
+        errors.push('El producto ingresado ya existe.')
       return errors
     },
     descriptionErrors() {
@@ -402,6 +446,13 @@ export default {
     },
   },
   methods: {
+    delayTouch($v) {
+      $v.$reset()
+      if (touchMap.has($v)) {
+        clearTimeout(touchMap.get($v))
+      }
+      touchMap.set($v, setTimeout($v.$touch, 1000))
+    },
     uploadImage(imagen) {
       this.createImage(imagen)
     },

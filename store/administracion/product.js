@@ -58,6 +58,7 @@ export const actions = {
   async createResource({ context, dispatch, state, rootState }, form) {
     const resource = {
       name: form.name,
+      slug: form.slug,
       description: form.description,
       price: form.price,
       quantity: form.quantity,
@@ -75,6 +76,7 @@ export const actions = {
     const resource = {
       id: form.id,
       name: form.name,
+      slug: form.slug,
       description: form.description,
       price: form.price,
       quantity: form.quantity,
@@ -92,6 +94,7 @@ export const actions = {
     const resource = {
       id: form.item.id,
       name: form.item.name,
+      slug: form.slug,
       description: form.item.description,
       price: form.item.price,
       quantity: form.quantity,

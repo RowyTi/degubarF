@@ -254,7 +254,6 @@
               <v-stepper-content step="1">
                 <v-container fluid class="mt-2 pt-0">
                   <v-row align="center" justify="center">
-                    <!-- {{ formu }} -->
                     <v-col cols="12" class="pb-0">
                       <v-text-field
                         v-model="username"
@@ -304,6 +303,7 @@
                         :items="itemState"
                         value="activo"
                         outlined
+                        class="text-capitalize"
                       >
                       </v-select>
                     </v-col>
