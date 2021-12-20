@@ -2,7 +2,6 @@
   <v-app>
     <base-nav-bar />
     <v-main>
-      <base-breadcrumbs />
       <v-container fluid>
         <check-state />
         <nuxt />
@@ -13,14 +12,12 @@
 
 <script>
 import CheckState from '~/components/CheckState.vue'
-import BaseBreadcrumbs from '~/components/ui/BaseBreadcrumbs.vue'
 import BaseNavBar from '~/components/ui/layouts/BaseNavBar.vue'
 
 export default {
   name: 'Admin',
   components: {
     BaseNavBar,
-    BaseBreadcrumbs,
     CheckState,
   },
 }

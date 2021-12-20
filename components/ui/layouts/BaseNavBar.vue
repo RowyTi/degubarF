@@ -99,7 +99,7 @@ export default {
         name: 'Comanda',
         slug: '/db-admin/administracion/comanda',
         icon: 'order-bool-ascending-variant',
-        permission: 'dashboard:product',
+        permission: 'dashboard:kitchen',
       },
     ],
   }),

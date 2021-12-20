@@ -295,23 +295,45 @@ export default {
         }
       }
     },
+    async updateStatePreparando(id) {
+      try {
+        await this.$axios.patch(`orders/state/${id}`, this.updatePreparando)
+        this.updatePreparando.state = ''
+        this.orderDetailPreparando = Object.assign({}, this.defaultDetail)
+        this.$toast.success(`La Mesa fue actualizada con éxito!`, {
+          icon: 'mdi-checkbox-marked-circle-outline',
+        })
+        await this.getOrdersPreparando()
+      } catch (error) {
+        if (error.response) {
+          if (error.response.status === 500) this.$toast.global.e500()
+          if (error.response.status === 403) this.$toast.global.e403()
+          if (error.response.status === 422) this.$toast.global.e422()
+        } else if (error.request) {
+          this.$toast.error('Ocurrió un problema al cargar las mesas')
+        }
+      }
+    },
+
     async deleteItem(item) {
       try {
         const res = await this.$confirm(
-          `Está seguro que desea eliminar la mesa ${item.name} ?`,
+          `Está seguro que desea anular la orden nro ${item.id} ?`,
           {
-            title: `Eliminar ${item.name}`,
+            title: `Anularorden Nro ${item.id}`,
             icon: 'mdi-delete',
             color: 'error',
             with: 'auto',
-            buttonTrueText: 'Eliminar',
+            buttonTrueText: 'Anular',
           }
         )
         if (res) {
-          await this.$store.dispatch(
-            'administracion/table/deleteResource',
-            item.id
-          )
+          const update = {
+            state: 'anulado',
+          }
+          await this.$axios.patch(`orders/state/${item.id}`, update)
+          await this.getData()
+          await this.anulado()
           this.$toast.success(
             `La orden nro ${item.id} fue anulada con éxito!`,
             {

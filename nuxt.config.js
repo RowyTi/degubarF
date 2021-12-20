@@ -17,6 +17,9 @@ export default {
 
     link: [
       { rel: 'icon', type: 'image/x-icon', href: '/favicon.ico' }
+    ],
+    script:[
+      {src: 'https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.6.2/chart.min.js'}
     ]
   },
   // env: {
@@ -40,8 +43,7 @@ export default {
     { src: '~/plugins/confirm' },
     { src: "~/plugins/mask" },
     { src: "~/plugins/vue2-google-maps" },
-    { src: "~/plugins/print" },
-    { src: '~/plugins/notifications-client', ssr: false }
+    { src: "~/plugins/print" }
   ],
   // Auto import components: https://go.nuxtjs.dev/config-components
   components: true,

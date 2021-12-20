@@ -23,7 +23,6 @@
                   'items-per-page-text': 'Filas por página',
                 }"
                 :options.sync="options"
-                :server-items-length="totalData"
                 loading-text="Cargando...Espere por favor!"
                 :loading="loading"
                 class="
@@ -93,7 +92,6 @@
                   'items-per-page-text': 'Filas por página',
                 }"
                 :options.sync="options"
-                :server-items-length="totalData"
                 loading-text="Cargando...Espere por favor!"
                 :loading="loading"
                 class="
@@ -263,7 +261,7 @@ export default {
     BaseCard,
   },
   layout: 'admin',
-  middleware: ['permission-order'],
+  middleware: ['permission-kitchen'],
   data: () => ({
     selectedRowPendiente: [],
     ordersPendiente: [],
@@ -385,10 +383,7 @@ export default {
         this.ordersPendiente = deserialize(res.data, {
           changeCase: 'camelCase',
         })
-        console.log(res)
-      } catch (error) {
-        console.log(error)
-      }
+      } catch (error) {}
     },
     async getOrdersPreparando() {
       try {
@@ -399,10 +394,7 @@ export default {
         this.ordersPreparando = deserialize(res.data, {
           changeCase: 'camelCase',
         })
-        console.log(res)
-      } catch (error) {
-        console.log(error)
-      }
+      } catch (error) {}
     },
     selectRowPreparando(value) {
       this.orderDetailPreparando.id = value.id
