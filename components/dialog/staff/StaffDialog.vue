@@ -283,6 +283,7 @@
                         item-text="name"
                         item-value="id"
                         label="Clientes"
+                        auto-select-first
                         no-data-text="El cliente solicitado no existe."
                         outlined
                         placeholder="Buscar cliente"

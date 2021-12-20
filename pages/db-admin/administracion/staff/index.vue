@@ -124,9 +124,9 @@ export default {
     form: {
       username: '',
       state: 'inactivo',
-      roles: 'Staff',
+      roles: 'Mozo',
       branch: {
-        id: '',
+        id: '0',
       },
       profile: {
         name: '',
@@ -147,9 +147,9 @@ export default {
       username: '',
       password: '',
       state: 'inactivo',
-      roles: 'Staff',
+      roles: 'Mozo',
       branch: {
-        id: '',
+        id: '0',
       },
       profile: {
         name: '',
@@ -260,6 +260,9 @@ export default {
         this.original.name = item.username
         this.editedIndex = this.staff.indexOf(item)
         this.form = Object.assign({}, deserializeData)
+        if (this.form.branch === null) {
+          this.form.branch = Object.assign({ id: '' })
+        }
         this.form.roles = deserializeData.roles[0]
         this.dialog = true
       } catch (error) {
@@ -267,7 +270,7 @@ export default {
           if (error.response.status === 500) this.$toast.global.e500()
           if (error.response.status === 403) this.$toast.global.e403()
           if (error.response.status === 422) this.$toast.global.e422()
-        } else if (error.request) {
+        } else {
           this.$toast.error('Ocurrió un problema al cargar los usuarios')
         }
       }

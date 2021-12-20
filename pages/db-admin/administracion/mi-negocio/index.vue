@@ -1,6 +1,10 @@
 <template>
   <v-row justify="center" align="center" class="mt-5">
     <v-col cols="12" md="10">
+      <!-- <v-alert v-if=""
+        >Acutalimente no tiene ningun Local asignado, comuniquese con soporte
+        para resolverlo lo antes posible</v-alert
+      > -->
       <v-expansion-panels v-model="panel" focusable>
         <my-store-branch />
         <my-store-location />

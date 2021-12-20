@@ -206,8 +206,14 @@ export default {
           this.options
         )
       } catch (error) {
-        if (error.response.status === 403)
-          alert('Usted no esta Autorizado para realizar esta acción')
+        if (error.response) {
+          if (error.response.status === 500) this.$toast.global.e500()
+          if (error.response.status === 403) this.$toast.global.e403()
+        } else if (error.request) {
+          this.$toast.error(
+            `Ocurrió un problema al cargar los datos del cliente`
+          )
+        }
       } finally {
         this.loading = false
       }
@@ -227,7 +233,7 @@ export default {
         if (error.response) {
           if (error.response.status === 500) this.$toast.global.e500()
           if (error.response.status === 403) this.$toast.global.e403()
-        } else if (error.request) {
+        } else {
           this.$toast.error(
             `Ocurrió un problema al cargar los datos del cliente`
           )
@@ -254,7 +260,7 @@ export default {
         if (error.response) {
           if (error.response.status === 500) this.$toast.global.e500()
           if (error.response.status === 403) this.$toast.global.e403()
-        } else if (error.request) {
+        } else {
           this.$toast.error(
             `Ocurrió un problema al cargar los datos del cliente`
           )

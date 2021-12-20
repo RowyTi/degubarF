@@ -95,6 +95,12 @@ export default {
         icon: 'silverware',
         permission: 'dashboard:product',
       },
+      {
+        name: 'Comanda',
+        slug: '/db-admin/administracion/comanda',
+        icon: 'order-bool-ascending-variant',
+        permission: 'dashboard:product',
+      },
     ],
   }),
   computed: {

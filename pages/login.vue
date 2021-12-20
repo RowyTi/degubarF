@@ -264,12 +264,18 @@ export default {
 
           await this.$router.push({ path: '/db-admin/dashboard' })
         }
-      } catch (err) {
-        if (err.response.status === 422) {
-          this.errors = err.response.data.errors.username[0]
-          return
+      } catch (error) {
+        if (error.response) {
+          if (error.response.status === 422) {
+            this.errors = error.response.data.errors.username[0]
+          }
+          if (error.response.status === 500) this.$toast.global.e500()
+          if (error.response.status === 403) this.$toast.global.e403()
+        } else if (error.request) {
+          this.$toast.error(
+            `Ocurrió un problema al cargar sus datos de usuario`
+          )
         }
-        this.$toast.global.e500()
       } finally {
         this.loading = false
       }

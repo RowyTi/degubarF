@@ -1,63 +1,29 @@
 <template>
   <v-row justify="center" align="center" class="my-5">
-    <v-col cols="3">
-      <v-sheet
-        rounded="lg"
-        height="100"
-        color="primary"
-        class="pa-5 d-flex flex-row"
-        elevation="3"
-        dark
-      >
-        PENDIENTE
-        <v-spacer></v-spacer>
-        <span class="display-3 font-weight-black">10</span>
-      </v-sheet>
-    </v-col>
-    <v-col cols="3">
-      <a>
-        <v-sheet
-          rounded="lg"
-          height="100"
-          color="info"
-          class="pa-5 d-flex flex-row"
-          elevation="3"
-          dark
-        >
-          EN PREPARACION
-          <v-spacer></v-spacer>
-          <span class="display-3 font-weight-black">6</span>
-        </v-sheet>
-      </a>
-    </v-col>
-    <v-col cols="3">
-      <v-sheet
-        rounded="lg"
-        height="100"
-        color="success"
-        class="pa-5 d-flex flex-row"
-        elevation="3"
-        dark
-      >
-        ENTREGADO
-        <v-spacer></v-spacer>
-        <span class="display-3 font-weight-black">79</span>
-      </v-sheet>
-    </v-col>
-    <v-col cols="3">
-      <v-sheet
-        rounded="lg"
-        height="100"
-        color="error"
-        class="pa-5 d-flex flex-row"
-        elevation="3"
-        dark
-      >
-        ANULADO
-        <v-spacer></v-spacer>
-        <span class="display-3 font-weight-black">--</span>
-      </v-sheet>
-    </v-col>
+    <v-container>
+      <v-row>
+        <v-col cols="3" v-for="(f, i) in filters" :key="i">
+          <v-sheet
+            rounded="lg"
+            height="100"
+            :color="f.color"
+            class="pa-5 d-flex flex-row"
+            elevation="3"
+            dark
+          >
+            <span class="text-uppercase">{{ f.state }}</span>
+            <v-spacer></v-spacer>
+            <span
+              v-if="f.count === '' || f.count === 0"
+              class="display-3 font-weight-black"
+              >--</span
+            >
+            <span v-else class="display-3 font-weight-black" v-text="f.count" />
+          </v-sheet>
+        </v-col>
+      </v-row>
+    </v-container>
+
     <v-col cols="12" md="11">
       <base-card :dialog="false">
         <template #rightCardTitle>
@@ -206,6 +172,28 @@ export default {
         value: 'libre',
       },
     ],
+    filters: {
+      pendiente: {
+        color: 'primary',
+        state: 'pendiente',
+        count: '',
+      },
+      preparacion: {
+        color: 'info',
+        state: 'preparando',
+        count: '',
+      },
+      entregado: {
+        color: 'success',
+        state: 'entregado',
+        count: '',
+      },
+      anulado: {
+        color: 'error',
+        state: 'anulado',
+        count: '',
+      },
+    },
     form: {
       content: '',
       takeAway: false,
@@ -241,6 +229,13 @@ export default {
     },
     deep: true,
   },
+  mounted() {
+    this.pendiente()
+    this.preparacion()
+    this.entregado()
+    this.anulado()
+    this.refreshData()
+  },
   methods: {
     closeDialog() {
       this.dialog = false
@@ -251,6 +246,15 @@ export default {
           this.showMode = false
         })
       }, 500)
+    },
+    refreshData() {
+      setInterval(() => {
+        this.getData()
+        this.pendiente()
+        this.preparacion()
+        this.entregado()
+        this.anulado()
+      }, 60000)
     },
     async getData() {
       try {
@@ -356,6 +360,46 @@ export default {
           color = 'error'
           return color
       }
+    },
+    async preparacion() {
+      const res = await this.$axios.get('orders', {
+        params: {
+          'filter[branch_id]': this.$auth.user.branch.id,
+          'filter[state]': 'preparando',
+        },
+      })
+      const deserializeData = deserialize(res.data, { changeCase: 'snakeCase' })
+      this.filters.preparacion.count = deserializeData.length
+    },
+    async pendiente() {
+      const res = await this.$axios.get('orders', {
+        params: {
+          'filter[branch_id]': this.$auth.user.branch.id,
+          'filter[state]': 'pendiente',
+        },
+      })
+      const deserializeData = deserialize(res.data, { changeCase: 'snakeCase' })
+      this.filters.pendiente.count = deserializeData.length
+    },
+    async entregado() {
+      const res = await this.$axios.get('orders', {
+        params: {
+          'filter[branch_id]': this.$auth.user.branch.id,
+          'filter[state]': 'entregado',
+        },
+      })
+      const deserializeData = deserialize(res.data, { changeCase: 'snakeCase' })
+      this.filters.entregado.count = deserializeData.length
+    },
+    async anulado() {
+      const res = await this.$axios.get('orders', {
+        params: {
+          'filter[branch_id]': this.$auth.user.branch.id,
+          'filter[state]': 'anulado',
+        },
+      })
+      const deserializeData = deserialize(res.data, { changeCase: 'snakeCase' })
+      this.filters.anulado.count = deserializeData.length
     },
   },
 }

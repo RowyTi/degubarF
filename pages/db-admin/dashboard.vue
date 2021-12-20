@@ -1,9 +1,85 @@
 <template>
   <v-row justify="center" align="center" class="mt-5">
     <v-col cols="6">
-      {{ result }}
+      <v-sheet
+        height="200"
+        color="primary"
+        rounded="xl"
+        elevation="10"
+        class="pa-10"
+      >
+        <h1 class="text-capitalize display-2">
+          Bienvenido {{ $auth.user.username }}
+        </h1>
+      </v-sheet>
     </v-col>
-    <!-- <v-col cols="6"> <v-btn @click="test">te</v-btn></v-col> -->
+    <v-col cols="6"> </v-col>
+    <v-col cols="6">
+      <v-card class="mt-4 mx-auto" max-width="400">
+        <v-sheet
+          class="v-sheet--offset mx-auto"
+          color="cyan"
+          elevation="12"
+          max-width="calc(100% - 32px)"
+        >
+          <v-sparkline
+            :labels="labels"
+            :value="value"
+            color="white"
+            line-width="2"
+            padding="16"
+          ></v-sparkline>
+        </v-sheet>
+
+        <v-card-text class="pt-0">
+          <div class="text-h6 font-weight-light mb-2">Ordenes Totales</div>
+          <div class="subheading font-weight-light grey--text">
+            Cantidad de ordenes entregadas
+          </div>
+          <v-divider class="my-2"></v-divider>
+          <v-icon class="mr-2" small> mdi-clock </v-icon>
+          <span class="text-caption grey--text font-weight-light"
+            >ver todas las ordenes</span
+          >
+        </v-card-text>
+      </v-card>
+    </v-col>
+    <v-col cols="6">
+      <v-sheet
+        color="info"
+        height="200"
+        rounded="xl"
+        elevation="6"
+        class="pa-5 d-flex justify-space-between"
+      >
+        <h2 class="display-2">Total Facturado</h2>
+        <span class="display-2">100.000,00</span>
+      </v-sheet>
+    </v-col>
+    <v-col cols="6">
+      <v-sheet
+        color="info"
+        height="200"
+        rounded="xl"
+        elevation="6"
+        class="pa-5 d-flex justify-space-between"
+      >
+        <h2 class="display-2">Ordenes Totales</h2>
+        <span class="display-4">12</span>
+      </v-sheet>
+    </v-col>
+    <v-col cols="6">
+      <v-sheet
+        color="info"
+        height="200"
+        rounded="xl"
+        elevation="6"
+        class="pa-5 d-flex justify-space-between"
+      >
+        <h2 class="display-2">Ordenes Totales</h2>
+        <span class="display-4">12</span>
+      </v-sheet>
+    </v-col>
   </v-row>
 </template>
 
@@ -13,58 +89,21 @@ export default {
   layout: 'admin',
   middleware: 'permission-dashboard',
   data: () => ({
-    result: {},
-    order: [
-      // items: [
-      {
-        id: '1',
-        name: 'pizza muzzarella',
-        description: 'pizza clasica',
-        image: 'productos/9/9-pizza-muzzarella.jpeg',
-        quantity: '3',
-        unit_price: '600',
-        total_price: '1800',
-      },
-      {
-        id: '2',
-        name: 'coca cola 500ml',
-        description: 'coca',
-        image: 'productos/9/9-coca-cola.jpeg',
-        quantity: '3',
-        unit_price: '100',
-        total_price: '300',
-      },
-      // ],
-    ],
-    items: [
-      {
-        text: 'Dashboard',
-        disabled: false,
-        href: 'breadcrumbs_dashboard',
-      },
-      {
-        text: 'Link 1',
-        disabled: false,
-        href: 'breadcrumbs_link_1',
-      },
-      {
-        text: 'Link 2',
-        disabled: true,
-        href: 'breadcrumbs_link_2',
-      },
-    ],
+    labels: ['12am', '3am', '6am', '9am', '12pm', '3pm', '6pm', '9pm'],
+    value: [200, 675, 410, 390, 310, 460, 250, 240],
   }),
   computed: {
     ...mapGetters(['isAuthenticated', 'user']),
   },
   mounted() {
-    this.enJson()
+    //
   },
-  methods: {
-    enJson() {
-      this.result = JSON.stringify(this.order)
-      console.log(JSON.parse(this.result))
-    },
-  },
+  methods: {},
 }
 </script>
+<style scoped>
+.v-sheet--offset {
+  top: -24px;
+  position: relative;
+}
+</style>

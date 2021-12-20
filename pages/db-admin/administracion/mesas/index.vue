@@ -82,14 +82,6 @@
                     @input="updateState"
                   >
                   </v-select>
-                  <!-- <v-text-field
-                    :value="item.state"
-                    label="Stock"
-                    single-line
-                    counter
-                    autofocus
-                    @input="updateState"
-                  ></v-text-field> -->
                 </template>
               </v-edit-dialog>
             </template>
