@@ -3,7 +3,7 @@
     <v-app-bar app color="amber accent-4" flat>
       <v-app-bar-nav-icon @click.stop="openDrawer">
         <v-icon v-if="drawer" v-text="'mdi-backburger'" />
-        <v-icon v-else v-text="'mdi-backburger'" class="rotate-180"></v-icon>
+        <v-icon v-else class="rotate-180" v-text="'mdi-backburger'"></v-icon>
       </v-app-bar-nav-icon>
       <!-- <v-toolbar-title class="text-body-1" v-text="nameBranch" /> -->
       <v-spacer></v-spacer>

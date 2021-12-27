@@ -1,9 +1,9 @@
 <template>
   <v-dialog v-bind="$attrs" max-width="400" scrollable v-on="$listeners">
     <v-card
+      v-if="showMode"
       class="mx-auto"
       max-width="400"
-      v-if="showMode"
       :dialog="false"
       :section-actions="false"
     >

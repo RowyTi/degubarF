@@ -1,17 +1,20 @@
-
-
 <script>
 import { Bar } from 'vue-chartjs'
 
 export default {
   extends: Bar,
-  // eslint-disable-next-line vue/require-prop-types
-  props: ['data', 'options'],
+  props: {
+    chartdata: {
+      type: Object,
+      default: null,
+    },
+    options: {
+      type: Object,
+      default: null,
+    },
+  },
   mounted() {
-    this.renderChart(this.data, this.options)
+    this.renderChart(this.chartdata, this.options)
   },
 }
 </script>
-
-<style>
-</style>

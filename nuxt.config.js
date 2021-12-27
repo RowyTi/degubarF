@@ -18,9 +18,9 @@ export default {
     link: [
       { rel: 'icon', type: 'image/x-icon', href: '/favicon.ico' }
     ],
-    script:[
-      {src: 'https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.6.2/chart.min.js'}
-    ]
+    // script:[
+    //   {src: 'https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.6.2/chart.min.js'}
+    // ]
   },
   // env: {
   //   BASE_URL: 'https://api.degubar.com.ar/v1/',
@@ -43,7 +43,8 @@ export default {
     { src: '~/plugins/confirm' },
     { src: "~/plugins/mask" },
     { src: "~/plugins/vue2-google-maps" },
-    { src: "~/plugins/print" }
+    { src: "~/plugins/print" },
+    { src: '~/plugins/chart', mode: 'client' }
   ],
   // Auto import components: https://go.nuxtjs.dev/config-components
   components: true,
@@ -63,6 +64,8 @@ export default {
     '@nuxtjs/pwa',
     // https://github.com/shakee93/vue-toasted
     '@nuxtjs/toast',
+    // Doc: https://http.nuxtjs.org
+    '@nuxt/http',
   ],
   toast: {
     position: 'top-right',

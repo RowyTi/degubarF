@@ -2,7 +2,7 @@
   <v-row justify="center" align="center" class="my-5">
     <v-container>
       <v-row>
-        <v-col cols="3" v-for="(f, i) in filters" :key="i">
+        <v-col v-for="(f, i) in filters" :key="i" cols="3">
           <v-sheet
             rounded="lg"
             height="100"

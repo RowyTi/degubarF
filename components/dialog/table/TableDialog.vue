@@ -79,8 +79,8 @@
                     hint="Ej mesa 1"
                     label="Nombre de Mesa"
                     :error-messages="nameErrors"
-                    @input="delayTouch($v.formu.slug)"
                     required
+                    @input="delayTouch($v.formu.slug)"
                   >
                     ></v-text-field
                   >

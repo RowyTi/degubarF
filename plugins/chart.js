@@ -1,11 +1,11 @@
 import Vue from 'vue'
-import { Line } from 'vue-chartjs'
+import { Bar } from 'vue-chartjs'
 
-Vue.component('LineChart', {
-	extends: Line,
+Vue.component('MyChart', {
+	extends: Bar,
 	// eslint-disable-next-line vue/require-prop-types
 	props: ['data', 'options'],
-	mounted () {
+	mounted() {
 		this.renderChart(this.data, this.options)
 	}
 })
