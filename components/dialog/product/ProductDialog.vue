@@ -107,7 +107,7 @@
         <template #body>
           <v-container fluid class="mt-5 pt-0">
             <v-row>
-              <v-col cols="6">
+              <v-col cols="12" sm="6">
                 <v-col cols="12" class="pb-0">
                   <v-text-field
                     v-model="productName"
@@ -181,7 +181,7 @@
                 </v-col>
               </v-col>
               <!-- IMAGEN DE PRODUCTO -->
-              <v-col cols="6">
+              <v-col cols="12" sm="6">
                 <v-col cols="12">
                   <v-file-input
                     v-model="file"
@@ -207,7 +207,7 @@
                       image.includes('data:image/png;base64,')
                     "
                     :src="image"
-                    class="rounded-lg"
+                    class="rounded-lg mx-auto"
                     max-height="200"
                     max-width="200"
                     contain
@@ -230,7 +230,7 @@
                       !formu.image.includes('data:image/')
                     "
                     :src="imgUrl + formu.image"
-                    class="rounded-lg"
+                    class="rounded-lg mx-auto"
                     max-height="200"
                     max-width="200"
                     contain
@@ -254,6 +254,7 @@
                     color="blue-grey lighten-5 d-flex align-center rounded-lg"
                     rounded-lg
                     elevation="5"
+                    class="mx-auto"
                   >
                     <v-icon class="mx-auto accent--text" size="72">
                       mdi-image

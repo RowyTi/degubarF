@@ -2,7 +2,7 @@
   <v-row justify="start" align="start" class="my-5">
     <v-col cols="12">
       <v-row>
-        <v-col cols="6">
+        <v-col cols="12" sm="6">
           <base-card :dialog="false">
             <template #rightCardTitle>
               <span class="font-weight-light accent--text">
@@ -71,7 +71,7 @@
             </template>
           </base-card>
         </v-col>
-        <v-col cols="6">
+        <v-col cols="12" sm="6">
           <base-card :dialog="false">
             <template #rightCardTitle>
               <span class="font-weight-light accent--text">
@@ -144,7 +144,7 @@
     </v-col>
     <v-col cols="12">
       <v-row>
-        <v-col cols="6">
+        <v-col cols="12" sm="6">
           <v-card class="mx-auto" :dialog="false" :section-actions="false">
             <v-toolbar color="primary">
               <v-toolbar-title class="accent--text"
@@ -195,7 +195,7 @@
             </v-list>
           </v-card>
         </v-col>
-        <v-col cols="6">
+        <v-col cols="12" sm="6">
           <v-card class="mx-auto" :dialog="false" :section-actions="false">
             <v-toolbar color="success">
               <v-toolbar-title class="white--text"
@@ -415,7 +415,7 @@ export default {
         await this.$axios.patch(`orders/state/${id}`, this.updatePendiente)
         this.updatePendiente.state = ''
         this.orderDetailPendiente = Object.assign({}, this.defaultDetail)
-        this.$toast.success(`La Mesa fue actualizada con éxito!`, {
+        this.$toast.success(`La Orden ${id} fue actualizada con éxito!`, {
           icon: 'mdi-checkbox-marked-circle-outline',
         })
 
@@ -427,7 +427,7 @@ export default {
           if (error.response.status === 403) this.$toast.global.e403()
           if (error.response.status === 422) this.$toast.global.e422()
         } else if (error.request) {
-          this.$toast.error('Ocurrió un problema al cargar las mesas')
+          this.$toast.error('Ocurrió un problema al actualizar la orden')
         }
       }
     },
@@ -436,7 +436,7 @@ export default {
         await this.$axios.patch(`orders/state/${id}`, this.updatePreparando)
         this.updatePreparando.state = ''
         this.orderDetailPreparando = Object.assign({}, this.defaultDetail)
-        this.$toast.success(`La Mesa fue actualizada con éxito!`, {
+        this.$toast.success(`La Orden ${id} fue actualizada con éxito!`, {
           icon: 'mdi-checkbox-marked-circle-outline',
         })
         await this.getOrdersPreparando()
@@ -446,7 +446,7 @@ export default {
           if (error.response.status === 403) this.$toast.global.e403()
           if (error.response.status === 422) this.$toast.global.e422()
         } else if (error.request) {
-          this.$toast.error('Ocurrió un problema al cargar las mesas')
+          this.$toast.error('Ocurrió un problema al actualizar la orden')
         }
       }
     },

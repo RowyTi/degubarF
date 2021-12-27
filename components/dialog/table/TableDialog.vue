@@ -70,7 +70,7 @@
         <template #body>
           <v-container fluid class="mt-5 pt-0">
             <v-row>
-              <v-col cols="6">
+              <v-col cols="12" sm="6">
                 <v-col cols="12" class="pb-0">
                   <v-text-field
                     v-model="tableName"
@@ -109,7 +109,7 @@
                 </v-col>
               </v-col>
               <!-- codigo qr -->
-              <v-col cols="6">
+              <v-col cols="12" sm="6">
                 <v-subheader v-text="'Código QR'" />
                 <v-sheet
                   v-if="formu.name.length < 1"
@@ -118,19 +118,20 @@
                   color="blue-grey lighten-5 d-flex align-center"
                   rounded
                   elevation="5"
+                  class="mx-auto"
                 >
                   <p class="mx-2">
                     El código se generará automaticamente al ingresar el nombre
                     de la mesa
                   </p>
                 </v-sheet>
-
-                <vue-qr
-                  v-else
-                  :text="formu.slug"
-                  :size="200"
-                  :callback="qrImage"
-                ></vue-qr>
+                <div v-else class="text-center">
+                  <vue-qr
+                    :text="formu.slug"
+                    :size="200"
+                    :callback="qrImage"
+                  ></vue-qr>
+                </div>
               </v-col>
             </v-row>
           </v-container>

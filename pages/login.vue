@@ -1,6 +1,5 @@
 <template>
   <v-row align="center" justify="center" class="bg">
-    <!--  -->
     <v-col cols="12" class="d-flex justify-center">
       <v-card
         class="elevation-5 px-10 py-10"
@@ -11,15 +10,6 @@
         max-width="500"
         min-width="360"
       >
-        <!-- <v-alert v-show="error.status" type="error">{{ error.texto }}</v-alert> -->
-        <!-- <h1 class="text-h3 text-md-h4 pl-3 font-weight-light">
-          Bienvenido a
-          <span class="mx-auto primary--text font-weight-black"> Degubar</span>!
-        </h1> -->
-        <!-- <v-card-subtitle
-          class="mt-0 pt-0"
-          v-text="'Inicie sesión para comenzar a trabajar'"
-        /> -->
         <div class="text-center">
           <h1 class="text-h3 text-md-h4 pl-3 font-weight-light">
             Bienvenido a
@@ -32,9 +22,6 @@
           />
         </div>
 
-        <!-- <v-avatar tile size="100" class="mx-auto d-block">
-          <v-img src="images/logo-degubar.png"></v-img>
-        </v-avatar> -->
         <v-form lazy-validation @submit.prevent="login()">
           <v-card-text class="">
             <v-text-field
@@ -81,128 +68,7 @@
           <span class="font-weight-light grey--text">v1.0.0</span>
         </div>
       </v-card>
-      <!-- <v-sheet
-        width="400"
-        height="400"
-        rounded="xl"
-        class="glass d-flex flex-column justify-center align-center"
-      >
-        <v-avatar tile size="100">
-          <v-img src="images/logo-degubar.png"></v-img>
-        </v-avatar>
-        <v-form>
-          <v-card-text>
-            <v-text-field
-              v-model="form.username"
-              label="Usuario"
-              :error-messages="usernameErrors"
-              @input="$v.form.username.$touch()"
-              @blur="$v.form.username.$touch()"
-            />
-            <v-text-field
-              v-model="form.password"
-              :type="showPassword ? 'text' : 'password'"
-              label="Contraseña"
-              :append-icon="showPassword ? 'mdi-eye' : 'mdi-eye-off'"
-              :error-messages="passwordErrors"
-              @input="$v.form.password.$touch()"
-              @blur="$v.form.password.$touch()"
-              @click:append="showPassword = !showPassword"
-              @keyup.enter="login"
-            />
-            <span
-              v-if="errors"
-              class="mx-auto error--text text-caption text-center"
-            >
-              {{ errors }}
-            </span>
-          </v-card-text>
-
-          <v-card-actions>
-            <v-btn
-              class="mx-auto"
-              :loading="loading"
-              color="primary"
-              :disabled="loading"
-              @click="login"
-              >Iniciar Sesión</v-btn
-            >
-          </v-card-actions>
-          <v-divider class="mt-5"></v-divider>
-        </v-form>
-      </v-sheet> -->
     </v-col>
-    <!-- <v-col cols="12" md="8" class="pa-0 ma-0" style="background-color: black">
-      <v-img
-        src="/images/logo-degubar.png"
-        height="100vh"
-        contain
-        class="pt-1"
-      />
-    </v-col>
-
-    <v-col
-      cols="12"
-      md="4"
-      class="d-flex align-center justify-center full-height"
-    >
-      <v-card class="elevation-0 pa-1" light height="" color="white">
-        <v-alert v-show="error.status" type="error">{{ error.texto }}</v-alert>
-        <h1 class="text-h3 text-md-h4 pl-3 font-weight-light">
-          Bienvenido a
-          <span class="mx-auto primary--text font-weight-black"> Degubar</span>!
-        </h1>
-        <v-card-subtitle
-          class="mt-0 pt-0"
-          v-text="'Inicie sesión para comenzar a trabajar'"
-        />
-        <v-form>
-          <v-card-text>
-            <v-text-field
-              v-model="form.username"
-              outlined
-              label="Usuario"
-              :error-messages="usernameErrors"
-              @input="$v.form.username.$touch()"
-              @blur="$v.form.username.$touch()"
-            />
-            <v-text-field
-              v-model="form.password"
-              :type="showPassword ? 'text' : 'password'"
-              outlined
-              label="Contraseña"
-              :append-icon="showPassword ? 'mdi-eye' : 'mdi-eye-off'"
-              :error-messages="passwordErrors"
-              @input="$v.form.password.$touch()"
-              @blur="$v.form.password.$touch()"
-              @click:append="showPassword = !showPassword"
-              @keyup.enter="login"
-            />
-            <span
-              v-if="errors"
-              class="mx-auto error--text text-caption text-center"
-            >
-              {{ errors }}
-            </span>
-          </v-card-text>
-
-          <v-card-actions>
-            <v-btn
-              class="mx-auto"
-              :loading="loading"
-              color="primary"
-              :disabled="loading"
-              @click="login"
-              >Iniciar Sesión</v-btn
-            >
-          </v-card-actions>
-          <v-divider class="mt-5"></v-divider>
-        </v-form>
-        <div class="text-center">
-          <span class="font-weight-light grey--text">v1.0.0</span>
-        </div>
-      </v-card>
-    </v-col> -->
   </v-row>
 </template>
 
@@ -261,8 +127,13 @@ export default {
           await this.$auth.loginWith('local', { data: this.form })
 
           await this.$auth.$storage.getUniversal('user')
-
-          await this.$router.push({ path: '/db-admin/dashboard' })
+          if (this.$auth.hasScope('dashboard:kitchen')) {
+            await this.$router.push({
+              path: '/db-admin/administracion/comanda',
+            })
+          } else {
+            await this.$router.push({ path: '/db-admin/dashboard' })
+          }
         }
       } catch (error) {
         if (error.response) {

@@ -22,14 +22,14 @@ export default {
     //   {src: 'https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.6.2/chart.min.js'}
     // ]
   },
-  // env: {
-  //   BASE_URL: 'https://api.degubar.com.ar/v1/',
-  //   BASE_IMG_URL: 'https://api.degubar.com.ar/storage/'
-  // },
   env: {
-    BASE_URL: process.env.BASE_URL || 'https://api.degubar.com.ar/v1/',
-    BASE_IMG_URL: process.env.BASE_IMG_URL || 'https://api.degubar.com.ar/storage/'
+    BASE_URL: 'https://api.degubar.com.ar/v1/',
+    BASE_IMG_URL: 'https://api.degubar.com.ar/storage/'
   },
+  // env: {
+  //   BASE_URL: process.env.BASE_URL || 'https://api.degubar.com.ar/v1/',
+  //   BASE_IMG_URL: process.env.BASE_IMG_URL || 'https://api.degubar.com.ar/storage/'
+  // },
   router: {
     middleware: ["auth"]
   },
@@ -115,8 +115,8 @@ export default {
   },
   // Axios module configuration: https://go.nuxtjs.dev/config-axios
   axios: {
-    // baseUrl: 'https://api.degubar.com.ar/v1/',
-    baseUrl: process.env.BASE_URL,
+    baseUrl: 'https://api.degubar.com.ar/v1/',
+    // baseUrl: process.env.BASE_URL,
     credentials: false,
     headers: {
       'Accept': 'application/vnd.api+json',
